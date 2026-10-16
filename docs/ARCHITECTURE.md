@@ -43,7 +43,7 @@ Actions to GitHub Pages.
 
 `Script Presets/presets.json` defines the four configurations. The generator
 combines them with a shared wrapper template. Wrappers perform a basic text
-write/read probe and load the pinned `v0.4.2` engine by default. Local development
+write/read probe and load the pinned `v0.4.3` engine by default. Local development
 requires an explicit `USE_LOCAL_CORE = true`. They record source identity,
 exceptions, and file existence in a JSON sidecar separately from file validity.
 The actual serializer is not duplicated.

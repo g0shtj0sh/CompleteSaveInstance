@@ -63,6 +63,11 @@ Une fonction terminée ne garantit pas l’existence du fichier. Vérifier sa
 présence, puis son ouverture et son contenu dans Roblox Studio. Les références
 d’assets ne constituent pas une copie de leurs fichiers binaires.
 
+Depuis la **0.4.3**, aucun en-tête « Saved by CompleteSaveInstance » ni lien
+« Original Source » n'est ajouté aux scripts exportés. Les commentaires du
+code récupéré ou du décompilateur sont conservés. Ultra conserve aussi le bloc
+de bytecode Base64 lorsque `SaveBytecode` est activé.
+
 ## Suite du développement
 
 La priorité est le diagnostic : inventaire, logs bufferisés, rapport précis,

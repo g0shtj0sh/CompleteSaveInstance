@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.3 — 2026-10-17
+
+- Removed the exporter-added `Saved by CompleteSaveInstance` and `Original
+  Source` comment prefixes from recovered/decompiled script Source in both
+  engine variants. Both preset profiles use the updated shared Luau engine.
+- Preserved comments returned with recovered source, native decompiler output,
+  bytecode comments selected by `SaveBytecode`, and diagnostic failure messages.
+  The optional export README and repository license/attribution remain separate.
+
+This release changes source presentation; it does not resolve or validate the
+native crash observed during the 0.4.2 initialization test.
+
 ## 0.4.2 — 2026-10-17
 
 - Replaced the primary engine's shared pending-job slot and manual coroutine

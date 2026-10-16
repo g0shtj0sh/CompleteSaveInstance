@@ -6,7 +6,7 @@
 -- Relative to the runtime's file workspace, not the Git checkout on your PC.
 local CORE_PATH = "CompleteSaveInstance/saveinstance.luau"
 local USE_LOCAL_CORE = false -- opt in explicitly when developing a local engine
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/saveinstance.luau"
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.3/saveinstance.luau"
 local PRESET_ID = "UltraCompleteSveInstance"
 local options = {
 	mode = "full",
@@ -77,7 +77,7 @@ local function onProgress(progress)
 	latestProgress = progress
 	progress.preset = PRESET_ID
 	progress.profile = "Universal"
-	progress.wrapperVersion = "0.4.2"
+	progress.wrapperVersion = "0.4.3"
 	progress.sourceOrigin = sourceOrigin
 	progress.validation = "unverified"
 	local wrote, writeError = pcall(function()
@@ -133,7 +133,7 @@ local report = type(exportReport) == "table" and exportReport or {
 	propertyAudit = "unavailable_from_this_core",
 }
 report.preset = PRESET_ID
-report.wrapperVersion = "0.4.2"
+report.wrapperVersion = "0.4.3"
 report.profile = "Universal"
 report.sourceOrigin = sourceOrigin
 report.sourceBytes = sourceBytes
@@ -165,8 +165,8 @@ end
 if report.criticalGeometryOmissions and report.criticalGeometryOmissions > 0 then
 	warn(prefix .. tostring(report.criticalGeometryOmissions) .. " geometry/terrain property columns were omitted. See the report; missing road geometry is not repaired by a completed export.")
 end
-if report.engineVersion ~= "0.4.2" then
-	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.4.2. Check for an outdated local CORE_PATH.")
+if report.engineVersion ~= "0.4.3" then
+	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.4.3. Check for an outdated local CORE_PATH.")
 end
 if not ok then
 	fail("Export failed. Check CORE_PATH and console details: " .. tostring(result))

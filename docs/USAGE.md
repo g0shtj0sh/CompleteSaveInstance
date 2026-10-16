@@ -23,7 +23,7 @@ gh repo clone g0shtj0sh/CompleteSaveInstance
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. Presets download the root engine pinned to `v0.4.2` by default.
+is required. Presets download the root engine pinned to `v0.4.3` by default.
 For local development, explicitly set `USE_LOCAL_CORE = true` and configure
 `CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
@@ -82,6 +82,19 @@ file and console output; see [troubleshooting](TROUBLESHOOTING.md).
 
 Server-only data, private DataStores, unloaded streamed instances, and restricted
 assets can be absent. An asset ID is a reference, not an embedded binary asset.
+
+## Exported script comments
+
+Since 0.4.3, neither engine adds a `Saved by CompleteSaveInstance` credit or
+`Original Source` URL above recovered/decompiled script Source. Existing source
+comments and anything returned by the native decompiler are preserved. With
+`SaveBytecode = true`, the separate Base64 bytecode comment is still prepended;
+Ultra and Scripts enable that option. Failed or inaccessible source can contain
+a diagnostic comment instead of code. Decompiled output is reconstructed code,
+not a guarantee of the original source text.
+
+`ReadMe = true` adds a separate export README; it does not add credits to each
+game script. Repository attribution is maintained in LICENSE and NOTICE.md.
 
 ## Namespace changes
 

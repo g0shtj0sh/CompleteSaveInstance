@@ -3032,7 +3032,7 @@ local GLOBAL_ENV = getgenv and getgenv() or _G or shared
 	Saves instances with specified options. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.3/",
 		SSI = "saveinstance",
 	}
 
@@ -4450,9 +4450,6 @@ local function completeSaveInstance(CustomOptions, CustomOptions2)
 													end
 												end
 
-												value = "-- Saved by CompleteSaveInstance\n\n"
-													.. (hasLinkedSource and "-- Original Source: https://assetdelivery.roblox.com/v1/asset/?" .. (LinkedSource_type or "id") .. "=" .. (LinkedSource or LinkedSource_Url) .. "\n\n" or "")
-													.. value
 											end
 										end
 										value = XML_Encoders._protectedString(value)

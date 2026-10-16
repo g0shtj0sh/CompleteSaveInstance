@@ -3664,7 +3664,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.3/",
 		SSI = "saveinstance",
 	}
 
@@ -3691,7 +3691,7 @@ local function completeSaveInstance(...)
 	GLOBAL_ENV.CSI = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.4.2",
+		engineVersion = "0.4.3",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -4805,10 +4805,6 @@ local function completeSaveInstance(...)
 				end
 			end
 		end
-
-		value = "-- Saved by CompleteSaveInstance\n\n"
-			.. (hasLinkedSource and "-- Original Source: https://assetdelivery.roblox.com/v1/asset/?" .. (LinkedSource_type or "id") .. "=" .. (LinkedSource or LinkedSource_Url) .. "\n\n" or "")
-			.. value
 
 		return value
 	end

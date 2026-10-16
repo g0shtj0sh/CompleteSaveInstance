@@ -14,7 +14,7 @@ local presetSource = __PRESET_SOURCE__
 local successes = 0
 local potassium = __POTASSIUM__
 local expectedCorePath = potassium and "CompleteSaveInstance/Executors/Potassium/saveinstance.luau" or "CompleteSaveInstance/saveinstance.luau"
-local expectedCoreUrl = potassium and "/v0.4.2/Executors/Potassium/saveinstance.luau" or "/v0.4.2/saveinstance.luau"
+local expectedCoreUrl = potassium and "/v0.4.3/Executors/Potassium/saveinstance.luau" or "/v0.4.3/saveinstance.luau"
 local function scenario(kind)
     local files, messages = {}, {}
     local capturedReport
@@ -71,8 +71,8 @@ local function scenario(kind)
                 if kind == "runtime-error" then error("serializer failed") end
                 if kind ~= "missing-output" then files[options.FilePath] = "mock output" end
                 if kind == "legacy-core" then return nil end
-                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.4.2"} end
-                return {ok=true, engineVersion="0.4.2", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
+                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.4.3"} end
+                return {ok=true, engineVersion="0.4.3", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
             end
         end
     end
@@ -99,7 +99,7 @@ local function scenario(kind)
     end
     if kind == "success" or kind == "remote-core" then
         assert(localReads == 0 and remoteReads == 1, "Default must not silently load a stale local core")
-        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.4.2/", 1, true))
+        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.4.3/", 1, true))
     elseif kind == "local-core" or kind == "local-core-missing" then
         assert(localReads == 1 and remoteReads == 0, "Local development must use only its explicit source")
     end
