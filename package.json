@@ -1,0 +1,13 @@
+{
+  "name": "completesaveinstance-docs",
+  "version": "0.2.0",
+  "private": true,
+  "description": "API documentation and preset catalog for CompleteSaveInstance",
+  "scripts": {
+    "docs:build": "python scripts/generate_option_index.py --check && moonwave build --code saveinstance.luau",
+    "docs:dev": "python scripts/generate_option_index.py --check && moonwave dev --code saveinstance.luau"
+  },
+  "devDependencies": {
+    "moonwave": "1.4.2"
+  }
+}

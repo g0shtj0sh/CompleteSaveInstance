@@ -14,10 +14,12 @@
 </p>
 
 <p align="center">
-  <a href="#getting-started">Get started</a> ?
-  <a href="docs/USAGE.md">Usage</a> ?
-  <a href="docs/TROUBLESHOOTING.md">Troubleshooting</a> ?
-  <a href="docs/ROADMAP.md">Roadmap</a> ?
+  <a href="https://g0shtj0sh.github.io/CompleteSaveInstance/">Documentation</a> ·
+  <a href="Script%20Presets/README.md">Script Presets</a> ·
+  <a href="#getting-started">Get started</a> ·
+  <a href="docs/USAGE.md">Usage</a> ·
+  <a href="docs/TROUBLESHOOTING.md">Troubleshooting</a> ·
+  <a href="docs/ROADMAP.md">Roadmap</a> ·
   <a href="README.fr.md">Français</a>
 </p>
 
@@ -33,8 +35,8 @@ reliability work.
 Use it with experiences you own or have permission to archive. For your own
 projects, start with Roblox Studio's built-in save and export features.
 
-> **Development status:** this first milestone introduces the project identity,
-> documentation, and repository checks. End-to-end export and Studio reopening
+> **Development status:** executable presets, source-generated API documentation,
+> and repository checks are available. End-to-end export and Studio reopening
 > have not been validated for this distribution. A completed function call is
 > not proof of a usable backup.
 
@@ -58,7 +60,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.1.0/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.2.0/saveinstance.luau",
     true
 )
 local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()
@@ -82,11 +84,23 @@ completeSaveInstance({
 })
 ```
 
-**Private repository:** raw GitHub URLs require authorized access and may return
-404 from an unauthenticated Roblox runtime. Use an authenticated local checkout
-and your runtime's local script facility instead. Never embed a GitHub token in
-a loader or exported place. Tag pinning selects the root script version;
-inherited external helpers are not yet pinned.
+The repository and [documentation website](https://g0shtj0sh.github.io/CompleteSaveInstance/)
+are public. No access token is required. The root engine is pinned to the project
+tag; inherited external helpers are not yet pinned.
+
+## Script Presets
+
+Choose an executable configuration from [Script Presets](Script%20Presets/README.md):
+
+- [DiagnosticSaveInstance](Script%20Presets/DiagnosticSaveInstance.luau): initial serializer and file-writing diagnosis.
+- [MapSaveInstance](Script%20Presets/MapSaveInstance.luau): map-focused export without decompilation or bytecode.
+- [ScriptsSaveInstance](Script%20Presets/ScriptsSaveInstance.luau): authorized script-focused export with per-job timeouts.
+- [UltraCompleteSveInstance](Script%20Presets/UltraCompleteSveInstance.luau): **experimental development target** for the widest accessible coverage.
+
+All presets share the same engine. Ultra is the configuration we are diagnosing
+and improving to preserve as much of a place as possible; it is not a verified
+complete backup. The [preset guide](docs/PRESETS.md) explains installation,
+exact options, and the limits of each mode.
 
 ## Know what was actually saved
 
@@ -98,7 +112,10 @@ recover server-only code, private DataStores, or unloaded streamed content.
 `PROP dropped` reports a property omission; it does not by itself mean an
 entire instance was lost. See [troubleshooting](docs/TROUBLESHOOTING.md).
 
-## Explore the repository
+## Explore the documentation
+
+- [Documentation website](https://g0shtj0sh.github.io/CompleteSaveInstance/) — searchable guides and API.
+- [API reference](https://g0shtj0sh.github.io/CompleteSaveInstance/api/CompleteSaveInstance/) — source-generated types, defaults, and aliases.
 
 - [Usage and compatibility](docs/USAGE.md) — entry points, first run, important options.
 - [Troubleshooting](docs/TROUBLESHOOTING.md) — missing files, crashes, property omissions.

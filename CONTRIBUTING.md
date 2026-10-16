@@ -9,13 +9,38 @@ Use Python 3.11+ and the official Luau compiler **0.742**:
 
 ```powershell
 python scripts/check_repository.py
-luau-compile --null saveinstance.luau saveinstance.lua
+python scripts/generate_presets.py --check
+python scripts/test_presets.py --luau luau
+luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/DiagnosticSaveInstance.luau" "Script Presets/MapSaveInstance.luau" "Script Presets/ScriptsSaveInstance.luau" "Script Presets/UltraCompleteSveInstance.luau"
 git diff --check
 ```
 
 Compilation checks syntax and bytecode generation without executing the script.
 Runtime changes need an authorized sample, exact options, output evidence, and
 a Studio reopening check before being described as validated.
+
+## Documentation and presets
+
+Edit `Script Presets/presets.json` and regenerate the executable wrappers with
+`python scripts/generate_presets.py`. They share the engine instead of copying it.
+The mock scenarios test wrapper behavior; they do not exercise Roblox APIs.
+
+Build the website with Node 22+:
+
+```powershell
+npm ci
+npm run docs:build
+python scripts/check_docs_build.py
+python scripts/serve_docs.py
+```
+
+Open `http://127.0.0.1:4173/CompleteSaveInstance/`. The API is extracted from the
+primary Luau source only. Markdown guides live in `docs/`, the homepage in
+`pages/index.js`, and the visual theme in `.moonwave/custom.css`.
+The documentation workflow builds and checks pull requests; pushes to `main`
+also deploy to GitHub Pages. Do not commit generated `build/` or `node_modules/`.
+After changing source API comments, run `python scripts/generate_option_index.py`
+to refresh the searchable option index. The build rejects stale generated text.
 
 ## Conventions
 

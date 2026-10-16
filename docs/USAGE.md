@@ -13,18 +13,18 @@ matrix yet.
 names are retained for compatibility. `saveinstance.lua` is an older variant
 with a different implementation; do not assume feature parity or binary support.
 
-## Access to the private repository
+## Access to the source and presets
 
-Clone with an authenticated Git client:
+The repository and documentation are public. Clone the project:
 
 ```powershell
 gh repo clone g0shtj0sh/CompleteSaveInstance
 ```
 
-Load the checked-out `saveinstance.luau` using your runtime's documented local
-script facility. There is no portable local loader for every runtime. Raw URLs
-for a private GitHub repository require authorized access and may otherwise
-return 404. Never embed an access token in Luau code or an exported place.
+Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
+checked-out script using your runtime's local script facility. No GitHub token
+is required. A preset first checks its local `CORE_PATH`, then downloads the
+root engine pinned to `v0.2.0` if no local source is available.
 
 The project tag pins the entry point. External helpers still load from upstream
 `main` URLs; the entire dependency chain is not reproducible yet.
@@ -35,7 +35,7 @@ The project tag pins the entry point. External helpers still load from upstream
 2. Record the source revision, Roblox version, and runtime version.
 3. Find the runtime's real file workspace; relative paths are resolved there.
 4. Write and read back a small unique text file using its file APIs.
-5. Use the explicit configuration in the [README](../README.md#getting-started).
+5. Start with the DiagnosticSaveInstance configuration in [Script Presets](PRESETS.md).
 6. Confirm the output exists, then open and inspect it in Studio.
 
 ## Important options in the primary source

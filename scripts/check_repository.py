@@ -28,6 +28,8 @@ def main() -> int:
         "docs/USAGE.md", "docs/TROUBLESHOOTING.md", "docs/ROADMAP.md",
         "assets/brand/logo.png", "assets/brand/banner.png",
         ".moonwave/static/logo.png", ".moonwave/static/favicon.png",
+        "docs/intro.md", "docs/PRESETS.md", "Script Presets/presets.json",
+        "Script Presets/README.md", "Script Presets/UltraCompleteSveInstance.luau",
     )
     for name in required:
         if not (ROOT / name).is_file():
@@ -56,6 +58,9 @@ def main() -> int:
         for link in links:
             parsed = urlsplit(link)
             if parsed.scheme or parsed.netloc or not parsed.path:
+                continue
+            if parsed.path.rstrip("/") == "/api/CompleteSaveInstance":
+                # This is a generated Moonwave route, not a source file.
                 continue
             target = (path.parent / unquote(parsed.path)).resolve()
             if not target.is_relative_to(ROOT):

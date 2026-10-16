@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0 — 2026-10-16
+
+- Public repository and public GitHub Pages documentation.
+- Moonwave API reference generated from the primary Luau source, with guides,
+  local search, responsive homepage, and the CompleteSaveInstance theme.
+- Added `Script Presets`: DiagnosticSaveInstance, MapSaveInstance,
+  ScriptsSaveInstance, and the experimental UltraCompleteSveInstance target.
+- Presets share the engine, prefer local source, and otherwise use the
+  `v0.2.0` engine. Each includes a basic write/read probe and explicit output
+  evidence without claiming file validity.
+- Generated catalog checks, 44 mocked wrapper scenarios, preset compilation,
+  built-site checks, and automatic documentation deployment.
+
+Ultra's export behavior remains unverified in Roblox and Studio; this milestone
+establishes the configuration we will diagnose, not a complete-backup guarantee.
+
 ## 0.1.0 — 2026-10-16
 
 First CompleteSaveInstance foundation, based on the supplied upstream snapshot.

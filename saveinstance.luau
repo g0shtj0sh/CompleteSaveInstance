@@ -3573,12 +3573,12 @@ end
 --- @field __DEBUG_MODE boolean -- This will print debug logs to console about unusual scenarios. Recommended to enable if you wish to help us improve our products and find bugs / issues with it! ___Default:___ false
 --- @field ReadMe boolean --___Default:___ true
 --- @field Binary boolean -- Saves as a binary file (.rbxl/.rbxm) instead of XML (.rbxlx/.rbxmx). Much smaller and faster to load. Pass `XML = true` for the opposite. ___Default:___ true
---- @field CompressionMode string -- How chunks are compressed in binary mode: "zstd", "lz4", or false for none. ___Default:___ "zstd"
+--- @field CompressionMode string | boolean -- How chunks are compressed in binary mode: "zstd", "lz4", or false for none. ___Default:___ "zstd"
 --- @field CompressionLevel number -- Compression strength, higher is smaller but slower. Range is -7 to 22 inclusive. ___Default:___ 9
 --- @field CopyToClipboard boolean -- Puts the finished output on the clipboard instead of writing a file, so you can paste it straight into Studio. Best for small saves -- a full place is usually far too big for the clipboard to handle. ___Default:___ false
 --- .RiskyServicesDisabled {UGC, Encoding, Reflection = boolean} -- Per-service kill switches for services games might detect. `UGC` skips UGCValidationService (GHP fallback reads, `MeshPart.VertexCount`). `Encoding` skips EncodingService (base64 encode/decode, zstd compression falls back to other funcs). `Reflection` skips ReflectionService (one of several API dump fallbacks, `Content` property lookups -- falls back to the other API dump sources). Examples: `{UGC = true}` disables only UGCValidationService; `{Encoding = true, Reflection = true}` disables both, leaving UGC untouched. ___Default:___ {UGC = true, Encoding = false, Reflection = false}
---- @field SafeMode boolean -- Kicks you before Saving, which keeps you safe. **HIGHLY RECOMMENDED TO KEEP ENABLED**. ___Default:___ false
---- @field KillAllScripts boolean -- Kills all scripts to further protect you. SafeMode also enables this by default. If you can't move after saving then this is the reason. **HIGHLY RECOMMENDED TO KEEP ENABLED**. ___Default:___ false
+--- @field SafeMode boolean -- Deliberately disconnects the client before saving and may enable script termination and rendering changes. It does not guarantee protection. ___Default:___ false
+--- @field KillAllScripts boolean -- Attempts to terminate other client scripts. SafeMode can enable this implicitly; it can prevent movement and disrupt the client. ___Default:___ false
 --- @field BoostFPS boolean -- Massively boosts FPS by disabling 3D rendering. Other options also enable it, like: SafeMode. ___Default:___ false
 --- @field ShutdownWhenDone boolean -- Shuts the game down after saveinstance is finished. ___Default:___ false
 --- @field AntiIdle boolean -- Prevents the 20-minute-Idle Kick. ___Default:___ true
@@ -3659,7 +3659,7 @@ end
 	Saves instances with specified options. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.1.0/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.2.0/",
 		SSI = "saveinstance",
 	}
 

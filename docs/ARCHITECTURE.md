@@ -34,7 +34,23 @@ Serializer algorithms, compression, property coverage, and output verification
 have not been redesigned in this milestone. The import commit preserves the
 original files for comparison.
 
-## Direction
+## Documentation and preset layer
+
+Moonwave 1.4.2 generates the API from `saveinstance.luau`; the older variant is
+excluded to avoid mixing different defaults and features. Guides and a local
+search index are built into the static Docusaurus website, deployed by GitHub
+Actions to GitHub Pages.
+
+`Script Presets/presets.json` defines the four configurations. The generator
+combines them with a shared wrapper template. Wrappers perform a basic text
+write/read probe, prefer a local engine, and otherwise load the pinned
+`v0.2.0` engine. They report exceptions and file existence separately from file
+validity. The actual serializer is not duplicated.
+
+UltraCompleteSveInstance is the experimental configuration for the next
+diagnostic work. Mock tests validate wrapper branches, not Roblox serialization.
+
+## Next engine work
 
 The next pipeline should expose preflight, write probe, inventory, extraction,
 serialization, writing, validation, and reporting as measurable phases. Logs

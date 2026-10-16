@@ -2,9 +2,10 @@
 
 ## Source URL returns 404
 
-The repository is private. Use an authenticated local checkout and your runtime's
-local script facility. Do not put a GitHub token into the loader. Confirm that
-the selected tag or commit contains the entry point.
+The repository is public and no GitHub token is required. Confirm the exact
+owner, repository, tag, and filename. The space in `Script Presets` must be
+encoded as `%20` in a raw URL. Check your runtime's HTTP access and try a local
+checkout when diagnosing network problems.
 
 ## Function returned, but no file exists
 

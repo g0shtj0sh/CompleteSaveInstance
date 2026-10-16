@@ -9,6 +9,10 @@
 
 ## Next — observable diagnostics
 
+- [x] Publish a source-generated API reference and searchable guides.
+- [x] Add a preset catalog with UltraCompleteSveInstance as the development target.
+- [x] Test preset preflight and file-existence reporting with a mocked engine.
+
 - [ ] Audit every supported option against the primary source.
 - [ ] Trace property omission messages and each final file-writing path.
 - [ ] Inventory-only run on a small authorized test place.

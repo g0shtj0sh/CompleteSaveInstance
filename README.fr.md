@@ -6,12 +6,16 @@
 
 **Une base claire pour sauvegarder les instances Roblox accessibles.**
 
-[English](README.md) · [Utilisation](docs/USAGE.md) · [Dépannage](docs/TROUBLESHOOTING.md) · [Feuille de route](docs/ROADMAP.md)
+[Site de documentation](https://g0shtj0sh.github.io/CompleteSaveInstance/) · [Script Presets](Script%20Presets/README.md) · [English](README.md) · [Utilisation](docs/USAGE.md) · [Dépannage](docs/TROUBLESHOOTING.md) · [Feuille de route](docs/ROADMAP.md)
 
 CompleteSaveInstance est un projet Luau d’export de places et de modèles Roblox.
 Cette première étape apporte son identité visuelle, sa documentation, ses
 espaces de noms et les contrôles du dépôt. La fiabilité des exports dans Roblox
 et leur ouverture dans Studio restent à valider pour cette distribution.
+
+Le site public comprend maintenant la référence API, un index des options,
+la recherche et le guide des presets. **UltraCompleteSveInstance** est notre
+configuration expérimentale de travail pour la couverture maximale.
 
 ## Ce qui est présent
 
@@ -26,9 +30,21 @@ Commencer par une petite place possédée ou autorisée. Lire le
 [guide d’utilisation](docs/USAGE.md), vérifier les API d’écriture sur un fichier
 témoin et utiliser les options explicites du [README principal](README.md#getting-started).
 
-Le dépôt est privé : son URL GitHub brute nécessite un accès autorisé depuis
-un runtime Roblox. Utiliser une copie locale authentifiée ; ne jamais intégrer
-un token GitHub au script.
+Le dépôt et le site de documentation sont publics. Aucun token GitHub n’est
+nécessaire. Les [presets](Script%20Presets/README.md) proposent des liens de
+lancement vers une version précise du moteur.
+
+## Script Presets
+
+- **DiagnosticSaveInstance** : premier diagnostic de sérialisation et d’écriture.
+- **MapSaveInstance** : export orienté map, sans décompilation ni bytecode.
+- **ScriptsSaveInstance** : export des scripts accessibles et autorisés.
+- **UltraCompleteSveInstance** : notre preset expérimental en cours de mise au point,
+  pour récupérer le plus de contenu accessible possible d’une place.
+
+Tous utilisent le même moteur avec des paramètres différents. Ultra active les
+options de couverture étendue, avec des délais par tâche bornés, mais ses
+résultats dans Roblox et Studio restent à valider.
 
 Une fonction terminée ne garantit pas l’existence du fichier. Vérifier sa
 présence, puis son ouverture et son contenu dans Roblox Studio. Les références

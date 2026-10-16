@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "developmentTarget": "UltraCompleteSveInstance",
+  "presets": [
+    {
+      "id": "DiagnosticSaveInstance",
+      "summary": "Initial serializer and writer diagnosis, without script extraction.",
+      "status": "runtime-unverified",
+      "options": {
+        "mode": "optimized",
+        "Binary": true,
+        "CompressionMode": false,
+        "Decompile": false,
+        "SaveBytecode": false,
+        "NilInstances": false,
+        "IgnoreSpecialProperties": true,
+        "IgnoreDefaultPlayerScripts": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    },
+    {
+      "id": "MapSaveInstance",
+      "summary": "Map-focused full-root export without decompilation or bytecode capture.",
+      "status": "runtime-unverified",
+      "options": {
+        "mode": "full",
+        "Binary": true,
+        "CompressionMode": "lz4",
+        "Decompile": false,
+        "SaveBytecode": false,
+        "NilInstances": false,
+        "IgnoreSpecialProperties": true,
+        "IgnoreNotArchivable": true,
+        "IgnoreDefaultPlayerScripts": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    },
+    {
+      "id": "ScriptsSaveInstance",
+      "summary": "Authorized script-focused export with per-job decompilation and bytecode timeouts.",
+      "status": "runtime-unverified",
+      "options": {
+        "mode": "scripts",
+        "Binary": true,
+        "CompressionMode": "lz4",
+        "Decompile": true,
+        "DecompileTimeout": 10,
+        "SaveBytecode": true,
+        "BytecodeTimeout": 3,
+        "IgnorePropertiesOfNotScriptsOnScriptsMode": true,
+        "NilInstances": false,
+        "IgnoreSpecialProperties": true,
+        "IgnoreDefaultPlayerScripts": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    },
+    {
+      "id": "UltraCompleteSveInstance",
+      "summary": "Experimental development target: preserve the widest accessible place content.",
+      "status": "experimental-runtime-unverified",
+      "options": {
+        "mode": "full",
+        "Binary": true,
+        "CompressionMode": "lz4",
+        "Decompile": true,
+        "DecompileTimeout": 10,
+        "SaveBytecode": true,
+        "BytecodeTimeout": 3,
+        "scriptcache": true,
+        "NilInstances": true,
+        "IgnoreNotArchivable": true,
+        "SaveNotCreatable": true,
+        "IgnoreList": [],
+        "DecompileIgnore": [],
+        "IgnoreSpecialProperties": false,
+        "IgnoreDefaultPlayerScripts": false,
+        "SavePlayerCharacters": true,
+        "IsolatePlayers": true,
+        "IgnoreDefaultProperties": false,
+        "ReadMe": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    }
+  ]
+}
