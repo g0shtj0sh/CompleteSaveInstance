@@ -44,5 +44,7 @@ jobs:
         run: .tools/luau/luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/"*.luau
       - name: Exercise preset preflight and output evidence with a mocked engine
         run: python scripts/test_presets.py --luau .tools/luau/luau
+      - name: Check actual property-reader regressions
+        run: python scripts/test_property_reads.py --luau .tools/luau/luau
       - name: Check whitespace errors
         run: git diff --check HEAD^ HEAD

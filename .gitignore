@@ -24,6 +24,10 @@ tempCodeRunnerFile.*
 *.rbxlx
 *.rbxm
 *.rbxmx
+*.rbxl.report.json
+*.rbxlx.report.json
+*.rbxm.report.json
+*.rbxmx.report.json
 completesaveinstance_cache/
 CompleteSaveInstance_Diagnostics/
 *.log

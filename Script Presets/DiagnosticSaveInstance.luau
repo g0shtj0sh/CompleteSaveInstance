@@ -5,7 +5,8 @@
 
 -- Relative to the runtime's file workspace, not the Git checkout on your PC.
 local CORE_PATH = "CompleteSaveInstance/saveinstance.luau"
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.2.0/saveinstance.luau"
+local USE_LOCAL_CORE = false -- opt in explicitly when developing a local engine
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/saveinstance.luau"
 local PRESET_ID = "DiagnosticSaveInstance"
 local options = {
 	mode = "optimized",
@@ -55,16 +56,22 @@ end
 print(prefix .. "Write/read probe passed. Output: " .. options.FilePath)
 print(prefix .. "Runtime status: runtime-unverified. Per-job timeouts do not bound the total export duration.")
 local started = os.clock()
+local exportReport
+local sourceOrigin
+local sourceBytes
 local ok, result = xpcall(function()
-	local localOk, localSource = pcall(readfile, CORE_PATH)
 	local source
-	if localOk and type(localSource) == "string" and #localSource > 0 then
+	if USE_LOCAL_CORE then
 		print(prefix .. "Loading local core: " .. CORE_PATH)
-		source = localSource
+		sourceOrigin = CORE_PATH
+		source = readfile(CORE_PATH)
 	else
 		print(prefix .. "Loading pinned core: " .. CORE_URL)
+		sourceOrigin = CORE_URL
 		source = game:HttpGet(CORE_URL, true)
 	end
+	sourceBytes = #source
+	print(prefix .. "Core source bytes: " .. tostring(sourceBytes))
 	local chunk, compileError = loadstring(source, "CompleteSaveInstance")
 	if not chunk then
 		error("Core compilation failed: " .. tostring(compileError), 0)
@@ -73,26 +80,65 @@ local ok, result = xpcall(function()
 	if type(completeSaveInstance) ~= "function" then
 		error("Core did not return an export function", 0)
 	end
-	completeSaveInstance(options)
+	exportReport = completeSaveInstance(options)
+	if type(exportReport) == "table" and exportReport.ok == false then
+		error("Engine reported failure: " .. tostring(exportReport.error), 0)
+	end
 end, function(message)
 	if debug and type(debug.traceback) == "function" then
 		return debug.traceback(tostring(message), 2)
 	end
 	return tostring(message)
 end)
+local report = type(exportReport) == "table" and exportReport or {
+	schemaVersion = 1, engineVersion = "unknown", validation = "unverified", ok = ok,
+	propertyAudit = "unavailable_from_this_core",
+}
+report.preset = PRESET_ID
+report.wrapperVersion = "0.3.0"
+report.sourceOrigin = sourceOrigin
+report.sourceBytes = sourceBytes
+report.wrapperError = not ok and tostring(result) or nil
+report.outputPath = report.outputPath or options.FilePath
+local existenceChecked, outputExists
+if type(isfile) == "function" then
+	existenceChecked, outputExists = pcall(isfile, report.outputPath)
+	if existenceChecked then
+		report.outputExists = outputExists
+	else
+		report.outputExistenceError = tostring(outputExists)
+	end
+else
+	report.outputExistenceError = "isfile_unavailable"
+end
+local reportPath = options.FilePath .. ".report.json"
+local reportOk, reportError = pcall(function()
+	local json = game:GetService("HttpService"):JSONEncode(report)
+	writefile(reportPath, json)
+end)
+if reportOk then
+	print(prefix .. "Diagnostic report: " .. reportPath)
+else
+	warn(prefix .. "Could not write diagnostic report: " .. tostring(reportError))
+end
+if report.criticalGeometryOmissions and report.criticalGeometryOmissions > 0 then
+	warn(prefix .. tostring(report.criticalGeometryOmissions) .. " geometry/terrain property columns were omitted. See the report; missing road geometry is not repaired by a completed export.")
+end
+if report.engineVersion ~= "0.3.0" then
+	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.3.0. Check for an outdated local CORE_PATH.")
+end
 if not ok then
 	fail("Export failed. Check CORE_PATH and console details: " .. tostring(result))
 end
 
 print(prefix .. string.format("Export function returned after %.2fs; file validity is unverified.", os.clock() - started))
 if type(isfile) == "function" then
-	local checked, exists = pcall(isfile, options.FilePath)
-	if checked and exists then
-		print(prefix .. "Output exists: " .. options.FilePath .. ". Open and inspect it in Roblox Studio.")
-	elseif checked then
-		warn(prefix .. "Output not found: " .. options.FilePath .. ". Do not treat this run as a successful backup.")
+	if existenceChecked and outputExists then
+		print(prefix .. "Output exists: " .. report.outputPath .. ". Open and inspect it in Roblox Studio.")
+	elseif existenceChecked then
+		warn(prefix .. "Output not found: " .. report.outputPath .. ". Do not treat this run as a successful backup.")
 	else
-		warn(prefix .. "Output existence check failed: " .. tostring(exists))
+		warn(prefix .. "Output existence check failed: " .. tostring(outputExists))
 	end
 else
 	warn(prefix .. "isfile is unavailable; output existence remains unverified.")

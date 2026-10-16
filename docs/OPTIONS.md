@@ -23,6 +23,8 @@ This will print debug logs to console about unusual scenarios. Recommended to en
 
 Type: `boolean`. Source default: `true`.
 
+Includes an embedded help document with export notes and limitations.
+
 ## Binary
 
 Type: `boolean`. Source default: `true`.
@@ -92,6 +94,8 @@ Type: `{boolean|table{UserId = string?, Name = string?}}`. Source default: `fals
 ## ShowStatus
 
 Type: `boolean`. Source default: `true`.
+
+Displays the export progress interface while the engine runs.
 
 ## Callback
 

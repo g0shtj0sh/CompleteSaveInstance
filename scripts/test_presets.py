@@ -14,11 +14,18 @@ local presetSource = __PRESET_SOURCE__
 local successes = 0
 local function scenario(kind)
     local files, messages = {}, {}
+    local capturedReport
+    local localReads, remoteReads = 0, 0
     local called = false
     local env = setmetatable({}, { __index = getfenv() })
     env.game = { PlaceId = 123 }
+    env.game.GetService = function(_, name)
+        assert(name == "HttpService")
+        return {JSONEncode = function(_, value) capturedReport=value;return "REPORT_JSON" end}
+    end
     env.game.HttpGet = function(_, url)
-        assert(string.find(url, "/v0.2.0/saveinstance.luau", 1, true), "Core must be pinned")
+        remoteReads += 1
+        assert(string.find(url, "/v0.3.0/saveinstance.luau", 1, true), "Core must be pinned")
         if kind == "missing-core" then error("network unavailable") end
         return "MOCK_CORE"
     end
@@ -26,11 +33,13 @@ local function scenario(kind)
     env.warn = env.print
     env.writefile = function(path, content)
         if kind == "probe-error" then error("disk unavailable") end
+        if kind == "report-write-error" and string.find(path, ".report.json", 1, true) then error("report disk error") end
         files[path] = kind == "corrupt-probe" and "wrong content" or content
     end
     env.readfile = function(path)
         if path == "CompleteSaveInstance/saveinstance.luau" then
-            if kind == "missing-core" or kind == "remote-core" then error("core missing") end
+            localReads += 1
+            if kind == "missing-core" or kind == "remote-core" or kind == "local-core-missing" then error("core missing") end
             return "MOCK_CORE"
         end
         return files[path]
@@ -49,19 +58,32 @@ local function scenario(kind)
                 assert(string.find(options.FilePath, "_123_", 1, true))
                 if kind == "runtime-error" then error("serializer failed") end
                 if kind ~= "missing-output" then files[options.FilePath] = "mock output" end
+                if kind == "legacy-core" then return nil end
+                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.3.0"} end
+                return {ok=true, engineVersion="0.3.0", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
             end
         end
     end
     if kind == "missing-api" then env.writefile = false end
     if kind == "no-isfile" then env.isfile = false end
-    local execute = assert(loadstring(presetSource, "preset under test"))
+    local scriptSource = presetSource
+    if kind == "local-core" or kind == "local-core-missing" then
+        scriptSource = string.gsub(scriptSource, "local USE_LOCAL_CORE = false", "local USE_LOCAL_CORE = true")
+    end
+    local execute = assert(loadstring(scriptSource, "preset under test"))
     setfenv(execute, env)
     local ok = pcall(execute)
     local text = table.concat(messages, "\n")
     local shouldFail = kind == "missing-api" or kind == "probe-error" or kind == "corrupt-probe"
-        or kind == "missing-core" or kind == "compile-error" or kind == "bad-core" or kind == "runtime-error"
+        or kind == "missing-core" or kind == "local-core-missing" or kind == "compile-error" or kind == "bad-core" or kind == "runtime-error" or kind == "engine-reported-error"
     assert(ok ~= shouldFail, "Unexpected scenario outcome: " .. kind)
     if kind == "success" or kind == "remote-core" then
+        assert(localReads == 0 and remoteReads == 1, "Default must not silently load a stale local core")
+        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.3.0/", 1, true))
+    elseif kind == "local-core" or kind == "local-core-missing" then
+        assert(localReads == 1 and remoteReads == 0, "Local development must use only its explicit source")
+    end
+    if kind == "success" or kind == "remote-core" or kind == "local-core" then
         assert(called and string.find(text, "Output exists:", 1, true))
         assert(string.find(text, "validity is unverified", 1, true))
     elseif kind == "missing-output" then
@@ -69,13 +91,20 @@ local function scenario(kind)
         assert(not string.find(text, "Output exists:", 1, true))
     elseif kind == "no-isfile" then
         assert(called and string.find(text, "existence remains unverified", 1, true))
-    elseif kind ~= "runtime-error" then
+    elseif kind == "geometry-omission" then
+        assert(capturedReport.criticalGeometryOmissions==2 and capturedReport.outputExists==true)
+        assert(string.find(text, "geometry/terrain property columns were omitted", 1, true))
+    elseif kind == "legacy-core" then
+        assert(capturedReport.engineVersion=="unknown" and string.find(text, "outdated local CORE_PATH", 1, true))
+    elseif kind == "report-write-error" then
+        assert(string.find(text, "Could not write diagnostic report", 1, true) and called)
+    elseif kind ~= "runtime-error" and kind ~= "engine-reported-error" then
         assert(not called, "Exporter must not run after failed preflight")
     end
     for path in files do assert(not string.find(path, "CSI_WriteProbe_", 1, true), "Probe was not cleaned up") end
     successes += 1
 end
-for _, kind in {"success", "remote-core", "missing-api", "probe-error", "corrupt-probe", "missing-core", "compile-error", "bad-core", "runtime-error", "missing-output", "no-isfile"} do
+for _, kind in {"success", "remote-core", "local-core", "local-core-missing", "missing-api", "probe-error", "corrupt-probe", "missing-core", "compile-error", "bad-core", "runtime-error", "missing-output", "no-isfile", "geometry-omission", "legacy-core", "report-write-error", "engine-reported-error"} do
     scenario(kind)
 end
 print("Preset runtime scenarios passed: " .. successes)

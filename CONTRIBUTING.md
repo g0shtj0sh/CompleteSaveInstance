@@ -10,7 +10,9 @@ Use Python 3.11+ and the official Luau compiler **0.742**:
 ```powershell
 python scripts/check_repository.py
 python scripts/generate_presets.py --check
+python scripts/generate_option_index.py --check
 python scripts/test_presets.py --luau luau
+python scripts/test_property_reads.py --luau luau
 luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/DiagnosticSaveInstance.luau" "Script Presets/MapSaveInstance.luau" "Script Presets/ScriptsSaveInstance.luau" "Script Presets/UltraCompleteSveInstance.luau"
 git diff --check
 ```
@@ -37,6 +39,9 @@ python scripts/serve_docs.py
 Open `http://127.0.0.1:4173/CompleteSaveInstance/`. The API is extracted from the
 primary Luau source only. Markdown guides live in `docs/`, the homepage in
 `pages/index.js`, and the visual theme in `.moonwave/custom.css`.
+The API UI lives in `website/ApiReference.jsx`; `scripts/docs.mjs` installs its
+component alias in the generated site configuration. The option generator
+updates both `docs/OPTIONS.md` and `website/api-data.json`.
 The documentation workflow builds and checks pull requests; pushes to `main`
 also deploy to GitHub Pages. Do not commit generated `build/` or `node_modules/`.
 After changing source API comments, run `python scripts/generate_option_index.py`

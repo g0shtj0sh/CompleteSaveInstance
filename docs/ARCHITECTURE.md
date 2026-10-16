@@ -43,12 +43,30 @@ Actions to GitHub Pages.
 
 `Script Presets/presets.json` defines the four configurations. The generator
 combines them with a shared wrapper template. Wrappers perform a basic text
-write/read probe, prefer a local engine, and otherwise load the pinned
-`v0.2.0` engine. They report exceptions and file existence separately from file
-validity. The actual serializer is not duplicated.
+write/read probe and load the pinned `v0.3.0` engine by default. Local development
+requires an explicit `USE_LOCAL_CORE = true`. They record source identity,
+exceptions, and file existence in a JSON sidecar separately from file validity.
+The actual serializer is not duplicated.
 
 UltraCompleteSveInstance is the experimental configuration for the next
 diagnostic work. Mock tests validate wrapper branches, not Roblox serialization.
+
+## Property reads and reports in 0.3.0
+
+The primary engine distinguishes an ordinary hidden-property read failure from
+a failed datatype self-check or a native crash. An inaccessible property no
+longer disables subsequent properties sharing its datatype. Ambiguous cached
+failures from older versions are reset; native-crash markers stay blocked.
+
+Binary property columns are omitted as a whole if a value cannot be read.
+The returned report counts these columns, records up to 256 failure samples,
+and flags selected geometry properties for investigation. XML omission auditing
+is not implemented. Neither report creation nor the existing writer verifies
+that Studio can open the result.
+
+The API Explorer uses generated option metadata and preset values. The build
+integrates it through a webpack component alias in Moonwave's generated
+Docusaurus configuration; dependency source files remain untouched.
 
 ## Next engine work
 

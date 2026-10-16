@@ -46,7 +46,7 @@ Run a preset in a compatible environment with HTTP access and file APIs:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.2.0/Script%20Presets/UltraCompleteSveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/Script%20Presets/UltraCompleteSveInstance.luau",
     true
 ))()
 ```
@@ -72,13 +72,19 @@ CompleteSaveInstance/
 ```
 
 Execute the chosen preset through the runtime's local script facility. If your
-layout differs, change `CORE_PATH` at the top of the preset. Local source takes
-priority; otherwise the pinned engine is downloaded. External helpers are
+layout differs, change `CORE_PATH` at the top of the preset. Set
+`USE_LOCAL_CORE = true` to opt into that local engine; the default downloads
+the pinned version. A missing local file produces an error. External helpers are
 still fetched by the engine and are not yet pinned.
 
 Every preset performs a basic text write/read probe, chooses a unique output name,
 and distinguishes a returned function from an existing file. Output contents
 and Studio compatibility remain unverified until you inspect them.
+
+Wrappers write `<output-path>.report.json` with engine identity, file evidence,
+class counts, and omitted binary property columns. A report-writing error is
+printed explicitly. Use the [missing geometry guide](GEOMETRY.md) when objects
+or surfaces are absent.
 
 ## Changing a configuration
 

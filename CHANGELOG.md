@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0 — 2026-10-16
+
+- Replaced the API's large type block with a searchable option explorer,
+  category filters, preset comparisons, and copyable configurations. Redesigned
+  the developer homepage and responsive theme.
+- Fixed primary-engine hidden-property failures incorrectly disabling later
+  reads of the same datatype. Retained self-check and native-crash guards.
+- Added a primary-engine report with collected class counts and omitted binary
+  property columns, plus a JSON sidecar from every preset wrapper.
+- Presets now download the pinned engine by default; local development is an
+  explicit opt-in. Source identity and engine version are recorded.
+- Added reader regression coverage and expanded wrapper mock scenarios.
+
+The missing road in the reported export still requires a new Roblox export
+and Studio inspection. XML property omission auditing is not implemented.
+
 ## 0.2.0 — 2026-10-16
 
 - Public repository and public GitHub Pages documentation.

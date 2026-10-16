@@ -3,11 +3,49 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / "docs/OPTIONS.md"
+DATA = ROOT / "website/api-data.json"
+
+GROUPS = {
+    "Output": "Binary CompressionMode CompressionLevel FilePath AvoidFileOverwrite Callback CopyToClipboard AlternativeWritefile SaveCacheInterval ReadMe",
+    "Selection": "mode Object IsModel ExtraInstances IgnoreList NilInstances IgnoreNotArchivable SaveNotCreatable",
+    "Scripts": "Decompile DecompileTimeout DecompileJobless scriptcache SaveBytecode BytecodeTimeout DecompileIgnore IgnoreDefaultPlayerScripts",
+    "Properties": "IgnoreProperties IgnoreDefaultProperties IgnoreSpecialProperties IgnorePropertiesOfNotScriptsOnScriptsMode SharedBinaryStrings TreatUnionsAsParts",
+    "Players": "IsolateStarterPlayer IsolatePlayers IsolateLocalPlayer IsolateLocalPlayerCharacter SavePlayerCharacters",
+    "Runtime": "SafeMode KillAllScripts BoostFPS ShutdownWhenDone AntiIdle Anonymous RiskyServicesDisabled",
+    "Diagnostics": "__DEBUG_MODE ShowStatus",
+    "Advanced": "NilInstancesFixes NotCreatableFixes",
+}
+
+
+def api_data() -> str:
+    source = (ROOT / "saveinstance.luau").read_text(encoding="utf-8")
+    section = source.split("--- @interface CustomOptions table", 1)[1].split("--- @interface OptionsAliases", 1)[0]
+    options = []
+    for name, kind, description in re.findall(r"^--- (?:@field |\.)(\w+)\s+(.+?)\s*--(.*)$", section, re.MULTILINE):
+        description, default = re.split(r"___Default:___\s*", description, maxsplit=1)
+        group = next((group for group, names in GROUPS.items() if name in names.split()), "Advanced")
+        options.append({"name": name, "type": kind.strip(), "description": description.strip(),
+                        "default": default.strip().strip("`"), "group": group,
+                        "line": source[:source.index(f"{name} {kind}")].count("\n") + 1})
+    aliases = []
+    for interface, inverse in (("OptionsAliases", False), ("OptionsAliasesInverse", True)):
+        section = source.split(f"--- @interface {interface}\n", 1)[1].split("--[=[", 1)[0]
+        if not inverse:
+            section = section.split("--- @interface OptionsAliasesInverse", 1)[0]
+        for name, target in re.findall(r"^--- @field (\w+) string -- (\w+)", section, re.MULTILINE):
+            aliases.append({"name": name, "target": target, "inverse": inverse})
+    data = {"version": json.loads((ROOT / "package.json").read_text())["version"],
+            "sourceHash": hashlib.sha256(source.encode()).hexdigest(),
+            "groups": list(GROUPS), "options": options, "aliases": aliases,
+            "presets": json.loads((ROOT / "Script Presets/presets.json").read_text())["presets"]}
+    return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 
 def escape_mdx(text: str) -> str:
@@ -42,10 +80,15 @@ if __name__ == "__main__":
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     rendered = render()
+    data = api_data()
     if args.check:
         if not TARGET.is_file() or TARGET.read_text(encoding="utf-8") != rendered:
             raise SystemExit("Regenerate the option index: python scripts/generate_option_index.py")
+        if not DATA.is_file() or DATA.read_text(encoding="utf-8") != data:
+            raise SystemExit("Regenerate the API explorer data: python scripts/generate_option_index.py")
         print("Source-generated option index is current.")
     else:
         TARGET.write_text(rendered, encoding="utf-8", newline="\n")
+        DATA.parent.mkdir(parents=True, exist_ok=True)
+        DATA.write_text(data, encoding="utf-8", newline="\n")
         print("Generated searchable option index.")

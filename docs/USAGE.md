@@ -23,8 +23,9 @@ gh repo clone g0shtj0sh/CompleteSaveInstance
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. A preset first checks its local `CORE_PATH`, then downloads the
-root engine pinned to `v0.2.0` if no local source is available.
+is required. Presets download the root engine pinned to `v0.3.0` by default.
+For local development, explicitly set `USE_LOCAL_CORE = true` and configure
+`CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
 The project tag pins the entry point. External helpers still load from upstream
 `main` URLs; the entire dependency chain is not reproducible yet.
@@ -66,6 +67,12 @@ The inline `CustomOptions` documentation in `saveinstance.luau` gives more detai
 Check the exact path, existence, plausible file size, and Studio opening.
 Inspect representative models, meshes, materials, UI, and authorized scripts.
 A return from the function does not prove that the output is valid.
+
+Version 0.3.0 presets write a companion `<output-path>.report.json`. It records
+the engine version, source origin, file existence, collected classes, and
+omitted binary property columns. `ok` means the export function completed;
+`validation` stays `unverified`. XML property omissions are not instrumented.
+See [missing geometry](GEOMETRY.md) for interpreting the report.
 
 Server-only data, private DataStores, unloaded streamed instances, and restricted
 assets can be absent. An asset ID is a reference, not an embedded binary asset.

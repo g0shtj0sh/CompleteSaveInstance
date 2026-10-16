@@ -1,0 +1,612 @@
+{
+  "version": "0.3.0",
+  "sourceHash": "8eede8ffefd4384ff6789bfd0b81ec45323eed370763cab36aa392ac4f473691",
+  "groups": [
+    "Output",
+    "Selection",
+    "Scripts",
+    "Properties",
+    "Players",
+    "Runtime",
+    "Diagnostics",
+    "Advanced"
+  ],
+  "options": [
+    {
+      "name": "__DEBUG_MODE",
+      "type": "boolean",
+      "description": "This will print debug logs to console about unusual scenarios. Recommended to enable if you wish to help us improve our products and find bugs / issues with it!",
+      "default": "false",
+      "group": "Diagnostics",
+      "line": 3573
+    },
+    {
+      "name": "ReadMe",
+      "type": "boolean",
+      "description": "Includes an embedded help document with export notes and limitations.",
+      "default": "true",
+      "group": "Output",
+      "line": 3574
+    },
+    {
+      "name": "Binary",
+      "type": "boolean",
+      "description": "Saves as a binary file (.rbxl/.rbxm) instead of XML (.rbxlx/.rbxmx). Much smaller and faster to load. Pass `XML = true` for the opposite.",
+      "default": "true",
+      "group": "Output",
+      "line": 3575
+    },
+    {
+      "name": "CompressionMode",
+      "type": "string | boolean",
+      "description": "How chunks are compressed in binary mode: \"zstd\", \"lz4\", or false for none.",
+      "default": "\"zstd\"",
+      "group": "Output",
+      "line": 3576
+    },
+    {
+      "name": "CompressionLevel",
+      "type": "number",
+      "description": "Compression strength, higher is smaller but slower. Range is -7 to 22 inclusive.",
+      "default": "9",
+      "group": "Output",
+      "line": 3577
+    },
+    {
+      "name": "CopyToClipboard",
+      "type": "boolean",
+      "description": "Puts the finished output on the clipboard instead of writing a file, so you can paste it straight into Studio. Best for small saves -- a full place is usually far too big for the clipboard to handle.",
+      "default": "false",
+      "group": "Output",
+      "line": 3578
+    },
+    {
+      "name": "RiskyServicesDisabled",
+      "type": "{UGC, Encoding, Reflection = boolean}",
+      "description": "Per-service kill switches for services games might detect. `UGC` skips UGCValidationService (GHP fallback reads, `MeshPart.VertexCount`). `Encoding` skips EncodingService (base64 encode/decode, zstd compression falls back to other funcs). `Reflection` skips ReflectionService (one of several API dump fallbacks, `Content` property lookups -- falls back to the other API dump sources). Examples: `{UGC = true}` disables only UGCValidationService; `{Encoding = true, Reflection = true}` disables both, leaving UGC untouched.",
+      "default": "{UGC = true, Encoding = false, Reflection = false}",
+      "group": "Runtime",
+      "line": 3579
+    },
+    {
+      "name": "SafeMode",
+      "type": "boolean",
+      "description": "Deliberately disconnects the client before saving and may enable script termination and rendering changes. It does not guarantee protection.",
+      "default": "false",
+      "group": "Runtime",
+      "line": 3580
+    },
+    {
+      "name": "KillAllScripts",
+      "type": "boolean",
+      "description": "Attempts to terminate other client scripts. SafeMode can enable this implicitly; it can prevent movement and disrupt the client.",
+      "default": "false",
+      "group": "Runtime",
+      "line": 3581
+    },
+    {
+      "name": "BoostFPS",
+      "type": "boolean",
+      "description": "Massively boosts FPS by disabling 3D rendering. Other options also enable it, like: SafeMode.",
+      "default": "false",
+      "group": "Runtime",
+      "line": 3582
+    },
+    {
+      "name": "ShutdownWhenDone",
+      "type": "boolean",
+      "description": "Shuts the game down after saveinstance is finished.",
+      "default": "false",
+      "group": "Runtime",
+      "line": 3583
+    },
+    {
+      "name": "AntiIdle",
+      "type": "boolean",
+      "description": "Prevents the 20-minute-Idle Kick.",
+      "default": "true",
+      "group": "Runtime",
+      "line": 3584
+    },
+    {
+      "name": "Anonymous",
+      "type": "{boolean|table{UserId = string?, Name = string?}}",
+      "description": "* **RISKY:** Removes your Name and UserId from the file -- useful for games that store them in GUIs or other Instances. Can also be a table with UserId and/or Name keys to pick the replacements. May mess up unrelated text or numbers that happen to match. Inside attributes and tags the replacement is padded to the same length, so a name shorter than yours comes out as for example `Roblox____`.",
+      "default": "false",
+      "group": "Runtime",
+      "line": 3585
+    },
+    {
+      "name": "ShowStatus",
+      "type": "boolean",
+      "description": "Displays the export progress interface while the engine runs.",
+      "default": "true",
+      "group": "Diagnostics",
+      "line": 3586
+    },
+    {
+      "name": "Callback",
+      "type": "function",
+      "description": "If set, the serialized data will be sent to the callback function instead of to file.",
+      "default": "false",
+      "group": "Output",
+      "line": 3587
+    },
+    {
+      "name": "mode",
+      "type": "string",
+      "description": "Valid modes: full, optimized, scripts. Change this to invalid mode like \"invalid\" if you only want ExtraInstances. \"optimized\" mode is **NOT** supported with *@Object* option.",
+      "default": "\"optimized\"",
+      "group": "Selection",
+      "line": 3588
+    },
+    {
+      "name": "Decompile",
+      "type": "boolean",
+      "description": "Script decompiling.",
+      "default": "true",
+      "group": "Scripts",
+      "line": 3589
+    },
+    {
+      "name": "scriptcache",
+      "type": "boolean",
+      "description": "Use decompiled script cache to avoid decompiling duplicate scripts.",
+      "default": "true",
+      "group": "Scripts",
+      "line": 3590
+    },
+    {
+      "name": "DecompileTimeout",
+      "type": "number",
+      "description": "If the decompilation run time exceeds this value it gets cancelled. Set to -1 to disable timeout.",
+      "default": "10",
+      "group": "Scripts",
+      "line": 3591
+    },
+    {
+      "name": "BytecodeTimeout",
+      "type": "number",
+      "description": "If the SaveBytecode run time exceeds this value it gets cancelled. Set to -1 to disable timeout.",
+      "default": "3",
+      "group": "Scripts",
+      "line": 3592
+    },
+    {
+      "name": "DecompileJobless",
+      "type": "boolean",
+      "description": "Includes already decompiled code in the output. No new scripts are decompiled.",
+      "default": "false",
+      "group": "Scripts",
+      "line": 3593
+    },
+    {
+      "name": "SaveBytecode",
+      "type": "boolean",
+      "description": "Includes bytecode in the output. Useful if you wish to be able to decompile it yourself later. Respects **@DecompileIgnore**.",
+      "default": "false",
+      "group": "Scripts",
+      "line": 3594
+    },
+    {
+      "name": "DecompileIgnore",
+      "type": "{Instance | Instance.ClassName | [Instance.ClassName] = {Instance.Name}}",
+      "description": "Ignores matched instances and their descendants by default. To ignore only the instance itself, set the value to `false`. Examples: `\"Chat\"` matches any instance with ClassName \"Chat\"; `Players = {\"MyPlayerName\"}` matches class \"Players\" AND name \"MyPlayerName\" only; `workspace` matches a specific instance by reference; `[workspace] = false` matches a specific instance by reference, ignoring only itself and not its descendants.",
+      "default": "{TextChatService}",
+      "group": "Scripts",
+      "line": 3595
+    },
+    {
+      "name": "IgnoreList",
+      "type": "{Instance | Instance.ClassName | [Instance.ClassName] = {Instance.Name | false}}",
+      "description": "Structure mirrors **@DecompileIgnore**, except `false` means keep the instance but ignore its descendants. Supports both instance references and ClassName strings. Examples: `\"CoreGui\"` skips entirely; `CorePackages = false` keeps the instance but skips its descendants; `Players = {\"SomePlayer\"}` skips a specific named instance with specific ClassName.",
+      "default": "{CoreGui, CorePackages, Packages = false}",
+      "group": "Selection",
+      "line": 3596
+    },
+    {
+      "name": "ExtraInstances",
+      "type": "{Instance}",
+      "description": "If used with any invalid mode (like \"invalidmode\") it will only save these instances.",
+      "default": "{}",
+      "group": "Selection",
+      "line": 3597
+    },
+    {
+      "name": "IgnoreProperties",
+      "type": "table",
+      "description": "Ignores properties by Name.",
+      "default": "{}",
+      "group": "Properties",
+      "line": 3598
+    },
+    {
+      "name": "SaveCacheInterval",
+      "type": "number",
+      "description": "The less the value the more often it saves, but that would mean less performance due to constantly saving. XML Only.",
+      "default": "0x1600 * 10",
+      "group": "Output",
+      "line": 3599
+    },
+    {
+      "name": "FilePath",
+      "type": "string",
+      "description": "The name (can include a path) of the file to save to. If it has no extension, `.rbxmx/rbxm` (models) or `.rbxlx/rbxl` (places) is appended; an existing extension is left as-is. Ignores `OPTIONS.AvoidFileOverwrite`.",
+      "default": "false",
+      "group": "Output",
+      "line": 3600
+    },
+    {
+      "name": "AvoidFileOverwrite",
+      "type": "boolean",
+      "description": "Prevents writing to place file that already exists.",
+      "default": "true",
+      "group": "Output",
+      "line": 3601
+    },
+    {
+      "name": "Object",
+      "type": "Instance",
+      "description": "* If provided, saves as .rbxmx (Model file) instead. If Object is game, it will be saved as a .rbxl file. **MUST BE AN INSTANCE REFERENCE, FOR EXAMPLE - *game.Workspace***. `\"optimized\"` mode is **NOT** supported with this option. If IsModel is set to false then Object specified here will be saved as a place file.",
+      "default": "false",
+      "group": "Selection",
+      "line": 3602
+    },
+    {
+      "name": "IsModel",
+      "type": "boolean",
+      "description": "If Object is specified then sets to true automatically, unless you set it to false.",
+      "default": "false",
+      "group": "Selection",
+      "line": 3603
+    },
+    {
+      "name": "NilInstances",
+      "type": "boolean",
+      "description": "Save instances that aren't Parented (Parented to nil).",
+      "default": "false",
+      "group": "Selection",
+      "line": 3604
+    },
+    {
+      "name": "NilInstancesFixes",
+      "type": "{[Instance.ClassName] = function}",
+      "description": "* This can cause some Classes to be fixed even though they might not need the fix (better be safe than sorry though). For example, Bones inherit from Attachment if we dont define them in the NilInstancesFixes then this will catch them anyways. **TO AVOID THIS BEHAVIOR USE THIS EXAMPLE:** {ClassName_That_Doesnt_Need_Fix = false}.",
+      "default": "{Animator = function, AdPortal = function, BaseWrap = function, Attachment = function}",
+      "group": "Advanced",
+      "line": 3605
+    },
+    {
+      "name": "IgnoreDefaultProperties",
+      "type": "boolean",
+      "description": "Ignores default properties during saving. XML Only (XML=true) because Binary (default) doesn't really need it.",
+      "default": "true",
+      "group": "Properties",
+      "line": 3606
+    },
+    {
+      "name": "IgnoreNotArchivable",
+      "type": "boolean",
+      "description": "Ignores the Archivable property and saves Non-Archivable instances.",
+      "default": "true",
+      "group": "Selection",
+      "line": 3607
+    },
+    {
+      "name": "IgnorePropertiesOfNotScriptsOnScriptsMode",
+      "type": "boolean",
+      "description": "Ignores property of every instance that is not a script in \"scripts\" mode.",
+      "default": "false",
+      "group": "Properties",
+      "line": 3608
+    },
+    {
+      "name": "IgnoreSpecialProperties",
+      "type": "boolean",
+      "description": "Prevents calls to `gethiddenproperty` and uses fallback methods instead. This also helps with crashes. If your file is corrupted after saving, you can try turning this on.",
+      "default": "false",
+      "group": "Properties",
+      "line": 3609
+    },
+    {
+      "name": "IsolateStarterPlayer",
+      "type": "boolean",
+      "description": "Saves StarterPlayer as separate folder, children of the original instance will be ignored.",
+      "default": "false",
+      "group": "Players",
+      "line": 3610
+    },
+    {
+      "name": "IsolatePlayers",
+      "type": "boolean",
+      "description": "Saves All Players as separate folder, children of the original instance will be ignored.",
+      "default": "false",
+      "group": "Players",
+      "line": 3611
+    },
+    {
+      "name": "IsolateLocalPlayer",
+      "type": "boolean",
+      "description": "Saves LocalPlayer as separate folder, original instance will be ignored.",
+      "default": "false",
+      "group": "Players",
+      "line": 3612
+    },
+    {
+      "name": "IsolateLocalPlayerCharacter",
+      "type": "boolean",
+      "description": "Saves LocalPlayer.Character as separate folder, original instance will be ignored.",
+      "default": "false",
+      "group": "Players",
+      "line": 3613
+    },
+    {
+      "name": "SavePlayerCharacters",
+      "type": "boolean",
+      "description": "Save player characters while saving.",
+      "default": "false",
+      "group": "Players",
+      "line": 3614
+    },
+    {
+      "name": "SaveNotCreatable",
+      "type": "boolean",
+      "description": "* Includes non-serializable instances as Folder objects (Name is misleading as this is mostly a fix for certain NilInstances and isn't always related to NotCreatable). Other options also enable it, like: IsolatePlayers, IsolateLocalPlayer, etc.",
+      "default": "false",
+      "group": "Selection",
+      "line": 3615
+    },
+    {
+      "name": "NotCreatableFixes",
+      "type": "table<Instance.ClassName>",
+      "description": "* {\"Player\"} is the same as {Player = \"Folder\"}; Format like {SpawnLocation = \"Part\"} is only to be used when SpawnLocation inherits from \"Part\" AND \"Part\" is Creatable.",
+      "default": "{ \"\", \"Player\", \"PlayerScripts\", \"PlayerGui\", \"TouchTransmitter\" }",
+      "group": "Advanced",
+      "line": 3616
+    },
+    {
+      "name": "AlternativeWritefile",
+      "type": "boolean",
+      "description": "* Splits file content string into segments and writes them using appendfile. This might help with crashes when it starts writing to file. Though there is a risk of appendfile working incorrectly on some execs.",
+      "default": "true",
+      "group": "Output",
+      "line": 3617
+    },
+    {
+      "name": "IgnoreDefaultPlayerScripts",
+      "type": "boolean",
+      "description": "* **RISKY**: Ignores Default PlayerScripts like PlayerModule & RbxCharacterSounds. Prevents crashes on some execs.",
+      "default": "true",
+      "group": "Scripts",
+      "line": 3618
+    },
+    {
+      "name": "SharedBinaryStrings",
+      "type": "boolean",
+      "description": "Stores BinaryString values in a shared pool so identical ones are only written once, instead of repeating them for every instance. Good when many instances hold the same data (like copies of the same mesh) -- can make files noticeably smaller. Slightly bigger when everything is unique. Roblox doesn't officially support this, so there's a small chance it confuses Studio.",
+      "default": "false",
+      "group": "Properties",
+      "line": 3619
+    },
+    {
+      "name": "TreatUnionsAsParts",
+      "type": "boolean",
+      "description": "* **RISKY:** Converts all UnionOperations to Parts. Useful if your Executor isn't able to save (read) Unions, because otherwise they will be invisible.",
+      "default": "false (except Solara)",
+      "group": "Properties",
+      "line": 3620
+    }
+  ],
+  "aliases": [
+    {
+      "name": "Clipboard",
+      "target": "CopyToClipboard",
+      "inverse": false
+    },
+    {
+      "name": "DecompileScripts",
+      "target": "Decompile",
+      "inverse": false
+    },
+    {
+      "name": "FileName",
+      "target": "FilePath",
+      "inverse": false
+    },
+    {
+      "name": "IgnoreArchivable",
+      "target": "IgnoreNotArchivable",
+      "inverse": false
+    },
+    {
+      "name": "IgnoreDefaultProps",
+      "target": "IgnoreDefaultProperties",
+      "inverse": false
+    },
+    {
+      "name": "InstancesBlacklist",
+      "target": "IgnoreList",
+      "inverse": false
+    },
+    {
+      "name": "IsolatePlayerGui",
+      "target": "IsolateLocalPlayer",
+      "inverse": false
+    },
+    {
+      "name": "SaveCharacters",
+      "target": "SavePlayerCharacters",
+      "inverse": false
+    },
+    {
+      "name": "SaveLocalPlayer",
+      "target": "IsolateLocalPlayer",
+      "inverse": false
+    },
+    {
+      "name": "SaveNilInstances",
+      "target": "NilInstances",
+      "inverse": false
+    },
+    {
+      "name": "SaveNonCreatable",
+      "target": "SaveNotCreatable",
+      "inverse": false
+    },
+    {
+      "name": "SavePlayerGui",
+      "target": "IsolateLocalPlayer",
+      "inverse": false
+    },
+    {
+      "name": "SavePlayers",
+      "target": "IsolatePlayers",
+      "inverse": false
+    },
+    {
+      "name": "ShowProgress",
+      "target": "ShowStatus",
+      "inverse": false
+    },
+    {
+      "name": "StatusText",
+      "target": "ShowStatus",
+      "inverse": false
+    },
+    {
+      "name": "timeout",
+      "target": "DecompileTimeout",
+      "inverse": false
+    },
+    {
+      "name": "DisableCompression",
+      "target": "CompressionMode",
+      "inverse": true
+    },
+    {
+      "name": "noscripts",
+      "target": "Decompile",
+      "inverse": true
+    },
+    {
+      "name": "RemovePlayerCharacters",
+      "target": "SavePlayerCharacters",
+      "inverse": true
+    },
+    {
+      "name": "RemovePlayers",
+      "target": "IsolatePlayers",
+      "inverse": true
+    },
+    {
+      "name": "XML",
+      "target": "Binary",
+      "inverse": true
+    }
+  ],
+  "presets": [
+    {
+      "id": "DiagnosticSaveInstance",
+      "summary": "Initial serializer and writer diagnosis, without script extraction.",
+      "status": "runtime-unverified",
+      "options": {
+        "mode": "optimized",
+        "Binary": true,
+        "CompressionMode": false,
+        "Decompile": false,
+        "SaveBytecode": false,
+        "NilInstances": false,
+        "IgnoreSpecialProperties": true,
+        "IgnoreDefaultPlayerScripts": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    },
+    {
+      "id": "MapSaveInstance",
+      "summary": "Map-focused full-root export without decompilation or bytecode capture.",
+      "status": "runtime-unverified",
+      "options": {
+        "mode": "full",
+        "Binary": true,
+        "CompressionMode": "lz4",
+        "Decompile": false,
+        "SaveBytecode": false,
+        "NilInstances": false,
+        "IgnoreSpecialProperties": true,
+        "IgnoreNotArchivable": true,
+        "IgnoreDefaultPlayerScripts": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    },
+    {
+      "id": "ScriptsSaveInstance",
+      "summary": "Authorized script-focused export with per-job decompilation and bytecode timeouts.",
+      "status": "runtime-unverified",
+      "options": {
+        "mode": "scripts",
+        "Binary": true,
+        "CompressionMode": "lz4",
+        "Decompile": true,
+        "DecompileTimeout": 10,
+        "SaveBytecode": true,
+        "BytecodeTimeout": 3,
+        "IgnorePropertiesOfNotScriptsOnScriptsMode": true,
+        "NilInstances": false,
+        "IgnoreSpecialProperties": true,
+        "IgnoreDefaultPlayerScripts": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    },
+    {
+      "id": "UltraCompleteSveInstance",
+      "summary": "Experimental development target: preserve the widest accessible place content.",
+      "status": "experimental-runtime-unverified",
+      "options": {
+        "mode": "full",
+        "Binary": true,
+        "CompressionMode": "lz4",
+        "Decompile": true,
+        "DecompileTimeout": 10,
+        "SaveBytecode": true,
+        "BytecodeTimeout": 3,
+        "scriptcache": true,
+        "NilInstances": true,
+        "IgnoreNotArchivable": true,
+        "SaveNotCreatable": true,
+        "IgnoreList": [],
+        "DecompileIgnore": [],
+        "IgnoreSpecialProperties": false,
+        "IgnoreDefaultPlayerScripts": false,
+        "SavePlayerCharacters": true,
+        "IsolatePlayers": true,
+        "IgnoreDefaultProperties": false,
+        "ReadMe": true,
+        "AlternativeWritefile": false,
+        "SafeMode": false,
+        "KillAllScripts": false,
+        "BoostFPS": false,
+        "ShutdownWhenDone": false,
+        "ShowStatus": true,
+        "__DEBUG_MODE": true
+      }
+    }
+  ]
+}

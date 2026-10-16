@@ -25,6 +25,7 @@ def main() -> int:
     required = (
         "index.html", "api/CompleteSaveInstance/index.html", "docs/intro/index.html",
         "docs/PRESETS/index.html", "docs/OPTIONS/index.html", "docs/USAGE/index.html", "docs/TROUBLESHOOTING/index.html",
+        "docs/GEOMETRY/index.html",
         "docs/ARCHITECTURE/index.html", "docs/ROADMAP/index.html", "changelog/index.html", "logo.png", "favicon.png",
     )
     errors = [f"Missing built route or asset: {name}" for name in required if not (BUILD / name).is_file()]
@@ -35,6 +36,9 @@ def main() -> int:
     api = Text()
     api.feed((BUILD / "api/CompleteSaveInstance/index.html").read_text(encoding="utf-8"))
     api_text = " ".join(api.parts)
+    for marker in ("CONFIGURATION PLAYGROUND", "Export API", "Preset overrides", "Export result"):
+        if marker not in api_text:
+            errors.append(f"API Explorer missing expected interface: {marker}")
     source = (ROOT / "saveinstance.luau").read_text(encoding="utf-8")
     options_section = source.split("--- @interface CustomOptions table", 1)[1].split("--- @interface OptionsAliases", 1)[0]
     options = re.findall(r"^--- (?:@field |\.)(\w+) ", options_section, re.MULTILINE)

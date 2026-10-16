@@ -48,6 +48,11 @@ projects, start with Roblox Studio's built-in save and export features.
 - **Existing diagnostics:** console messages, status display, and selected write probes.
 - **Two entry points:** the primary `saveinstance.luau` and an older `saveinstance.lua` variant.
 
+Version 0.3.0 adds an [interactive API Explorer](https://g0shtj0sh.github.io/CompleteSaveInstance/api/CompleteSaveInstance/),
+fixes datatype-wide suppression after an individual hidden-property failure,
+and records binary geometry omissions in preset JSON reports. See the
+[missing geometry guide](docs/GEOMETRY.md) when an exported surface is absent.
+
 Availability depends on the runtime, readable properties, and loaded instances.
 The Lua variant differs from the Luau source and is not feature-equivalent.
 
@@ -60,7 +65,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.2.0/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/saveinstance.luau",
     true
 )
 local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()

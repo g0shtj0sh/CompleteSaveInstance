@@ -3571,7 +3571,7 @@ end
 --- * Note: Options are case-insensitive, meaning you can type `NilInstances` option as `nilInStaNces` and it still will be valid.
 --- @within CompleteSaveInstance
 --- @field __DEBUG_MODE boolean -- This will print debug logs to console about unusual scenarios. Recommended to enable if you wish to help us improve our products and find bugs / issues with it! ___Default:___ false
---- @field ReadMe boolean --___Default:___ true
+--- @field ReadMe boolean -- Includes an embedded help document with export notes and limitations. ___Default:___ true
 --- @field Binary boolean -- Saves as a binary file (.rbxl/.rbxm) instead of XML (.rbxlx/.rbxmx). Much smaller and faster to load. Pass `XML = true` for the opposite. ___Default:___ true
 --- @field CompressionMode string | boolean -- How chunks are compressed in binary mode: "zstd", "lz4", or false for none. ___Default:___ "zstd"
 --- @field CompressionLevel number -- Compression strength, higher is smaller but slower. Range is -7 to 22 inclusive. ___Default:___ 9
@@ -3583,7 +3583,7 @@ end
 --- @field ShutdownWhenDone boolean -- Shuts the game down after saveinstance is finished. ___Default:___ false
 --- @field AntiIdle boolean -- Prevents the 20-minute-Idle Kick. ___Default:___ true
 --- .Anonymous {boolean|table{UserId = string?, Name = string?}} -- * **RISKY:** Removes your Name and UserId from the file -- useful for games that store them in GUIs or other Instances. Can also be a table with UserId and/or Name keys to pick the replacements. May mess up unrelated text or numbers that happen to match. Inside attributes and tags the replacement is padded to the same length, so a name shorter than yours comes out as for example `Roblox____`. ___Default:___ false
---- @field ShowStatus boolean -- ___Default:___ true
+--- @field ShowStatus boolean -- Displays the export progress interface while the engine runs. ___Default:___ true
 --- @field Callback function -- If set, the serialized data will be sent to the callback function instead of to file. ___Default:___ false
 --- @field mode string -- Valid modes: full, optimized, scripts. Change this to invalid mode like "invalid" if you only want ExtraInstances. "optimized" mode is **NOT** supported with *@Object* option. ___Default:___ `"optimized"`
 --- @field Decompile boolean -- Script decompiling. ___Default:___ true
@@ -3656,10 +3656,12 @@ end
 
 --[=[
 	@function saveinstance
-	Saves instances with specified options. Example:
+	Saves instances with specified options. The primary engine returns an optional
+	diagnostic report after the export attempt; early aborts can return nil.
+	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.2.0/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/",
 		SSI = "saveinstance",
 	}
 
@@ -3684,6 +3686,17 @@ local function completeSaveInstance(...)
 		return
 	end
 	GLOBAL_ENV.CSI = true
+	local ExportReport = {
+		schemaVersion = 1,
+		engineVersion = "0.3.0",
+		ok = false,
+		validation = "unverified",
+		propertyAudit = "binary_columns_only",
+		droppedPropertyColumns = 0,
+		criticalGeometryOmissions = 0,
+		propertyFailures = {},
+		classCounts = {},
+	}
 	-- do -- ? Causes issues on SirHurt (Kick lacking Capability "Consequences"), let threads operate on their default/preferred identity set by the developers
 	-- 	local setthreadidentity = global_container.setthreadidentity
 	-- 	if setthreadidentity then
@@ -4141,7 +4154,7 @@ local function completeSaveInstance(...)
 	local EXEC_STATE_FILE = CSI_FOLDER .. "EXEC_STATE.json"
 	local EXEC_STATE_KEY
 	local ExecState = {}
-	local GHP = {} -- ghp datatype -> "ok"|"failed"|"crashed"
+	local GHP = {} -- datatype -> "ok"|"failed" (self-check)|"property_failed"|"crashed"
 	do
 		local execName, execVersion = "UNKNOWN", "0"
 		if identify_executor then
@@ -4160,6 +4173,16 @@ local function completeSaveInstance(...)
 			end
 		end
 		GHP = ExecState["ghp"] or {}
+		if ExecState.ghpSchema ~= 2 then
+			-- Legacy property failures poisoned whole datatypes. Recheck those,
+			-- but preserve native-crash markers rather than retrying them blindly.
+			for datatype, state in GHP do
+				if state == "failed" then
+					GHP[datatype] = nil
+				end
+			end
+			ExecState.ghpSchema = 2
+		end
 		ExecState["ghp"] = GHP
 	end
 
@@ -4835,7 +4858,7 @@ local function completeSaveInstance(...)
 		end
 
 		local persisted = GHP[valueType]
-		if persisted == "ok" then
+		if persisted == "ok" or persisted == "property_failed" then
 			state = true
 		elseif persisted == "failed" or persisted == "crashed" then
 			state = false
@@ -4859,13 +4882,15 @@ local function completeSaveInstance(...)
 		return state
 	end
 
-	local function ghpDatatypeReport(valueType, ok)
-		local wantState = ok and "ok" or "failed"
+	local function ghpDatatypeReport(valueType, ok, selfCheck)
+		-- A protected read failure says nothing about other properties of the
+		-- same datatype. Only a dedicated self-check can disable that datatype.
+		local wantState = ok and "ok" or (selfCheck and "failed" or "property_failed")
 		if GHP[valueType] == wantState then
 			return
 		end
 		GHP[valueType] = wantState
-		GHPDatatypeState[valueType] = ok
+		GHPDatatypeState[valueType] = not selfCheck or not not ok
 		saveExecState()
 	end
 
@@ -5211,9 +5236,12 @@ local function completeSaveInstance(...)
 
 			for i = 1, n do
 				yieldIfDue()
-				local raw = readProperty(objs[i], prop)
+				local ok, raw = pcall(readProperty, objs[i], prop)
+				if not ok then
+					return nil, i, "read_error: " .. string.sub(tostring(raw), 1, 240)
+				end
 				if raw == __BREAK then
-					return nil, i
+					return nil, i, "unavailable_after_fallbacks"
 				end
 				vals[i] = raw
 			end
@@ -5385,10 +5413,32 @@ local function completeSaveInstance(...)
 						refCtxArg = sharedStringCtx
 					end
 
-					local vals, failedAt = readAll(objs, prop)
+					local vals, failedAt, failureReason = readAll(objs, prop)
 					if not vals then
+						ExportReport.droppedPropertyColumns += 1
+						local geometryClass = class == "Terrain" or class == "MeshPart"
+							or class == "UnionOperation" or class == "PartOperation" or class == "NegateOperation"
+						local geometryProperty = propName == "SmoothGrid" or propName == "PhysicsGrid"
+							or propName == "Materials" or propName == "MeshData" or propName == "MeshData2"
+							or propName == "ChildData" or propName == "ChildData2" or propName == "AssetId"
+							or propName == "MeshId" or propName == "MeshID" or propName == "SolidMeshHolder"
+							or propName == "PhysicsData" or propName == "Content"
+						local critical = geometryClass and geometryProperty
+						if critical then
+							ExportReport.criticalGeometryOmissions += 1
+						end
+						if #ExportReport.propertyFailures < 256 then
+							local pathOk, example = pcall(function()
+								return objs[failedAt]:GetFullName()
+							end)
+							ExportReport.propertyFailures[#ExportReport.propertyFailures + 1] = {
+								class = class, property = propName, instancesInColumn = #objs,
+								failedAt = failedAt, reason = failureReason, criticalGeometry = critical,
+								example = pathOk and example or "unavailable",
+							}
+						end
 						if __DEBUG_MODE then
-							__DEBUG_MODE("PROP dropped", class, propName, "n=" .. #objs, "failed at " .. failedAt)
+							__DEBUG_MODE("PROP dropped", class, propName, "n=" .. #objs, "failed at " .. failedAt, failureReason)
 						end
 						continue
 					end
@@ -6028,6 +6078,18 @@ local function completeSaveInstance(...)
 			end
 		end
 		ctx.mainRoots = mainRoots
+		ExportReport.instancesCollected = ctx.instCount
+		for _, entry in ctx.entries do
+			ExportReport.classCounts[entry.class] = (ExportReport.classCounts[entry.class] or 0) + 1
+		end
+		local streamingOk, streaming = pcall(index, workspace, "StreamingEnabled")
+		if streamingOk then
+			ExportReport.streamingEnabled = streaming
+		end
+		ExportReport.format = OPTIONS.Binary and "binary" or "xml"
+		if not OPTIONS.Binary then
+			ExportReport.propertyAudit = "not_instrumented_for_xml"
+		end
 
 		local chunks = OPTIONS.Binary and emitBinary(ctx) or emitXML(ctx)
 
@@ -6478,6 +6540,9 @@ local function completeSaveInstance(...)
 					local key = check.key
 					if key then
 						local state = GHP[key]
+						if state == "property_failed" then
+							state = nil -- not a failed datatype self-check
+						end
 						if state == "crashed" then
 							if check.fatal then
 								gethiddenproperty = nil
@@ -6509,7 +6574,7 @@ local function completeSaveInstance(...)
 					local ok, passed = pcall(check.test)
 					passed = ok and passed
 					if key then
-						ghpDatatypeReport(key, passed)
+						ghpDatatypeReport(key, passed, true)
 					end
 					if not passed and check.fatal then
 						gethiddenproperty = nil
@@ -6762,6 +6827,11 @@ local function completeSaveInstance(...)
 	local ok, err = xpcall(save_game, function(err)
 		return debug.traceback(err)
 	end)
+	ExportReport.ok = ok
+	ExportReport.error = not ok and tostring(err) or nil
+	ExportReport.outputPath = placename
+	ExportReport.ghpDatatypes = table.clone(GHP)
+	ExportReport.elapsed = os.clock() - elapse_t
 
 	if OPTIONS.BoostFPS then
 		pcall(function()
@@ -6813,6 +6883,7 @@ local function completeSaveInstance(...)
 		task.wait(Log10 * 2 + ExtraTime)
 		game:Shutdown()
 	end
+	return ExportReport
 end
 
 return completeSaveInstance
