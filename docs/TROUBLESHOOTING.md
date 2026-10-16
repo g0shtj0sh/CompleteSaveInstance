@@ -58,6 +58,24 @@ deadline. They cannot preempt native code that blocks the whole client. A total
 freeze can therefore still require an executor-side fix. A fresh runtime test
 and Studio inspection remain necessary.
 
+## Low FPS while exporting
+
+Use a preset pinned to 0.5.0 or newer for the progress panel and shorter Lua work
+slices. `WorkBudgetMs` defaults to 4 ms; smaller values, down to 1 ms, can give the
+game more scheduler time at the cost of export speed. Large binary loops now
+yield between batches as well as during property reading. These settings do not
+change the content selected by Ultra.
+
+A native read/decompiler call, compression, or a large allocation can still block
+rendering. Frame rate also includes the game's own workload. The exporter does
+not change your FPS cap or graphics settings, and it cannot guarantee 60 FPS.
+`BoostFPS` disables 3D rendering and is not the intended solution for keeping
+the game playable during export; both Ultra presets leave it disabled.
+
+The bar is for the named stage/property, not the whole export. For example,
+`ModuleScript.Source · 500 / 4000` means 500 source entries have been processed;
+it does not mean 12.5% of the total export time has elapsed.
+
 ## `PROP dropped` messages
 
 The binary encoder can omit a property column when reading or encoding fails.

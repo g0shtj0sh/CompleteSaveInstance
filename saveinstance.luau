@@ -505,6 +505,12 @@ end
 
 -- Byte-plane writers
 
+local function yieldEncoder(sbuf, index)
+	if index % 256 == 0 and sbuf.yieldIfDue then
+		sbuf.yieldIfDue()
+	end
+end
+
 local function pokeU32Planes(sbuf, o, n, v)
 	local buf = sbuf.buf
 	local wu8 = buffer.writeu8
@@ -525,6 +531,7 @@ local function interleavedU32Plane(sbuf, n, base, getU32ForIndex)
 	local rshift = bit32.rshift
 	local wu8 = buffer.writeu8
 	for i = 1, n do
+		yieldEncoder(sbuf, i)
 		local v = getU32ForIndex(i)
 		local o = base + (i - 1)
 		wu8(buf, o, rshift(v, 24))
@@ -542,6 +549,7 @@ local function writeRefPlane(sbuf, n, base, getRef)
 	local wu8 = buffer.writeu8
 	local lastRef = nil
 	for i = 1, n do
+		yieldEncoder(sbuf, i)
 		local ref = getRef(i)
 		local acc = lastRef and (ref - lastRef) or ref
 		lastRef = ref
@@ -569,6 +577,7 @@ local function planeEncoder(...)
 			local getter = getters[p]
 			local pbase = base + (p - 1) * stride
 			for i = 1, n do
+				yieldEncoder(sbuf, i)
 				local v = getter(vals[i])
 				local o = pbase + (i - 1)
 				wu8(buf, o, rshift(v, 24))
@@ -588,6 +597,7 @@ local function f32Encoder(...)
 		local base = sbuf:allocRegion(4 * k * n)
 		local buf = sbuf.buf
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local v = vals[i]
 			local o = base + (i - 1) * 4 * k
 			for p = 1, k do
@@ -606,6 +616,7 @@ local function i16Encoder(...)
 		local base = sbuf:allocRegion(2 * k * n)
 		local buf = sbuf.buf
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local v = vals[i]
 			local o = base + (i - 1) * 2 * k
 			for p = 1, k do
@@ -622,6 +633,7 @@ local function flagEncoder(bits)
 		local buf = sbuf.buf
 		local wu8 = buffer.writeu8
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local v = vals[i]
 			local packed = 0
 			for name, b in bits do
@@ -640,6 +652,8 @@ local function writeCFrameBody(sbuf, vals, n, optional)
 	local identity = CFrame.identity
 
 	for i = 1, n do
+
+		yieldEncoder(sbuf, i)
 		local val = vals[i]
 
 		if optional then
@@ -670,6 +684,7 @@ local function writeCFrameBody(sbuf, vals, n, optional)
 		local coords = planes[p]
 		local pbase = posBase + (p - 1) * 4 * n
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			bf32(scratch, 0, coords[i])
 			local v = lr(ru32(scratch, 0), 1)
 			local o = pbase + (i - 1)
@@ -1121,12 +1136,14 @@ local Binary_Encoders = {
 	["string"] = function(sbuf, vals, n)
 		local total = 4 * n
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			total += #vals[i]
 		end
 		local o = sbuf:allocRegion(total)
 		local buf = sbuf.buf
 		local wu32, wstr = buffer.writeu32, buffer.writestring
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local v = vals[i]
 			local l = #v
 			wu32(buf, o, l)
@@ -1139,6 +1156,7 @@ local Binary_Encoders = {
 		local buf = sbuf.buf
 		local wu8 = buffer.writeu8
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			if vals[i] then
 				wu8(buf, base + (i - 1), 1)
 			end
@@ -1153,6 +1171,7 @@ local Binary_Encoders = {
 		local buf = sbuf.buf
 		local wf64 = buffer.writef64
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			wf64(buf, base + (i - 1) * 8, vals[i])
 		end
 	end,
@@ -1235,12 +1254,14 @@ local Binary_Encoders = {
 	["NumberSequence"] = function(sbuf, vals, n)
 		local total = 4 * n
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			total += 12 * #vals[i].Keypoints
 		end
 		local o = sbuf:allocRegion(total)
 		local buf = sbuf.buf
 		local wu32, wf32 = buffer.writeu32, buffer.writef32
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local keypoints = vals[i].Keypoints
 			wu32(buf, o, #keypoints)
 			o += 4
@@ -1255,12 +1276,14 @@ local Binary_Encoders = {
 	["ColorSequence"] = function(sbuf, vals, n)
 		local total = 4 * n
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			total += 20 * #vals[i].Keypoints
 		end
 		local o = sbuf:allocRegion(total)
 		local buf = sbuf.buf
 		local wu32, wf32 = buffer.writeu32, buffer.writef32
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local keypoints = vals[i].Keypoints
 			wu32(buf, o, #keypoints)
 			o += 4
@@ -1298,6 +1321,7 @@ local Binary_Encoders = {
 		local o = sbuf.len
 		local wu8, wf32 = buffer.writeu8, buffer.writef32
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local val = vals[i]
 			if val then
 				wu8(buf, o, 3)
@@ -1322,6 +1346,7 @@ local Binary_Encoders = {
 		local wu8 = buffer.writeu8
 		local floor = math.floor
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local val = vals[i]
 			local o = base + (i - 1)
 			wu8(buf, o, floor(val.R * 255 + 0.5))
@@ -1333,6 +1358,7 @@ local Binary_Encoders = {
 	["int64"] = function(sbuf, vals, n)
 		local base = sbuf:allocRegion(8 * n)
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			pokeU64Planes(sbuf, base + (i - 1), n, zigzag64(vals[i]))
 		end
 	end,
@@ -1362,6 +1388,7 @@ local Binary_Encoders = {
 		local buf = sbuf.buf
 		local wu8 = buffer.writeu8
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			if vals[i] ~= nil then
 				wu8(buf, boolBase + (i - 1), 1)
 			end
@@ -1371,6 +1398,8 @@ local Binary_Encoders = {
 		local base = sbuf:allocRegion(16 * n)
 
 		for i = 1, n do
+
+			yieldEncoder(sbuf, i)
 			local val = vals[i]
 			local o = base + (i - 1)
 			local hex = string.gsub(val, "%-", "")
@@ -1385,6 +1414,7 @@ local Binary_Encoders = {
 	["Font"] = function(sbuf, vals, n)
 		local wlstr, wu16, wu8, wu32 = sbuf.writeLenString, sbuf.writeu16, sbuf.writeu8, sbuf.writeu32
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local val = vals[i]
 
 			local hasWeight, weight = pcall(index, val, "Weight")
@@ -1399,6 +1429,7 @@ local Binary_Encoders = {
 	["SecurityCapabilities"] = function(sbuf, vals, n)
 		local base = sbuf:allocRegion(8 * n)
 		for i = 1, n do
+			yieldEncoder(sbuf, i)
 			local lo, hi = capabilityHalves(vals[i])
 			pokeU64Planes(sbuf, base + (i - 1), n, zigzagHalves(hi, lo))
 		end
@@ -3564,6 +3595,116 @@ do
 	end
 end
 
+-- A stage meter reports completed work, never elapsed-time guesses.
+local function progressView(progress, now)
+	local meter = progress.meter
+	local total = meter and meter.total
+	local known = type(total) == "number" and total > 0
+	local done = meter and meter.completed or 0
+	local fraction = known and math.clamp(done / total, 0, 1) or 0
+	local text
+	if progress.phase == "completed" then
+		return { fraction = 1, offset = 0, text = "Export finished · inspect the file in Studio", indeterminate = false }
+	elseif progress.phase == "failed" then
+		text = "Export failed · check the console"
+	elseif known then
+		text = string.format("%s · %d / %d · %.1f%%", meter.label, done, total, fraction * 100)
+	else
+		text = meter and meter.label or "Preparing export"
+		if done > 0 then
+			text ..= " · " .. tostring(done)
+		end
+	end
+	local indeterminate = not known and progress.phase ~= "failed"
+	return {
+		fraction = indeterminate and 0.2 or fraction,
+		offset = indeterminate and ((now % 1.6) / 1.6 * 1.2 - 0.2) or 0,
+		text = text, indeterminate = indeterminate, failed = progress.phase == "failed",
+	}
+end
+
+local function createStatusDisplay()
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "CSI_ExportStatus"
+	gui.DisplayOrder = 2e9
+	gui.ResetOnSpawn = false
+	gui.IgnoreGuiInset = true
+	pcall(function() gui.OnTopOfCoreBlur = true end)
+	local panel = Instance.new("Frame")
+	panel.Name = "ExportProgress"
+	panel.AnchorPoint = Vector2.new(1, 0)
+	panel.Position = UDim2.new(1, -12, 0, 12)
+	panel.Size = UDim2.new(0.36, 0, 0, 74)
+	panel.BackgroundColor3 = Color3.fromRGB(12, 18, 29)
+	panel.BackgroundTransparency = 0.1
+	panel.BorderSizePixel = 0
+	panel.Parent = gui
+	local constraint = Instance.new("UISizeConstraint")
+	constraint.MinSize = Vector2.new(260, 74)
+	constraint.MaxSize = Vector2.new(520, 74)
+	constraint.Parent = panel
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 9)
+	corner.Parent = panel
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = Color3.fromRGB(76, 242, 207)
+	stroke.Transparency = 0.65
+	stroke.Parent = panel
+	local status = Instance.new("TextLabel")
+	status.Name = "Status"
+	status.Position = UDim2.fromOffset(12, 8)
+	status.Size = UDim2.new(1, -24, 0, 22)
+	status.BackgroundTransparency = 1
+	status.Font = Enum.Font.Code
+	status.TextSize = 14
+	status.TextColor3 = Color3.fromRGB(239, 247, 255)
+	status.TextXAlignment = Enum.TextXAlignment.Left
+	status.TextTruncate = Enum.TextTruncate.AtEnd
+	status.Text = "CSI | Preparing export..."
+	status.Parent = panel
+	local track = Instance.new("Frame")
+	track.Name = "ProgressTrack"
+	track.Position = UDim2.fromOffset(12, 36)
+	track.Size = UDim2.new(1, -24, 0, 6)
+	track.BackgroundColor3 = Color3.fromRGB(43, 55, 73)
+	track.BorderSizePixel = 0
+	track.ClipsDescendants = true
+	track.Parent = panel
+	local trackCorner = Instance.new("UICorner")
+	trackCorner.CornerRadius = UDim.new(0, 3)
+	trackCorner.Parent = track
+	local fill = Instance.new("Frame")
+	fill.Name = "ProgressFill"
+	fill.Size = UDim2.fromScale(0, 1)
+	fill.BackgroundColor3 = Color3.fromRGB(76, 242, 207)
+	fill.BorderSizePixel = 0
+	fill.Parent = track
+	local fillCorner = Instance.new("UICorner")
+	fillCorner.CornerRadius = UDim.new(0, 3)
+	fillCorner.Parent = fill
+	local caption = Instance.new("TextLabel")
+	caption.Name = "ProgressCaption"
+	caption.Position = UDim2.fromOffset(12, 48)
+	caption.Size = UDim2.new(1, -24, 0, 17)
+	caption.BackgroundTransparency = 1
+	caption.Font = Enum.Font.Code
+	caption.TextSize = 11
+	caption.TextColor3 = Color3.fromRGB(176, 195, 214)
+	caption.TextXAlignment = Enum.TextXAlignment.Left
+	caption.TextTruncate = Enum.TextTruncate.AtEnd
+	caption.Text = "Preparing export"
+	caption.Parent = panel
+	return { gui = gui, status = status, fill = fill, caption = caption }
+end
+
+local function renderStatusDisplay(display, progress, now)
+	local view = progressView(progress, now)
+	display.fill.Position = UDim2.fromScale(view.offset, 0)
+	display.fill.Size = UDim2.fromScale(view.fraction, 1)
+	display.fill.BackgroundColor3 = view.failed and Color3.fromRGB(255, 108, 119) or Color3.fromRGB(76, 242, 207)
+	display.caption.Text = view.text
+end
+
 --[=[
     @class CompleteSaveInstance
     Represents the options for saving instances with custom settings using the completeSaveInstance function.
@@ -3587,6 +3728,7 @@ end
 --- @field AntiIdle boolean -- Prevents the 20-minute-Idle Kick. ___Default:___ true
 --- .Anonymous {boolean|table{UserId = string?, Name = string?}} -- * **RISKY:** Removes your Name and UserId from the file -- useful for games that store them in GUIs or other Instances. Can also be a table with UserId and/or Name keys to pick the replacements. May mess up unrelated text or numbers that happen to match. Inside attributes and tags the replacement is padded to the same length, so a name shorter than yours comes out as for example `Roblox____`. ___Default:___ false
 --- @field ShowStatus boolean -- Displays the export progress interface while the engine runs. ___Default:___ true
+--- @field WorkBudgetMs number -- Cooperative Lua work budget in milliseconds, clamped to 1–16. Smaller budgets give the game more scheduler time but can lengthen exports. Native calls cannot be preempted. ___Default:___ 4
 --- @field Callback function -- If set, the serialized data will be sent to the callback function instead of to file. ___Default:___ false
 --- @field mode string -- Valid modes: full, optimized, scripts. Change this to invalid mode like "invalid" if you only want ExtraInstances. "optimized" mode is **NOT** supported with *@Object* option. ___Default:___ `"optimized"`
 --- @field Decompile boolean -- Script decompiling. ___Default:___ true
@@ -3664,7 +3806,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.4/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/",
 		SSI = "saveinstance",
 	}
 
@@ -3691,7 +3833,7 @@ local function completeSaveInstance(...)
 	GLOBAL_ENV.CSI = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.4.4",
+		engineVersion = "0.5.0",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -3721,14 +3863,28 @@ local function completeSaveInstance(...)
 
 	local totalsize = 0
 
-	local StatusText
+	local StatusText, ProgressDisplay
 	local progressStarted = os.clock()
 	local Progress = { phase = "preflight" }
 	ExportReport.lastProgress = Progress
 	ExportReport.scriptJobs = { bytecodeCalls = 0, decompileCalls = 0, bytecodeSeconds = 0, decompileSeconds = 0, timedOut = 0, failed = 0, failures = {} }
 	ExportReport.compression = { bypassedSource = 0, bypassedLarge = 0, failed = 0 }
+	local lastUIRefresh = 0
+	local function refreshProgressDisplay(force)
+		local now = os.clock()
+		if ProgressDisplay and (force or now - lastUIRefresh >= 0.1) then
+			lastUIRefresh = now
+			renderStatusDisplay(ProgressDisplay, Progress, now)
+		end
+	end
+	local function setMeter(label, completed, total)
+		local meter = { label = label, completed = completed or 0, total = total }
+		Progress.meter = meter
+		return meter
+	end
 	local lastProgressSent = 0
 	local function publishProgress(force)
+		refreshProgressDisplay(false)
 		local now = os.clock()
 		if force or now - lastProgressSent >= 2 then
 			Progress.elapsed = now - progressStarted
@@ -3743,6 +3899,9 @@ local function completeSaveInstance(...)
 		local changed = Progress.phase ~= phase
 		Progress.phase, Progress.detail = phase, detail
 		publishProgress(force or changed)
+		if phase == "completed" or phase == "failed" then
+			refreshProgressDisplay(true)
+		end
 	end
 	setProgress("preflight", nil, true)
 
@@ -3781,6 +3940,7 @@ local function completeSaveInstance(...)
 
 		SaveCacheInterval = 0x1600 * 10,
 		ShowStatus = true,
+		WorkBudgetMs = 4,
 		KillAllScripts = false,
 		SafeMode = false,
 		BoostFPS = false,
@@ -4482,6 +4642,12 @@ local function completeSaveInstance(...)
 		return Size
 	end
 
+	local WorkBudgetMs = OPTIONS.WorkBudgetMs
+	if type(WorkBudgetMs) ~= "number" or WorkBudgetMs ~= WorkBudgetMs then
+		WorkBudgetMs = 4
+	end
+	local WorkBudgetSeconds = math.clamp(WorkBudgetMs, 1, 16) / 1000
+	ExportReport.workBudgetMs = WorkBudgetSeconds * 1000
 	local lastYield = os.clock()
 	local function yieldFrame()
 		pcall(task.wait) -- ? Needed for at least 1fps (status text) and resets the watchdog (RenderStepped:Wait doesn't); pcall due to "thread cannot be yielded"
@@ -4495,7 +4661,7 @@ local function completeSaveInstance(...)
 	end
 
 	local function yieldIfDue() -- ? Watchdog kills scripts that run >30s without yielding
-		if os.clock() - lastYield > 0.1 then
+		if os.clock() - lastYield >= WorkBudgetSeconds then
 			publishProgress(false)
 			yieldFrame()
 		end
@@ -5215,6 +5381,9 @@ local function completeSaveInstance(...)
 
 			refs[instance] = ctx.instCount
 			ctx.instCount += 1
+			if Progress.meter then
+				Progress.meter.completed = ctx.instCount
+			end
 
 			local bucket = e.tag
 			if e.propsOnly then
@@ -5297,16 +5466,23 @@ local function completeSaveInstance(...)
 	end
 
 	local function emitBinary(ctx)
+		local function newBinaryBuffer(capacity)
+			local result = StreamBuffer.new(capacity)
+			result.yieldIfDue = yieldIfDue
+			return result
+		end
 		local function readAll(objs, prop)
 			local n = #objs
 			local vals = table.create(n)
 			local detail = { class = ctx.entries[objs[1]].class, property = prop.Name, total = n, index = 1 }
+			local meter = setMeter(detail.class .. "." .. prop.Name, 0, n)
 			setProgress("read-property", detail)
 
 			for i = 1, n do
 				detail.index = i
 				yieldIfDue()
 				local ok, raw = pcall(readProperty, objs[i], prop)
+				meter.completed = i
 				if Progress.phase == "scripts" then
 					setProgress("read-property", detail)
 				end
@@ -5333,6 +5509,7 @@ local function completeSaveInstance(...)
 			elseif compress and uncompressedLen > 8 * 1024 * 1024 then
 				stats.bypassedLarge += 1
 			elseif compress then
+				setMeter("Compressing " .. (propertyName or name))
 				setProgress("compress", { chunk = name, property = propertyName, bytes = uncompressedLen }, true)
 				local ok, dataStr = pcall(compress, chunkBuf:tostring())
 				if not ok or type(dataStr) ~= "string" or #dataStr == 0 then
@@ -5396,7 +5573,7 @@ local function completeSaveInstance(...)
 		end
 
 		if IsModel then
-			local metaBuf = StreamBuffer.new(64)
+			local metaBuf = newBinaryBuffer(64)
 			metaBuf:writeu32(1)
 			metaBuf:writeLenString("ExplicitAutoJoints")
 			metaBuf:writeLenString("true")
@@ -5415,12 +5592,13 @@ local function completeSaveInstance(...)
 		local deferredBuckets
 
 		local function encode_class_bucket(objs)
+			yieldIfDue()
 			local n = #objs
 			local entry = entries[objs[1]]
 
 			local class = entry.class
 
-			local instBuf = StreamBuffer.new(64 + 4 * n)
+			local instBuf = newBinaryBuffer(64 + 4 * n)
 			instBuf:writeu32(classId)
 			instBuf:writeLenString(class)
 			local classInfo = ClassList[class]
@@ -5446,13 +5624,15 @@ local function completeSaveInstance(...)
 
 			if entry.propsOnly then
 				for propName in entry.override.Properties do
+					yieldIfDue()
 					local isSource = propName == "Source"
-					local buf = StreamBuffer.new(64 + n * 16)
+					local buf = newBinaryBuffer(64 + n * 16)
 					buf:writeu32(classId)
 					buf:writeLenString(propName)
 					buf:writeu8(isSource and Type_Ids.ProtectedString or Type_Ids.string)
 
 					for i = 1, n do
+						yieldIfDue()
 						local value = entries[objs[i]].override.Properties[propName]
 						if type(value) == "function" then
 							value = value() -- Deferred Source (README): resolved at encode time
@@ -5466,6 +5646,7 @@ local function completeSaveInstance(...)
 				end
 			elseif not skipProps then
 				for _, prop in GetInheritedProps(entry.propClass) do
+					yieldIfDue()
 					local propName = prop.Name
 					if IgnoreProperties[propName] then
 						continue
@@ -5528,17 +5709,19 @@ local function completeSaveInstance(...)
 					if encoder and typeId then
 						if (SaveNotCreatableWillBeEnabled or HasAutoRemaps) and prop.Category == "Class" then
 							for i = 1, n do
+								yieldIfDue()
 								if refIsInvalid(vals[i], valueType) then
 									vals[i] = nil
 								end
 							end
 						end
 
-						local propBuf = StreamBuffer.new(128 + #objs * 4)
+						local propBuf = newBinaryBuffer(128 + #objs * 4)
 						propBuf:writeu32(classId)
 						propBuf:writeLenString(propName)
 						propBuf:writeu8(typeId)
 
+						setMeter("Encoding " .. class .. "." .. propName)
 						setProgress("encode-property", { class = class, property = propName, total = n })
 						encoder(propBuf, vals, #objs, refCtxArg)
 						local chunk = buildChunk("PROP", propBuf, compress, propName)
@@ -5571,10 +5754,11 @@ local function completeSaveInstance(...)
 		-- SSTR must land before the INST/PROP chunks it's referenced from, so it
 		-- goes into the reserved slot rather than at the current end.
 		if sharedStringCtx.count > 0 then
-			local sstrBuf = StreamBuffer.new(64 + sharedStringCtx.count * 32)
+			local sstrBuf = newBinaryBuffer(64 + sharedStringCtx.count * 32)
 			sstrBuf:allocRegion(4) -- version 0 in fresh zeroed capacity
 			sstrBuf:writeu32(sharedStringCtx.count)
 			for i = 1, sharedStringCtx.count do
+				yieldIfDue()
 				sstrBuf:allocRegion(16) -- Fresh StreamBuffer capacity is already zeroed.
 				sstrBuf:writeLenString(sharedStringCtx.order[i])
 			end
@@ -5590,7 +5774,7 @@ local function completeSaveInstance(...)
 
 		-- PRNT chunk: two interleaved i32 zigzag-delta planes (object ref, parent ref)
 		do
-			local prntBuf = StreamBuffer.new(16 + instCount * 8)
+			local prntBuf = newBinaryBuffer(16 + instCount * 8)
 			prntBuf:allocRegion(1) -- version 0 in fresh zeroed capacity
 			prntBuf:writeu32(instCount)
 
@@ -5610,7 +5794,7 @@ local function completeSaveInstance(...)
 
 		-- END chunk: fixed, never compressed.
 		do
-			local endBuf = StreamBuffer.new(16)
+			local endBuf = newBinaryBuffer(16)
 			endBuf:writestring("</roblox>")
 			emit(buildChunk("END\0", endBuf, nil))
 		end
@@ -5619,6 +5803,7 @@ local function completeSaveInstance(...)
 		-- temporary strings. Each chunk gets one exact allocation and copy pass.
 		local out = table.create(#chunks)
 		for i, c in chunks do
+			yieldIfDue()
 			local payloadLen = c.str and #c.str or c.tailLen or 0
 			if payloadLen == 0 then
 				out[i] = buffer.readstring(c.buf, 0, c.len)
@@ -5639,6 +5824,7 @@ local function completeSaveInstance(...)
 	end
 
 	local function emitXML(ctx)
+		local meter = setMeter("XML instances", 0, ctx.instCount)
 		local chunks = table.create(1)
 		local savebuffer, savebuffer_size = {}, 1
 		local header =
@@ -5680,6 +5866,7 @@ local function completeSaveInstance(...)
 			local entries = ctx.entries
 
 			for _, instance in hierarchy do
+				yieldIfDue()
 				local entry = entries[instance]
 				if not entry then
 					continue -- filtered out by collect
@@ -5729,6 +5916,7 @@ local function completeSaveInstance(...)
 						end
 					end
 					for _, Property in GetInheritedProps(entry.propClass) do
+						yieldIfDue()
 						local PropertyName = Property.Name
 
 						if IgnoreProperties[PropertyName] then
@@ -5810,6 +5998,7 @@ local function completeSaveInstance(...)
 
 				savebuffer[savebuffer_size] = "</Properties>"
 				savebuffer_size += 1
+				meter.completed += 1
 
 				if SaveCacheInterval < savebuffer_size then
 					save_cache()
@@ -6099,6 +6288,7 @@ local function completeSaveInstance(...)
 			end
 		end
 
+		setMeter("Collecting instances")
 		setProgress("collect", nil, true)
 		local ctx = collect(allRoots)
 
@@ -6183,10 +6373,18 @@ local function completeSaveInstance(...)
 			stampElapsed(chunks, os.clock() - elapse_t)
 		end
 
+		local writeTotal = 0
+		for _, chunk in chunks do
+			writeTotal += #chunk
+			yieldIfDue()
+		end
+		local writeMeter = setMeter("Writing bytes", 0, writeTotal)
 		if CopyToClipboard then
 			setrbxclipboard(table.concat(chunks))
+			writeMeter.completed = writeTotal
 		elseif Callback then
 			Callback(table.concat(chunks), chunks)
+			writeMeter.completed = writeTotal
 		elseif OPTIONS.AlternativeWritefile and appendfile then
 			-- Batch chunks into ~4MB appends: sizes come from #chunk, so nothing
 			-- is joined until a batch actually flushes. A whole-file concat would
@@ -6198,15 +6396,17 @@ local function completeSaveInstance(...)
 				if batchSize == 0 then
 					return
 				end
-				written += batchSize
 				run_with_loading(
-					"Writing to File " .. math.round(written / totalsize * 100) .. "%",
+					"Writing to File",
 					nil,
 					false,
 					appendfile,
 					placename,
 					table.concat(batch)
 				)
+				written += batchSize
+				writeMeter.completed = written
+				publishProgress(false)
 				table.clear(batch)
 				batchSize = 0
 				task.wait()
@@ -6219,11 +6419,14 @@ local function completeSaveInstance(...)
 					flush()
 					local offset = 1
 					while offset <= #chunk do
-						appendfile(placename, string.sub(chunk, offset, offset + SEGMENT_SIZE - 1))
+						local segment = string.sub(chunk, offset, offset + SEGMENT_SIZE - 1)
+						appendfile(placename, segment)
+						written += #segment
+						writeMeter.completed = written
+						publishProgress(false)
 						offset += SEGMENT_SIZE
 						task.wait()
 					end
-					written += #chunk
 				else
 					batch[#batch + 1] = chunk
 					batchSize += #chunk
@@ -6243,6 +6446,7 @@ local function completeSaveInstance(...)
 				placename,
 				table.concat(chunks)
 			)
+			writeMeter.completed = writeTotal
 		end
 	end
 
@@ -6356,32 +6560,15 @@ local function completeSaveInstance(...)
 			end
 		end
 
-		local StatusGui = Instance.new("ScreenGui")
-
+		ProgressDisplay = createStatusDisplay()
+		local StatusGui = ProgressDisplay.gui
+		StatusText = ProgressDisplay.status
+		IgnoreList[StatusGui] = true -- The exporter's own overlay is not place content.
 		GLOBAL_ENV.CSI_statustext = StatusGui
-
-		StatusGui.DisplayOrder = 2e9
-		pcall(function() -- ? Compatibility with level 2
-			StatusGui.OnTopOfCoreBlur = true
+		Connect(service.RunService.Heartbeat, function()
+			refreshProgressDisplay(false)
 		end)
-
-		StatusText = Instance.new("TextLabel")
-
-		StatusText.Text = "CSI | Saving..."
-
-		StatusText.BackgroundTransparency = 1
-		StatusText.Font = Enum.Font.Code
-		StatusText.AnchorPoint = Vector2.new(1)
-		StatusText.Position = UDim2.new(1)
-		StatusText.Size = UDim2.new(0.3, 0, 0, 20)
-
-		StatusText.TextColor3 = Color3.new(1, 1, 1)
-		StatusText.TextScaled = true
-		StatusText.TextStrokeTransparency = 0.7
-		StatusText.TextXAlignment = Enum.TextXAlignment.Right
-		StatusText.TextYAlignment = Enum.TextYAlignment.Top
-
-		StatusText.Parent = StatusGui
+		refreshProgressDisplay(true)
 
 		local function randomString()
 			local length = math.random(10, 20)

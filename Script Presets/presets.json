@@ -21,7 +21,8 @@
         "BoostFPS": false,
         "ShutdownWhenDone": false,
         "ShowStatus": true,
-        "__DEBUG_MODE": true
+        "__DEBUG_MODE": true,
+        "WorkBudgetMs": 4
       }
     },
     {
@@ -44,7 +45,8 @@
         "BoostFPS": false,
         "ShutdownWhenDone": false,
         "ShowStatus": true,
-        "__DEBUG_MODE": true
+        "__DEBUG_MODE": true,
+        "WorkBudgetMs": 4
       }
     },
     {
@@ -69,7 +71,8 @@
         "BoostFPS": false,
         "ShutdownWhenDone": false,
         "ShowStatus": true,
-        "__DEBUG_MODE": true
+        "__DEBUG_MODE": true,
+        "WorkBudgetMs": 4
       }
     },
     {
@@ -102,7 +105,8 @@
         "BoostFPS": false,
         "ShutdownWhenDone": false,
         "ShowStatus": true,
-        "__DEBUG_MODE": true
+        "__DEBUG_MODE": true,
+        "WorkBudgetMs": 4
       }
     }
   ]

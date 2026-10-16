@@ -50,5 +50,9 @@ jobs:
         run: python scripts/test_potassium.py --luau .tools/luau/luau
       - name: Check export deadlines, bytecode memoization, and chunk fallbacks
         run: python scripts/test_export_jobs.py --luau .tools/luau/luau
+      - name: Check progress display, frame budget, and writer counters
+        run: python scripts/test_progress_ui.py --luau .tools/luau/luau
+      - name: Check binary encoder bytes across cooperative yields
+        run: python scripts/test_binary_scheduling.py --luau .tools/luau/luau
       - name: Check whitespace errors
         run: git diff --check HEAD^ HEAD

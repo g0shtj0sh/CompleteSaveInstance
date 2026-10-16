@@ -1,0 +1,135 @@
+{
+  "baseline": "v0.4.4",
+  "encoders": {
+    "Axes": {
+      "bytes": 1025,
+      "sha256": "cd1789405e9d3e52097342c8267f54c1b4303387e10400f07a4821e7e3e5d4e2"
+    },
+    "BrickColor": {
+      "bytes": 4100,
+      "sha256": "8ddfa2cc338d8978676ba724c209bd1c66b9c6873b5adb06cc4b7d6d30f86e75"
+    },
+    "CFrame": {
+      "bytes": 31757,
+      "sha256": "4a24a9750b703e25e4a7a775df64f46f4a68cd423a3f6b49bf60312c3e3da509"
+    },
+    "Color3": {
+      "bytes": 12300,
+      "sha256": "b82b15fc66f1471fec8a74eb05f80b7e37b1b1c32534fab561b18d1f7e92dcef"
+    },
+    "Color3uint8": {
+      "bytes": 3075,
+      "sha256": "e7f722c5b256e892e52a16671ed5ee896cb3bc61f8bf05580495ab0a7a4a9c1e"
+    },
+    "ColorSequence": {
+      "bytes": 45100,
+      "sha256": "e239cf85bbbf59716bd020e7226c5f96ef21b22d2b74e4de812c3aae42b457ba"
+    },
+    "Content": {
+      "bytes": 17738,
+      "sha256": "639011be6e52a6401120ffc5bb34f9bb1b1060256098827d1cf8bc234da1d63c"
+    },
+    "Enum": {
+      "bytes": 4100,
+      "sha256": "3a798537105c0a9a3142b5bf5708357d3e0c468e59a309cb7548af85967a6285"
+    },
+    "Faces": {
+      "bytes": 1025,
+      "sha256": "0884c86549d603ec53038e0dfb9d06443a2d7fd358da2264bad65734df2b2267"
+    },
+    "Font": {
+      "bytes": 29725,
+      "sha256": "ce4539c15261ef3fa28bdc4739c9e06fdd1c49fab07a8c6e80e8da979f126ffc"
+    },
+    "NumberRange": {
+      "bytes": 8200,
+      "sha256": "6e37c8daf7e89b634b4525fbff815df1bd6a2d7cf0ca21ab9493e97033393b23"
+    },
+    "NumberSequence": {
+      "bytes": 28700,
+      "sha256": "7c8a2c1a3d405e37b3ec9a627ce783e8c88b961659b41beb71836c37e5402634"
+    },
+    "OptionalCoordinateFrame": {
+      "bytes": 14352,
+      "sha256": "0cead298d8f22d9112cf4474a887bda050a0519528358b762ed44e0a10c81fdb"
+    },
+    "PhysicalProperties": {
+      "bytes": 19481,
+      "sha256": "6279a0a1dc987a1bba20659c671e1ab9ba18036ec5a9e40e952211c330b56326"
+    },
+    "Ray": {
+      "bytes": 24600,
+      "sha256": "373979afdac5a5ee1aee60759b6f3d5a47e182e2b505d941bb6b096143392108"
+    },
+    "Rect": {
+      "bytes": 16400,
+      "sha256": "31d19ed243a81a1f069bb82b088fec75db7f02e8964f84a5a76b87a4df573e40"
+    },
+    "Referent": {
+      "bytes": 4100,
+      "sha256": "d44b79797b9fa7e41058b97aff6a340a0ecce03c9eb5568b03d288ae7a04b846"
+    },
+    "SecurityCapabilities": {
+      "bytes": 8200,
+      "sha256": "3922b213a7ce44815eb58a34dbf86e86176d09096e06f50c45dd1204cdf961aa"
+    },
+    "SharedString": {
+      "bytes": 4100,
+      "sha256": "d9d11ef3c28b2c8ebd223f2dea91ee729ac4e0e92de62937a80be79ce01496fe"
+    },
+    "UDim": {
+      "bytes": 8200,
+      "sha256": "2ae9c64b90407a350fe354328e5caedc3cfd6bc9d18bbdc21194ab56a59fd329"
+    },
+    "UDim2": {
+      "bytes": 16400,
+      "sha256": "6d84059e9f8b9981f861c530e26e7ba196c3fd07e3afdba6b1b37bcdf5fa3987"
+    },
+    "UniqueId": {
+      "bytes": 16400,
+      "sha256": "1aeced7070481282616f963183a4cb3988fd6e533d9b7fe10686c12d8678ccb7"
+    },
+    "Vector2": {
+      "bytes": 8200,
+      "sha256": "b3d7b0f41cc1bf4667966066ea5f92320e226d1072f0247e6fe69a344fe471e6"
+    },
+    "Vector2int16": {
+      "bytes": 4100,
+      "sha256": "61f79b70d81a1b92a9ccf23a288a90e9e48d3d6c2025d049a3e99f614c29ab19"
+    },
+    "Vector3": {
+      "bytes": 12300,
+      "sha256": "63fbfa35daf379e120ef8ee45ec6c47f48be96fcf37986effe6e0feccedf7e48"
+    },
+    "Vector3int16": {
+      "bytes": 6150,
+      "sha256": "1ebb36b0fbf7b27c4fa61de47c2b3cabfeb848a89863d25733b243d45d183c06"
+    },
+    "bool": {
+      "bytes": 1025,
+      "sha256": "6d407d427457ff65b68d418c98fa9ea7ea4548e7688ea4313f5942eb4c6c3045"
+    },
+    "double": {
+      "bytes": 8200,
+      "sha256": "d716341d1ed5e9cb85f25d0d8a09ac12ad94c1938bfd2d688df5de5dc2677d3f"
+    },
+    "float": {
+      "bytes": 4100,
+      "sha256": "b15c0d2f481fb66c66285331517fbed992ac5ab627c4a2468501ce2382e642f0"
+    },
+    "int": {
+      "bytes": 4100,
+      "sha256": "00ce460280445d6c25ecd026e7d98ecdb71cd159fd048221148416ed9443dedd"
+    },
+    "int64": {
+      "bytes": 8200,
+      "sha256": "b5bd637bca8608fa1d1b6cc4a590fddfacb3f396e8350da94f5b0f678d331285"
+    },
+    "string": {
+      "bytes": 10486,
+      "sha256": "ef605f74f9b0499013579da9ca3ee84361fde342a0a02c0af446381ac5998544"
+    }
+  },
+  "sourceHash": "f2153b0aa212f14fd3a19a24f3cc33dbe414e18b39c1bf4101925d62a81daca0",
+  "valuesPerColumn": 1025
+}

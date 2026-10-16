@@ -43,7 +43,7 @@ Actions to GitHub Pages.
 
 `Script Presets/presets.json` defines the four configurations. The generator
 combines them with a shared wrapper template. Wrappers perform a basic text
-write/read probe and load the pinned `v0.4.4` engine by default. Local development
+write/read probe and load the pinned `v0.5.0` engine by default. Local development
 requires an explicit `USE_LOCAL_CORE = true`. They record source identity,
 exceptions, and file existence in a JSON sidecar separately from file validity.
 The actual serializer is not duplicated.
@@ -125,6 +125,34 @@ client confirms lower scheduling/UI overhead; it does not establish a multiplier
 for real native reads or a complete place export.
 One native ModuleScript read also succeeded through the updated job pipeline;
 this is a compatibility sample, not a full export or Studio validation.
+
+## Progress UI and work slices in 0.5.0
+
+The primary engine keeps an independent `Progress.meter` with a label, completed
+count, and optional total. This survives changes from property reading to an
+individual bytecode/decompilation job. Binary reads count attempted instances
+within the current property column; XML counts processed instances. Append
+progress advances only after each native write returns. Unknown totals remain
+indeterminate. No estimated duration or global percentage is manufactured.
+
+The GUI reads this state at most every 100 ms. Disk checkpoints retain their
+separate policy, including pre-call checkpoints for script jobs. Cleanup releases
+the GUI heartbeat and spinner. The optional `ShowStatus = false` path remains
+headless while reports and cooperative scheduling continue.
+The exporter excludes its own status GUI from collection, including when the
+GUI falls back to CoreGui; game interfaces remain governed by the selected preset.
+
+`WorkBudgetMs` defaults to 4 ms and clamps to 1–16. Binary StreamBuffers carry a
+per-buffer yield callback, checked every 256 values in the encoding helpers.
+Encoding order and byte planes are unchanged. Regression fixtures cover 32
+types with 1025 values each, both with and without yielding, against 0.4.4 bytes.
+Collection, property traversal, XML, shared strings, and chunk assembly also
+yield between work slices. This is cooperative Lua scheduling, not preemption
+of native work, and it cannot guarantee a target frame rate.
+
+The connected-client check instantiated the actual GUI and verified its native
+bounds, bar width, placement below the status label, and caption fit. A full
+0.5.0 export, FPS comparison, and Studio reopening remain to be tested.
 
 ## Next engine work
 

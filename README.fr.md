@@ -73,11 +73,17 @@ le moteur Luau commun. Les deux Ultra conservent leur couverture, le bytecode
 et leurs délais. Le gain sur un export complet dépend des appels natifs et du
 nombre de scripts ; un export déjà lancé garde son ancienne version du moteur.
 
+La **0.5.0** ajoute une barre de progression sous l'opération en cours, avec
+des compteurs par étape. Le budget de travail Lua passe à **4 ms** par défaut
+(`WorkBudgetMs`, réglable de 1 à 16), y compris dans les grandes boucles binaires.
+Cela vise à préserver la réactivité du jeu ; les appels natifs longs peuvent
+toujours bloquer une image et aucun FPS cible n'est garanti.
+
 ## Suite du développement
 
-La priorité est le diagnostic : inventaire, logs bufferisés, rapport précis,
-validation du fichier et reprise après interruption. Ces fonctionnalités sont
-des objectifs ; elles ne sont pas annoncées comme terminées.
+Les compteurs, checkpoints et rapports sont disponibles. Les prochaines étapes
+sont la validation du fichier et la reprise après interruption. Une ouverture
+et une inspection dans Studio restent nécessaires pour valider le résultat.
 
 Le client ne dispose pas des scripts serveur non répliqués, des DataStores
 privés ou des objets jamais chargés. Pour ses propres projets, examiner

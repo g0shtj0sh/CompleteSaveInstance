@@ -15,6 +15,8 @@ python scripts/test_presets.py --luau luau
 python scripts/test_property_reads.py --luau luau
 python scripts/test_potassium.py --luau luau
 python scripts/test_export_jobs.py --luau luau
+python scripts/test_progress_ui.py --luau luau
+python scripts/test_binary_scheduling.py --luau luau
 luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/DiagnosticSaveInstance.luau" "Script Presets/MapSaveInstance.luau" "Script Presets/ScriptsSaveInstance.luau" "Script Presets/UltraCompleteSveInstance.luau"
 git diff --check
 ```
@@ -22,6 +24,10 @@ git diff --check
 Compilation checks syntax and bytecode generation without executing the script.
 Runtime changes need an authorized sample, exact options, output evidence, and
 a Studio reopening check before being described as validated.
+
+Binary scheduling tests compare the actual encoder output with recorded 0.4.4
+byte digests and with a yielding run. Preserve those fixtures unless a deliberate
+format change has been reviewed; do not record new fixtures merely to pass a check.
 
 ## Documentation and presets
 

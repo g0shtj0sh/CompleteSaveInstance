@@ -111,6 +111,7 @@ end
 local StatusText={Text="Saving"}
 local IsLoading, LoadingText=false,nil
 local frameWaits=0
+local WorkBudgetSeconds=0.004
 lastYield=now
 local function yieldFrame() frameWaits+=1;task.wait();lastYield=now end
 local function ensureSpinner() end
@@ -205,6 +206,7 @@ print("Actual decompilation passed: Potassium bytecode overload, ordinary Instan
 
 local ExportReport={compression={bypassedSource=0,bypassedLarge=0,failed=0}}
 local function setProgress() end
+local function setMeter() end
 __CHUNK__
 local raw=string.rep("X",32)
 local function chunk(value)

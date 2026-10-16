@@ -97,6 +97,12 @@ Type: `boolean`. Source default: `true`.
 
 Displays the export progress interface while the engine runs.
 
+## WorkBudgetMs
+
+Type: `number`. Source default: `4`.
+
+Cooperative Lua work budget in milliseconds, clamped to 1–16. Smaller budgets give the game more scheduler time but can lengthen exports. Native calls cannot be preempted.
+
 ## Callback
 
 Type: `function`. Source default: `false`.

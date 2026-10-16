@@ -19,7 +19,7 @@ GROUPS = {
     "Scripts": "Decompile DecompileTimeout DecompileJobless scriptcache SaveBytecode BytecodeTimeout DecompileIgnore IgnoreDefaultPlayerScripts",
     "Properties": "IgnoreProperties IgnoreDefaultProperties IgnoreSpecialProperties IgnorePropertiesOfNotScriptsOnScriptsMode SharedBinaryStrings TreatUnionsAsParts",
     "Players": "IsolateStarterPlayer IsolatePlayers IsolateLocalPlayer IsolateLocalPlayerCharacter SavePlayerCharacters",
-    "Runtime": "SafeMode KillAllScripts BoostFPS ShutdownWhenDone AntiIdle Anonymous RiskyServicesDisabled",
+    "Runtime": "SafeMode KillAllScripts BoostFPS ShutdownWhenDone AntiIdle Anonymous RiskyServicesDisabled WorkBudgetMs",
     "Diagnostics": "__DEBUG_MODE ShowStatus",
     "Advanced": "NilInstancesFixes NotCreatableFixes",
 }

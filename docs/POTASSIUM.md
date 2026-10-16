@@ -70,7 +70,7 @@ native property access, and the append-based writer.
 
 Both entry points use the same serializer. The Potassium entry point is under
 `Executors/Potassium/saveinstance.luau`; its four presets are under
-`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.4.4.
+`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.5.0.
 For local adapter development, edit its `CORE_URL` as well as the preset's
 `CORE_PATH`; opting into a local adapter alone still downloads its pinned core.
 

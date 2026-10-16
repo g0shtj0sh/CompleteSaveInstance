@@ -23,7 +23,7 @@ gh repo clone g0shtj0sh/CompleteSaveInstance
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. Presets download the root engine pinned to `v0.4.4` by default.
+is required. Presets download the root engine pinned to `v0.5.0` by default.
 For local development, explicitly set `USE_LOCAL_CORE = true` and configure
 `CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
@@ -61,6 +61,9 @@ The inline `CustomOptions` documentation in `saveinstance.luau` gives more detai
 - `AlternativeWritefile`: uses an append-based writer where supported. Existing
   probes and fallbacks still need validation in Roblox for this distribution.
 - `ShowStatus`, `__DEBUG_MODE`: existing status display and console diagnostics.
+- `WorkBudgetMs`: cooperative Lua work budget, default `4` milliseconds and
+  clamped to `1–16`. Smaller values leave more scheduler time to the game and
+  can lengthen exports. This is not a guaranteed FPS setting or a native-call timeout.
 
 ## Verify the result
 
@@ -113,6 +116,31 @@ in `scriptJobs.bytecodeSeconds` and `decompileSeconds`.
 Start a new export with the new version to use the optimization. Existing runs
 keep their loaded engine; avoid starting another export in the same client
 while one is active.
+
+## Live progress and responsiveness
+
+Since 0.5.0, `ShowStatus` displays a progress bar below the current operation.
+The caption identifies exactly what is counted: a binary property column such
+as `ModuleScript.Source`, XML instances, or bytes written. Source counters advance
+after processing each instance, including cache hits and diagnostic placeholders.
+They do not certify successful recovery of every source.
+
+The bar resets for the next stage/property. It is not an overall export percentage
+or a time estimate. Preparation, collection, encoding, and compression can have
+unknown totals; those stages use an animated indicator without a percentage.
+The final completed state is set after the export function finishes; inspect the
+file in Studio to establish validity. The current meter is also in progress JSON.
+
+GUI refreshes are limited to 10 Hz. The default `WorkBudgetMs = 4` replaces the
+previous approximately 100 ms Lua work slice; large binary value loops check
+the budget every 256 values. XML traversal also yields periodically. Work is
+preserved, but more frequent scheduling can trade export throughput for game
+responsiveness. Native calls, compression, large allocations, and string copies
+can exceed the budget. Normal FPS cannot be guaranteed during a full export.
+
+An existing export keeps its loaded code. Use a new versioned preset on the
+next run to get the panel and scheduling changes; do not start a second export
+in the same client while one is active.
 
 ## Namespace changes
 

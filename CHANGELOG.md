@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.5.0 — 2026-10-17
+
+- Added a compact status panel with a progress bar below the current operation.
+  Binary property/source counts, XML instance counts, and post-write byte counts
+  drive each stage. Unknown totals show an indeterminate indicator, never a
+  percentage inferred from elapsed time. This is stage progress, not a whole-export ETA.
+- Throttled GUI refreshes to at most 10 Hz and released the heartbeat connection
+  with the existing export cleanup. Checkpoint reports include the current meter.
+- Added `WorkBudgetMs` (default 4, clamped to 1–16). Collection, property reads,
+  XML traversal, and large binary encoding loops now cooperate with the scheduler
+  more frequently. Binary buffers carry their own callback; no global hook is used.
+- Added post-append writer counters and tests that preserve exact output bytes,
+  including large segments and partial write failures.
+- Verified 32 binary encoders against 0.4.4 byte fixtures across cooperative yields.
+  Tested the native GUI's construction, bounds, counter width, and caption fit on
+  the connected client without replacing its ongoing export.
+
+These changes apply to the shared Luau engine used by both Ultra profiles.
+FPS during a full 0.5.0 export remains unmeasured. Native API calls, compression,
+and individual large allocations can still block the client beyond the Lua
+work budget. Existing exports keep their originally loaded engine.
+
 ## 0.4.4 — 2026-10-17
 
 - Removed the forced display-frame wait before every primary-engine bytecode

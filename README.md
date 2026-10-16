@@ -45,7 +45,10 @@ projects, start with Roblox Studio's built-in save and export features.
 - **Place and model serialization:** binary `.rbxl` / `.rbxm` and XML `.rbxlx` / `.rbxmx` paths.
 - **Configurable selection:** instance roots, exclusion lists, properties, and modes.
 - **Environment adapters:** detection and fallbacks for environment-specific APIs.
-- **Existing diagnostics:** console messages, status display, and selected write probes.
+- **Live diagnostics:** stage progress below the current operation, JSON checkpoints,
+  console messages, and selected write probes.
+- **Cooperative scheduling:** configurable Lua work slices, including large binary
+  loops, to leave more scheduler time to the game. Native pauses remain possible.
 - **Two entry points:** the primary `saveinstance.luau` and an older `saveinstance.lua` variant.
 
 The project includes an [interactive API Explorer](https://g0shtj0sh.github.io/CompleteSaveInstance/api/CompleteSaveInstance/),
@@ -70,7 +73,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.4/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/saveinstance.luau",
     true
 )
 local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()
