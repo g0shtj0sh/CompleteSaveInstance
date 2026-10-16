@@ -1,4 +1,4 @@
-title = "Universal Syn SaveInstance"
+title = "CompleteSaveInstance"
 
 [home]
 enabled = true
@@ -6,31 +6,26 @@ bannerImage = "logo.png"
 
 [docusaurus]
 favicon = "favicon.png"
-tagline = "A universal saveinstance revival. This is an independent, unofficial project. We are not affiliated with, endorsed by, or officially connected to Roblox Corporation. ''Luau'' is a trademark of Roblox Corporation."
-
+tagline = "Roblox instance archival. Accessible data. Explicit limits. Evidence before success."
 
 [[navbar.items]]
-href = "https://discord.gg/wx4ThpAsmw"
-label = "Discord"
+href = "https://github.com/g0shtj0sh/CompleteSaveInstance"
+label = "GitHub"
 position = "right"
 
 [[navbar.items]]
-href = "https://ko-fi.com/M4M1JNH5G"
-label = "Support"
+href = "https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/docs/USAGE.md"
+label = "Usage"
 position = "right"
 
 [navbar.logo]
 src = "favicon.png"
 
 [[footer.links]]
-href = "https://discord.gg/wx4ThpAsmw"
-label = "Discord"
-[[footer.links]]
-href = "https://ko-fi.com/M4M1JNH5G"
-label = "Support"
+href = "https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/NOTICE.md"
+label = "License & credits"
 
 [footer.logo]
 src = "favicon.png"
 width = 50
 height = 50
-

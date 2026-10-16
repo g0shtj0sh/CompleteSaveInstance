@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Documentation
-    url: https://luau.github.io/UniversalSynSaveInstance/
-    about: API reference and guides.
-  - name: Discord
-    url: https://discord.gg/wx4ThpAsmw
-    about: Ask questions and get support in our Discord server.
+  - name: Usage and compatibility
+    url: https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/docs/USAGE.md
+    about: Runtime requirements and first diagnostic.
+  - name: Troubleshooting
+    url: https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/docs/TROUBLESHOOTING.md
+    about: Missing output, crashes, and property omissions.

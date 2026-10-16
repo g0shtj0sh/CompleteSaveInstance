@@ -1,7 +1,10 @@
 --!native
 --!optimize 2
 --!divine-intellect
--- https://discord.gg/wx4ThpAsmw
+-- CompleteSaveInstance | modified 2026-10-16 by g0shtj0sh
+-- Source: https://github.com/g0shtj0sh/CompleteSaveInstance
+-- License: AGPL-3.0; see LICENSE and NOTICE.md. No warranty.
+-- Upstream credit: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw
 
 local function string_find(s, pattern, init)
 	return string.find(s, pattern, init, true)
@@ -1537,8 +1540,8 @@ do
 
 	--[[
 		For more info:
-		- https://github.com/luau/UniversalSynSaveInstance/blob/main/Tools/NotScriptable-Related/Potentially%20Missing%20Properties%20Dumper/Potentially%20Missing%20Properties%20Dumper.luau
-		- https://github.com/luau/UniversalSynSaveInstance/blob/main/Tools/NotScriptable-Related/NotScriptable%20Dumper/NotScriptable%20Dumper.py
+		- https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/Tools/NotScriptable-Related/Potentially%20Missing%20Properties%20Dumper/Potentially%20Missing%20Properties%20Dumper.luau
+		- https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/Tools/NotScriptable-Related/NotScriptable%20Dumper/NotScriptable%20Dumper.py
 		]]
 	local NotScriptableFixes = {
 		Instance = {
@@ -2942,14 +2945,14 @@ end
 local GLOBAL_ENV = getgenv and getgenv() or _G or shared
 
 --[=[
-    @class SynSaveInstance
-    Represents the options for saving instances with custom settings using the synsaveinstance function.
+    @class CompleteSaveInstance
+    Represents the options for saving instances with custom settings using the completeSaveInstance function.
 ]=]
 
 --- @interface CustomOptions table
 --- * Structure of the main CustomOptions table.
 --- * Note: Options are case-insensitive, meaning you can type `NilInstances` option as `nilInStaNces` and it still will be valid.
---- @within SynSaveInstance
+--- @within CompleteSaveInstance
 --- @field __DEBUG_MODE boolean -- This will print debug logs to console about unusual scenarios. Recommended to enable if you wish to help us improve our products and find bugs / issues with it! ___Default:___ false
 --- @field ReadMe boolean --___Default:___ true
 --- @field SafeMode boolean -- Kicks you before Saving, which keeps you safe. **HIGHLY RECOMMENDED TO KEEP ENABLED**. ___Default:___ true
@@ -2996,8 +2999,8 @@ local GLOBAL_ENV = getgenv and getgenv() or _G or shared
 --- @field TreatUnionsAsParts boolean -- * **RISKY:** Converts all UnionOperations to Parts. Useful if your Executor isn't able to save (read) Unions, because otherwise they will be invisible. ___Default:___ false (except Solara)
 
 --- @interface OptionsAliases
---- @within SynSaveInstance
---- Alias → Canonical option mapping for the [SynSaveInstance.CustomOptions] table.
+--- @within CompleteSaveInstance
+--- Alias → Canonical option mapping for the [CompleteSaveInstance.CustomOptions] table.
 --- Format: { Alias = CanonicalOption }
 --- These are resolved before user options are processed and cannot be modified at runtime.
 --- @field timeout string -- DecompileTimeout
@@ -3016,7 +3019,7 @@ local GLOBAL_ENV = getgenv and getgenv() or _G or shared
 --- @field StatusText string -- ShowStatus
 
 --- @interface OptionsAliasesInverse
---- @within SynSaveInstance
+--- @within CompleteSaveInstance
 --- Alias → Canonical option mapping with boolean inversion.
 --- Format: { Alias = CanonicalOption }
 --- These aliases invert the provided boolean value before applying it.
@@ -3030,27 +3033,27 @@ local GLOBAL_ENV = getgenv and getgenv() or _G or shared
 	Saves instances with specified options. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.1.0/",
 		SSI = "saveinstance",
 	}
 
-	local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+	local completeSaveInstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
 
-	local CustomOptions = { SafeMode = true, DecompileTimeout = 15, SaveBytecode = true }
+	local CustomOptions = { Decompile = false, SaveBytecode = false, SafeMode = false, KillAllScripts = false, BoostFPS = false }
 
-	synsaveinstance(CustomOptions)
+	completeSaveInstance(CustomOptions)
 	```
-	@within SynSaveInstance
+	@within CompleteSaveInstance
 	@yields
-	@param Parameter_1 variant<table, table<Instance>> -- Can either be [SynSaveInstance.CustomOptions table] or a filled with instances ({Instance}), (then it will be treated as ExtraInstances with an invalid mode and IsModel will be true).
-	@param Parameter_2 table -- [OPTIONAL] If present, then Parameter_2 will be assumed to be [SynSaveInstance.CustomOptions table]. And then if the Parameter_1 is an Instance, then it will be assumed to be [SynSaveInstance.CustomOptions table].Object. If Parameter_1 is a table filled with instances ({Instance}), then it will be assumed to be [SynSaveInstance.CustomOptions table].ExtraInstances and IsModel will be true). This exists for sake compatibility with `saveinstance(game, {})`
+	@param Parameter_1 variant<table, table<Instance>> -- Can either be [CompleteSaveInstance.CustomOptions table] or a filled with instances ({Instance}), (then it will be treated as ExtraInstances with an invalid mode and IsModel will be true).
+	@param Parameter_2 table -- [OPTIONAL] If present, then Parameter_2 will be assumed to be [CompleteSaveInstance.CustomOptions table]. And then if the Parameter_1 is an Instance, then it will be assumed to be [CompleteSaveInstance.CustomOptions table].Object. If Parameter_1 is a table filled with instances ({Instance}), then it will be assumed to be [CompleteSaveInstance.CustomOptions table].ExtraInstances and IsModel will be true). This exists for sake compatibility with `saveinstance(game, {})`
 ]=]
 
-local function synsaveinstance(CustomOptions, CustomOptions2)
-	if GLOBAL_ENV.USSI then
+local function completeSaveInstance(CustomOptions, CustomOptions2)
+	if GLOBAL_ENV.CSI then
 		return
 	end
-	GLOBAL_ENV.USSI = true
+	GLOBAL_ENV.CSI = true
 	-- do -- ? Causes issues on SirHurt (Kick lacking Capability "Consequences"), let threads operate on their default/preferred identity set by the developers
 	-- 	local setthreadidentity = global_container.setthreadidentity
 	-- 	if setthreadidentity then
@@ -3061,7 +3064,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 	local totalsize, chunks = 0, table.create(1)
 	local savebuffer, savebuffer_size = {}, 1
 	local header =
-		'<!-- Saved by UniversalSynSaveInstance (Join to Copy Games) https://discord.gg/wx4ThpAsmw --><roblox version="4">'
+		'<!-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw --><roblox version="4">'
 
 	local StatusText
 
@@ -3347,7 +3350,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		warn(text)
 
-		GLOBAL_ENV.USSI = nil
+		GLOBAL_ENV.CSI = nil
 		return
 	end
 
@@ -3449,7 +3452,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 	local IgnoreSharedStrings = OPTIONS.IgnoreSharedStrings
 	local SharedStringOverwrite = OPTIONS.SharedStringOverwrite
 
-	local ldeccache = GLOBAL_ENV.USSI_scriptcache
+	local ldeccache = GLOBAL_ENV.CSI_scriptcache
 
 	local DecompileIgnoring, ToSaveList, ldecompile, placename, elapse_t, SaveNotCreatableWillBeEnabled, RecoveredScripts
 
@@ -3459,7 +3462,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 	if ScriptCache and not ldeccache then
 		ldeccache = {}
-		GLOBAL_ENV.USSI_scriptcache = ldeccache
+		GLOBAL_ENV.CSI_scriptcache = ldeccache
 	end
 
 	if ToSaveInstance == game then
@@ -3535,12 +3538,12 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		end
 
 		if GLOBAL_ENV[placename] then -- ? AvoidFileOverwrite kinda messes with this, but shouldn't be an issue
-			-- warn("UniversalSynSaveInstance is already saving to this file")
+			-- warn("CompleteSaveInstance is already saving to this file")
 			return
 		end
 
 		GLOBAL_ENV[placename] = true
-		GLOBAL_ENV.USSI = nil
+		GLOBAL_ENV.CSI = nil
 
 		if mode ~= "scripts" then
 			IgnorePropertiesOfNotScriptsOnScriptsMode = nil
@@ -4448,7 +4451,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 													end
 												end
 
-												value = "-- Saved by UniversalSynSaveInstance (Join to Copy Games) https://discord.gg/wx4ThpAsmw\n\n"
+												value = "-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw\n\n"
 													.. (hasLinkedSource and "-- Original Source: https://assetdelivery.roblox.com/v1/asset/?" .. (LinkedSource_type or "id") .. "=" .. (LinkedSource or LinkedSource_Url) .. "\n\n" or "")
 													.. value
 											end
@@ -4653,7 +4656,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 						RecoveredScripts
 					) .. "\n" or "")
 					.. [[
-		Thank you for using UniversalSynSaveInstance (Join to Copy Games) https://discord.gg/wx4ThpAsmw.
+		Thank you for using CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw.
 
 		If you didn't save in Binary (rbxl) - it's recommended to save the game right away to take advantage of the binary format & to preserve values of certain properties if you used IgnoreDefaultProperties setting (as they might change in the future).
 		You can do that by going to FILE -> Save to File As -> Make sure File Name ends with .rbxl -> Save
@@ -4727,7 +4730,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		end
 
 		savebuffer[savebuffer_size] =
-			"</roblox><!-- Saved by UniversalSynSaveInstance (Join to Copy Games) https://discord.gg/wx4ThpAsmw -->"
+			"</roblox><!-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw -->"
 		savebuffer_size = savebuffer_size + 1
 		save_cache()
 		do
@@ -4838,8 +4841,8 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 		end
 	end
 
-	if OPTIONS.KillAllScripts and not GLOBAL_ENV.USSI_KAS then
-		GLOBAL_ENV.USSI_KAS = true
+	if OPTIONS.KillAllScripts and not GLOBAL_ENV.CSI_KAS then
+		GLOBAL_ENV.CSI_KAS = true
 		-- * partial credits @centerepic
 		game:GetService("ScriptContext"):SetTimeout(math.clamp(SaveCacheInterval * 0.000047, 20, 30))
 
@@ -4894,7 +4897,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 	if OPTIONS.ShowStatus then
 		do
-			local Exists = GLOBAL_ENV.USSI_statustext
+			local Exists = GLOBAL_ENV.CSI_statustext
 			if Exists then
 				Exists:Destroy()
 			end
@@ -4902,7 +4905,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		local StatusGui = Instance.new("ScreenGui")
 
-		GLOBAL_ENV.USSI_statustext = StatusGui
+		GLOBAL_ENV.CSI_statustext = StatusGui
 
 		StatusGui.DisplayOrder = 2e9
 		pcall(function() -- ? Compatibility with level 2
@@ -4911,7 +4914,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 
 		StatusText = Instance.new("TextLabel")
 
-		StatusText.Text = "Saving..."
+		StatusText.Text = "CSI | Saving..."
 
 		StatusText.BackgroundTransparency = 1
 		StatusText.Font = Enum.Font.Code
@@ -4980,7 +4983,7 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 					}
 				end
 				local msg =
-					"[SAVEINSTANCE SAFEMODE]\nSaving..\nDo NOT leave\nLVL7 Executor RECOMMENDED for more SAFETY\nTo Disable this: SafeMode=false (Less Protection)"
+					"[CompleteSaveInstance / SafeMode]\nSaving..\nDo NOT leave\nLVL7 Executor RECOMMENDED for more SAFETY\nTo Disable this: SafeMode=false (Less Protection)"
 				local function Kick()
 					LocalPlayer:Kick(msg)
 				end
@@ -5198,4 +5201,4 @@ local function synsaveinstance(CustomOptions, CustomOptions2)
 	end
 end
 
-return synsaveinstance
+return completeSaveInstance

@@ -1,0 +1,44 @@
+name: Validate repository
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Repository and Luau compilation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 2
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Check repository assets and documentation
+        run: python scripts/check_repository.py
+      - name: Install pinned Luau compiler
+        shell: bash
+        run: |
+          mkdir -p .tools/luau
+          curl --fail --location --retry 3 --output .tools/luau.zip https://github.com/luau-lang/luau/releases/download/0.742/luau-ubuntu.zip
+          echo "152058b98c60ff1f5b5ec9bca0b8eb37793cae161dd3a05608cc3d8738ba1a4d  .tools/luau.zip" | sha256sum --check
+          unzip -q .tools/luau.zip -d .tools/luau
+          chmod +x .tools/luau/luau-compile
+      - name: Compile both entry points without executing Roblox code
+        run: .tools/luau/luau-compile --null saveinstance.luau saveinstance.lua
+      - name: Check whitespace errors
+        run: git diff --check HEAD^ HEAD

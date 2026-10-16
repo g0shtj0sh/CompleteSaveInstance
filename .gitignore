@@ -1,7 +1,32 @@
-__pycache__
+# Local editor and interpreter state
+__pycache__/
+*.py[cod]
 .luaurc
-.vscode
-build
-docs
+.vscode/
+.idea/
+
+# Generated documentation, tools, and scratch space
+/build/
+/.tools/
+/.csi-tmp/
+/node_modules/
+.moonwave/node_modules/
+.moonwave/build/
+.moonwave/docs/
+.moonwave/.docusaurus/
 tempCodeRunnerFile.*
-test*.*
+
+# Original downloaded snapshot: retained locally, excluded from this repository
+/UniversalSynSaveInstance-main/
+
+# Local exports, diagnostics, and credentials
+*.rbxl
+*.rbxlx
+*.rbxm
+*.rbxmx
+completesaveinstance_cache/
+CompleteSaveInstance_Diagnostics/
+*.log
+.env
+.env.*
+!.env.example

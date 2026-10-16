@@ -1,116 +1,67 @@
-name: Bug Report
-description: Create a report to help us improve
-title: "[BUG] "
-labels: ["bug"]
-assignees: ["phoriah"]
+name: Bug report
+description: Report a reproducible CompleteSaveInstance issue.
+title: "[Bug] "
+labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug. Fill in the sections below so we can reproduce and fix the issue.
-
-  - type: checkboxes
-    id: duplicate-check
-    attributes:
-      label: Duplicate Check
-      description: Do not skip this.
-      options:
-        - label: I searched existing issues (both open & closed) and this isn't a duplicate.
-          required: true
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Describe the Bug
-      description: A clear and concise description of what the bug is.
-    validations:
-      required: true
-
+        Include observable evidence. Remove credentials and private content from attachments.
   - type: input
-    id: executor-emulator
+    id: revision
     attributes:
-      label: Executor (& Emulator if used) Name(s)
-      description: "For example: Fluxus v1, Delta, Wave, etc."
+      label: Source revision
+      description: Tag or full commit SHA, and entry point used.
+      placeholder: v0.1.0 / saveinstance.luau
     validations:
       required: true
-
   - type: input
-    id: game-links
+    id: environment
     attributes:
-      label: Game Link(s)
-      description: Always include, even if the bug happens on any game.
-      placeholder: "https://www.roblox.com/games/..."
+      label: Environment
+      description: Runtime name/version, Roblox version, and operating system.
     validations:
       required: true
-
   - type: textarea
-    id: screenshots
+    id: problem
     attributes:
-      label: Screenshots
-      description: "IMPORTANT: Always include a console screenshot (F9 or `/console`; also show your executor's built-in console if it has one)."
+      label: Expected and observed behavior
     validations:
       required: true
-
   - type: textarea
-    id: files
+    id: reproduction
     attributes:
-      label: Attached Files
-      description: Upload the saved files that you're having issues with to a platform like MEGA or Google Drive and attach the link.
+      label: Minimal reproduction
+      description: Steps on an experience you own or are authorized to test.
     validations:
-      required: false
-
+      required: true
   - type: textarea
-    id: script-used
+    id: options
     attributes:
-      label: Script Used
-      description: Your full script, including the options/settings you passed. Options matter.
+      label: Exact options
       render: lua
       value: |
-        local Params = {
-            RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
-            SSI = "saveinstance",
+        local options = {
+            Decompile = false,
+            SaveBytecode = false,
+            SafeMode = false,
+            KillAllScripts = false,
+            BoostFPS = false,
+            ShutdownWhenDone = false,
+            __DEBUG_MODE = true,
         }
-        local synsaveinstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
-
-        local Options = {} -- Documentation here https://luau.github.io/UniversalSynSaveInstance/api/SynSaveInstance
-
-        synsaveinstance(Options)
     validations:
-      required: false
-
+      required: true
   - type: textarea
-    id: steps
+    id: output
     attributes:
-      label: To Reproduce
-      description: Step-by-step instructions to reproduce the behavior.
-      placeholder: |
-        1. Go to '...'
-        2. Click on '...'
-        3. Scroll down to '...'
-        4. See error
+      label: File evidence and Studio result
+      description: Actual output path, file existence, size, and Studio opening/error. Say if not checked.
     validations:
-      required: false
-
+      required: true
   - type: textarea
-    id: expected
+    id: logs
     attributes:
-      label: Expected Behavior
-      description: What did you expect to happen instead?
-    validations:
-      required: false
-
-  - type: input
-    id: discord-tag
-    attributes:
-      label: My Discord Tag
-      description: So we can contact you for testing if needed.
-    validations:
-      required: false
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: Additional Context
-      description: Any other context about the problem here.
-    validations:
-      required: false
+      label: Relevant console messages
+      description: Include final messages and exact property omission messages.
+      render: text
