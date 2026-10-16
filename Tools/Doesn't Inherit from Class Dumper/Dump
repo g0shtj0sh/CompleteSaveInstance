@@ -1,0 +1,34 @@
+version-93202a13414c4131
+
+Classes that do NOT inherit from Object:
+----------------------------------------
+All classes inherit from Object
+
+Classes that do NOT inherit from Instance:
+----------------------------------------
+AnimatedImageTrack does not inherit from Instance
+AnimationNode does not inherit from Instance
+Capture does not inherit from Instance
+ConfigSnapshot does not inherit from Instance
+DataModelDiff does not inherit from Instance
+EditableImage does not inherit from Instance
+EditableMesh does not inherit from Instance
+ExecutedRemoteCommand does not inherit from Instance
+Logger does not inherit from Instance
+LuauExpression does not inherit from Instance
+MLSession does not inherit from Instance
+Object does not inherit from Instance
+OutputLink does not inherit from Instance
+PluginConnection does not inherit from Instance
+ScreenshotCapture does not inherit from Instance
+StudioActionOverride does not inherit from Instance
+TerrainIterateOperation does not inherit from Instance
+TerrainModifyOperation does not inherit from Instance
+TerrainReadOperation does not inherit from Instance
+TerrainWriteOperation does not inherit from Instance
+VideoCapture does not inherit from Instance
+VideoSampler does not inherit from Instance
+VirtualInput does not inherit from Instance
+VoxelBuffer does not inherit from Instance
+WebStreamClient does not inherit from Instance
+
