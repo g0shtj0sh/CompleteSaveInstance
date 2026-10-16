@@ -47,6 +47,7 @@ primary Luau source only. Markdown guides live in `docs/`, the homepage in
 The API UI lives in `website/ApiReference.jsx`; `scripts/docs.mjs` installs its
 component alias in the generated site configuration. The option generator
 updates both `docs/OPTIONS.md` and `website/api-data.json`.
+Use `.moonwave/sidebars.js` for guide ordering and the Script Presets category.
 The documentation workflow builds and checks pull requests; pushes to `main`
 also deploy to GitHub Pages. Do not commit generated `build/` or `node_modules/`.
 After changing source API comments, run `python scripts/generate_option_index.py`

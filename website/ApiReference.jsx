@@ -46,10 +46,13 @@ export default function ApiReference() {
         {data.groups.map(g=><button key={g} className={group===g?'csi-rail-link active':'csi-rail-link'} onClick={()=>setGroup(g)} aria-pressed={group===g}><span>{ICONS[g]}</span>{g}<b>{data.options.filter(o=>o.group===g).length}</b></button>)}
         <div className="csi-rail-label csi-space-top">RESOURCES</div>
         <Link className="csi-rail-link" to="/docs/intro"><span>↳</span>Getting started</Link>
-        <Link className="csi-rail-link" to="/docs/PRESETS"><span>▧</span>Script Presets</Link>
+        <details className="csi-preset-tree" open>
+          <summary>Script Presets</summary>
+          <Link className="csi-rail-link" to="/docs/PRESETS">Script Presets</Link>
+          <Link className="csi-rail-link" to="/docs/POTASSIUM">Potassium</Link>
+        </details>
         <Link className="csi-rail-link" to="/docs/TROUBLESHOOTING"><span>⌁</span>Troubleshooting</Link>
         <Link className="csi-rail-link" to="/docs/GEOMETRY"><span>◈</span>Missing geometry</Link>
-        <Link className="csi-rail-link" to="/docs/POTASSIUM"><span>K</span>Potassium edition</Link>
         <div className="csi-rail-status"><i/> v{data.version}<small>Public documentation</small></div>
       </aside>
       <main className="csi-reference">

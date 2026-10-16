@@ -113,6 +113,11 @@ html[data-theme='dark']:root {
 .csi-rail-brand small { display: block; color: #6f819a; font-size: 10px; margin-top: 2px; font-weight: 400; }
 .csi-rail-label { color: #60738e; font-size: 10px; font-weight: 650; letter-spacing: .14em; margin: 12px 12px 14px; }
 .csi-space-top { margin-top: 38px; }
+.csi-preset-tree { color: #93a4ba; margin: 6px 0; font-size: 13px; }
+.csi-preset-tree summary { padding: 10px 12px; cursor: pointer; font-weight: 550; }
+.csi-preset-tree summary:hover { color: #a1f4d3; }
+.csi-preset-tree .csi-rail-link { width: calc(100% - 23px); margin-left: 23px; padding-left: 14px; border-left: 1px solid #2a3c48; border-radius: 0; }
+@media (max-width: 700px) { .csi-rail .csi-preset-tree { display: none; } }
 .csi-rail-link { display: flex; width: 100%; gap: 11px; padding: 10px 12px; margin-block: 3px; align-items: center; color: #93a4ba; background: transparent; border: 1px solid transparent; border-radius: 7px; text-align: left; font: 500 13px var(--ifm-font-family-base); cursor: pointer; }
 .csi-rail-link>span { font-size: 18px; width: 18px; color: #6f819a; text-align: center; }
 .csi-rail-link b { margin-left: auto; font: 11px var(--ifm-font-family-monospace); color: #65758b; }
