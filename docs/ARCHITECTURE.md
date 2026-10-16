@@ -43,7 +43,7 @@ Actions to GitHub Pages.
 
 `Script Presets/presets.json` defines the four configurations. The generator
 combines them with a shared wrapper template. Wrappers perform a basic text
-write/read probe and load the pinned `v0.3.0` engine by default. Local development
+write/read probe and load the pinned `v0.4.0` engine by default. Local development
 requires an explicit `USE_LOCAL_CORE = true`. They record source identity,
 exceptions, and file existence in a JSON sidecar separately from file validity.
 The actual serializer is not duplicated.
@@ -67,6 +67,15 @@ that Studio can open the result.
 The API Explorer uses generated option metadata and preset values. The build
 integrates it through a webpack component alias in Moonwave's generated
 Docusaurus configuration; dependency source files remain untouched.
+
+## Executor adapters in 0.4.0
+
+Version 0.4.0 adds a narrow adapter argument to the primary source chunk.
+`Executors/Potassium/saveinstance.luau` supplies canonical native functions
+without global hooks or a second serializer. BinaryString reads can use its
+protected raw reader before the ordinary fallback chain; dedicated presets
+explicitly enable those reads. See [Potassium](POTASSIUM.md) for contracts and
+the reference review. The universal entry point still uses method discovery.
 
 ## Next engine work
 

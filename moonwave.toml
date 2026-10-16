@@ -27,6 +27,11 @@ href = "https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/README.fr.md
 label = "Français"
 position = "right"
 
+[[navbar.items]]
+to = "/docs/POTASSIUM"
+label = "Potassium"
+position = "left"
+
 [navbar.logo]
 src = "favicon.png"
 alt = "CompleteSaveInstance"

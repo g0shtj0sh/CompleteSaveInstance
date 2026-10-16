@@ -3,6 +3,7 @@ import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import data from './api-data.json';
+import PresetLauncher from './PresetLauncher';
 
 const ICONS = {Output: '↗', Selection: '▦', Scripts: '⌘', Properties: '◈', Players: '◎', Runtime: 'ϟ', Diagnostics: '⌁', Advanced: '⋯'};
 function lua(value, depth=0) {
@@ -28,12 +29,14 @@ export default function ApiReference() {
   const [group,setGroup]=useState('All options');
   const [query,setQuery]=useState('');
   const [presetId,setPresetId]=useState('UltraCompleteSveInstance');
+  const [profile,setProfile]=useState('Universal');
   const [overridesOnly,setOverridesOnly]=useState(false);
   const preset=data.presets.find(p=>p.id===presetId);
+  const presetOptions=profile==='Potassium'?preset.potassiumOptions:preset.options;
   const options=useMemo(()=>data.options.filter(o=>(group==='All options'||o.group===group)
-    && (!overridesOnly||Object.hasOwn(preset.options,o.name))
-    && (o.name+' '+o.type+' '+o.description).toLowerCase().includes(query.toLowerCase())),[group,query,preset,overridesOnly]);
-  const snippet='local options = '+lua(preset.options)+'\n\nlocal report = completeSaveInstance(options)';
+    && (!overridesOnly||Object.hasOwn(presetOptions,o.name))
+    && (o.name+' '+o.type+' '+o.description).toLowerCase().includes(query.toLowerCase())),[group,query,presetOptions,overridesOnly]);
+  const snippet='local options = '+lua(presetOptions)+'\n\nlocal report = completeSaveInstance(options)';
   return <Layout title="API Explorer" description="Search and explore every CompleteSaveInstance option, compare preset overrides, and copy a configuration.">
     <div className="csi-workspace">
       <aside className="csi-rail" aria-label="API categories">
@@ -46,6 +49,7 @@ export default function ApiReference() {
         <Link className="csi-rail-link" to="/docs/PRESETS"><span>▧</span>Script Presets</Link>
         <Link className="csi-rail-link" to="/docs/TROUBLESHOOTING"><span>⌁</span>Troubleshooting</Link>
         <Link className="csi-rail-link" to="/docs/GEOMETRY"><span>◈</span>Missing geometry</Link>
+        <Link className="csi-rail-link" to="/docs/POTASSIUM"><span>K</span>Potassium edition</Link>
         <div className="csi-rail-status"><i/> v{data.version}<small>Public documentation</small></div>
       </aside>
       <main className="csi-reference">
@@ -60,12 +64,12 @@ export default function ApiReference() {
             <div className="csi-results-heading"><h2>{group}</h2><span aria-live="polite">{options.length} results</span></div>
             <div className="markdown csi-option-list">
               {options.map(option=>{
-                const isOverride=Object.hasOwn(preset.options,option.name);
+                const isOverride=Object.hasOwn(presetOptions,option.name);
                 const description=option.description || 'Controls this aspect of the export. See the source for runtime behavior.';
                 return <section className="csi-option-card" key={option.name} id={option.name}>
                   <div className="csi-option-card-top"><a className="csi-option-name" href={'#'+option.name}>{option.name}</a><span className="csi-type-chip">{option.type}</span><Copy text={option.name} label="Copy name"/></div>
                   <p className="csi-option-description"><Inline text={description}/></p>
-                  <div className="csi-option-values"><div><span>DEFAULT</span><code>{option.default}</code></div>{isOverride&&<div className="csi-preset-value"><span>IN SELECTED PRESET</span><code>{lua(preset.options[option.name])}</code></div>}</div>
+                  <div className="csi-option-values"><div><span>DEFAULT</span><code>{option.default}</code></div>{isOverride&&<div className="csi-preset-value"><span>IN SELECTED PRESET</span><code>{lua(presetOptions[option.name])}</code></div>}</div>
                   <div className="csi-option-card-bottom"><span>{ICONS[option.group]} {option.group}</span><a href={'https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/saveinstance.luau#L'+option.line}>Source ↗</a></div>
                 </section>;
               })}
@@ -75,6 +79,7 @@ export default function ApiReference() {
             <section className="csi-return-panel"><h2>Export result</h2><code>completeSaveInstance(options) → ExportReport?</code><p>The primary engine returns collection counts and omitted property columns after an attempted export. <code>ok</code> means the export function completed; <code>validation</code> remains <code>unverified</code> until the file is inspected in Studio. Early aborts can return no report.</p></section>
           </article>
           <aside className="csi-recipe-column" aria-label="Preset configuration preview">
+            <PresetLauncher id={presetId} compact onProfileChange={setProfile} />
             <div className="csi-recipe"><div className="csi-recipe-label">CONFIGURATION PLAYGROUND <span>↗</span></div><h2>Start with a preset.</h2><p>See exactly which values override the engine defaults.</p><label htmlFor="csi-preset">Selected preset</label><select id="csi-preset" value={presetId} onChange={e=>setPresetId(e.target.value)}>{data.presets.map(p=><option key={p.id}>{p.id}</option>)}</select><div className="csi-code-title"><span><i/> Luau</span><Copy text={snippet} label="Copy options"/></div><pre tabIndex="0" aria-label="Selected preset configuration"><code>{snippet}</code></pre><Link className="csi-recipe-link" to="/docs/PRESETS">Launch a preset →</Link></div>
             <div className="csi-evidence-note"><span>◎</span><div><strong>Output ≠ verified backup</strong><p>Check the file and its diagnostic report, then inspect the result in Studio.</p><Link to="/docs/TROUBLESHOOTING">Read the verification guide ↗</Link></div></div>
             <div className="csi-source-stamp">GENERATED FROM PRIMARY LUAU SOURCE<br/><code>{data.sourceHash.slice(0,16)}</code></div>

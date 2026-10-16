@@ -13,6 +13,13 @@ ROOT = Path(__file__).resolve().parents[1]
 CATALOG = ROOT / "Script Presets" / "presets.json"
 
 
+def potassium_options(preset: dict) -> dict:
+    options = dict(preset["options"])
+    options["IgnoreSpecialProperties"] = False
+    options["AlternativeWritefile"] = preset["id"] != "DiagnosticSaveInstance"
+    return options
+
+
 def lua(value: object, level: int = 0) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
@@ -41,6 +48,7 @@ def render() -> dict[Path, str]:
     documented = set(re.findall(r"^--- (?:@field |\.)(\w+) ", source, re.MULTILINE))
     identifiers: set[str] = set()
     outputs: dict[Path, str] = {}
+    version = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))["version"]
     for preset in catalog["presets"]:
         identifier = preset["id"]
         if not re.fullmatch(r"[A-Za-z][A-Za-z0-9]*", identifier) or identifier in identifiers:
@@ -61,7 +69,15 @@ def render() -> dict[Path, str]:
                 if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
                     raise ValueError(f"{identifier}: {timeout} must be a positive per-job timeout")
         outputs[ROOT / "Script Presets" / f"{identifier}.luau"] = template.substitute(
-            PRESET_ID=identifier, SUMMARY=preset["summary"], STATUS=preset["status"], OPTIONS=lua(options)
+            PRESET_ID=identifier, SUMMARY=preset["summary"], STATUS=preset["status"], OPTIONS=lua(options),
+            VERSION=version, CORE_PATH="CompleteSaveInstance/saveinstance.luau",
+            CORE_URL_PATH="saveinstance.luau", PROFILE="Universal",
+        )
+        outputs[ROOT / "Executors/Potassium/Script Presets" / f"{identifier}.luau"] = template.substitute(
+            PRESET_ID=identifier, SUMMARY=preset["summary"] + " Potassium profile.", STATUS=preset["status"],
+            OPTIONS=lua(potassium_options(preset)), VERSION=version,
+            CORE_PATH="CompleteSaveInstance/Executors/Potassium/saveinstance.luau",
+            CORE_URL_PATH="Executors/Potassium/saveinstance.luau", PROFILE="Potassium",
         )
     if catalog["developmentTarget"] not in identifiers:
         raise ValueError("Development target is missing from the catalog")
@@ -77,7 +93,7 @@ def render() -> dict[Path, str]:
         lines += [f"## [{identifier}]({identifier}.luau)", "", preset["summary"], "",
                   f"Status: `{preset['status']}`.", "", "Run this preset:", "", "```lua",
                   "loadstring(game:HttpGet(",
-                  f'    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/Script%20Presets/{identifier}.luau",',
+                  f'    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v{version}/Script%20Presets/{identifier}.luau",',
                   "    true", "))()", "```", "", "Options:", "", "```lua", lua(preset["options"]), "```", ""]
     lines += [
         "## Running a preset", "",
@@ -85,7 +101,7 @@ def render() -> dict[Path, str]:
         "```text", "CompleteSaveInstance/", "  saveinstance.luau", "  Script Presets/",
         "    UltraCompleteSveInstance.luau", "```", "",
         "Execute the chosen preset through the runtime's local script facility, or use the versioned loader above.", "",
-        "The preset downloads the engine pinned to `v0.3.0` by default, avoiding stale local copies.",
+        f"The preset downloads the engine pinned to `v{version}` by default, avoiding stale local copies.",
         "For local development, explicitly set `USE_LOCAL_CORE = true` and adjust `CORE_PATH`.",
         "No GitHub token is required. The runtime still needs HTTP access and file APIs.", "",
         "The wrapper performs a basic text write/read probe, uses a unique output filename, and checks file existence when available.",
@@ -96,6 +112,7 @@ def render() -> dict[Path, str]:
         "Edit `presets.json`, then run `python scripts/generate_presets.py` from the repository root.",
         "The serializer is shared; engine fixes apply to every preset without copying the core.", "",
         "See [the preset guide](../docs/PRESETS.md) for differences, limits, and the Ultra development focus.", "",
+        "Potassium users can use the [dedicated engine and presets](../Executors/Potassium/README.md).", "",
     ]
     outputs[ROOT / "Script Presets" / "README.md"] = "\n".join(lines)
     return outputs
@@ -112,11 +129,12 @@ def main() -> int:
             if not path.is_file() or path.read_text(encoding="utf-8") != content:
                 stale.append(str(path.relative_to(ROOT)))
         else:
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content, encoding="utf-8", newline="\n")
     if stale:
         print("Regenerate presets: " + ", ".join(stale), file=sys.stderr)
         return 1
-    print(f"Preset catalog {'checked' if args.check else 'generated'} ({len(outputs) - 1} executable presets).")
+    print(f"Preset catalog {'checked' if args.check else 'generated'} ({len(outputs) - 1} executable presets, Universal + Potassium).")
     return 0
 
 

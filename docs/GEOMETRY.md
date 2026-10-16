@@ -40,7 +40,15 @@ Property auditing currently covers **binary columns only**. XML reports use
 `propertyAudit: "not_instrumented_for_xml"`; zero recorded omissions there
 does not mean every property was readable.
 
-## What changed in 0.3.0
+## Reader changes
+
+For Potassium, the [dedicated profile](POTASSIUM.md) in 0.4.0 additionally
+attempts raw `getbspval` reads before the ordinary hidden-property reader.
+Its report includes `runtimeAdapter.capabilities.getbspval` and
+`runtimeAdapter.binaryStringReads` counters. A successful byte read does not
+establish that the road was serialized correctly or reopened successfully.
+
+The following reader fix was introduced in 0.3.0 and remains in the current engine.
 
 An ordinary hidden-property read failure previously marked its entire datatype
 as unsupported. For example, one inaccessible BinaryString could prevent later

@@ -4,6 +4,13 @@
 
 # CompleteSaveInstance
 
+La [documentation des presets](https://g0shtj0sh.github.io/CompleteSaveInstance/docs/PRESETS/)
+propose un bouton **Copier le script** pour chaque configuration, avec le choix
+**Universal / Potassium**. Le [dossier Potassium](Executors/Potassium/README.md)
+contient une entrée adaptée et quatre presets : lectures binaires natives,
+compression LZ4 contrôlée et rapports détaillés. Les résultats réels restent à
+vérifier dans Studio.
+
 **Une base claire pour sauvegarder les instances Roblox accessibles.**
 
 [Site de documentation](https://g0shtj0sh.github.io/CompleteSaveInstance/) · [Script Presets](Script%20Presets/README.md) · [English](README.md) · [Utilisation](docs/USAGE.md) · [Dépannage](docs/TROUBLESHOOTING.md) · [Feuille de route](docs/ROADMAP.md)

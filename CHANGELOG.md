@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.4.0 — 2026-10-16
+
+- Added direct runnable-script copy buttons to all preset sections and the API
+  Explorer, with Universal/Potassium selection and manual clipboard fallback.
+- Added `Executors/Potassium/` with a dedicated entry point and four generated
+  presets sharing the primary serializer.
+- Added native raw BinaryString reads through getbspval, explicit API bindings,
+  native LZ4 candidate validation, and profile/capability/read-counter reports.
+- Enabled the existing append writer for Potassium Map, Scripts, and Ultra.
+- Reviewed all 198 pages in the official Potassium reference and documented
+  adopted APIs and deferred integrations without duplicating its source text.
+- Expanded mock coverage to both sets of presets and adapter contracts.
+
+Installed Potassium behavior and the missing road still require a fresh Roblox
+export and Studio inspection. The universal path retains its existing fallbacks.
+
 ## 0.3.0 — 2026-10-16
 
 - Replaced the API's large type block with a searchable option explorer,

@@ -4,9 +4,9 @@
 -- License: AGPL-3.0. See LICENSE and NOTICE.md for upstream attribution.
 
 -- Relative to the runtime's file workspace, not the Git checkout on your PC.
-local CORE_PATH = "CompleteSaveInstance/saveinstance.luau"
+local CORE_PATH = "$CORE_PATH"
 local USE_LOCAL_CORE = false -- opt in explicitly when developing a local engine
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/saveinstance.luau"
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v$VERSION/$CORE_URL_PATH"
 local PRESET_ID = "$PRESET_ID"
 local options = $OPTIONS
 
@@ -79,7 +79,8 @@ local report = type(exportReport) == "table" and exportReport or {
 	propertyAudit = "unavailable_from_this_core",
 }
 report.preset = PRESET_ID
-report.wrapperVersion = "0.3.0"
+report.wrapperVersion = "$VERSION"
+report.profile = "$PROFILE"
 report.sourceOrigin = sourceOrigin
 report.sourceBytes = sourceBytes
 report.wrapperError = not ok and tostring(result) or nil
@@ -108,8 +109,8 @@ end
 if report.criticalGeometryOmissions and report.criticalGeometryOmissions > 0 then
 	warn(prefix .. tostring(report.criticalGeometryOmissions) .. " geometry/terrain property columns were omitted. See the report; missing road geometry is not repaired by a completed export.")
 end
-if report.engineVersion ~= "0.3.0" then
-	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.3.0. Check for an outdated local CORE_PATH.")
+if report.engineVersion ~= "$VERSION" then
+	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected $VERSION. Check for an outdated local CORE_PATH.")
 end
 if not ok then
 	fail("Export failed. Check CORE_PATH and console details: " .. tostring(result))

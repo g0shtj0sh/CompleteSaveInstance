@@ -41,10 +41,12 @@ jobs:
           unzip -q .tools/luau.zip -d .tools/luau
           chmod +x .tools/luau/luau-compile .tools/luau/luau
       - name: Compile both entry points without executing Roblox code
-        run: .tools/luau/luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/"*.luau
+        run: .tools/luau/luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/"*.luau Executors/Potassium/saveinstance.luau "Executors/Potassium/Script Presets/"*.luau
       - name: Exercise preset preflight and output evidence with a mocked engine
         run: python scripts/test_presets.py --luau .tools/luau/luau
       - name: Check actual property-reader regressions
         run: python scripts/test_property_reads.py --luau .tools/luau/luau
+      - name: Check Potassium adapter contracts
+        run: python scripts/test_potassium.py --luau .tools/luau/luau
       - name: Check whitespace errors
         run: git diff --check HEAD^ HEAD

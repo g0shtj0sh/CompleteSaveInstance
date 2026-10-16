@@ -7,6 +7,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
+from generate_presets import potassium_options
 
 ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / "docs/OPTIONS.md"
@@ -45,6 +46,9 @@ def api_data() -> str:
             "sourceHash": hashlib.sha256(source.encode()).hexdigest(),
             "groups": list(GROUPS), "options": options, "aliases": aliases,
             "presets": json.loads((ROOT / "Script Presets/presets.json").read_text())["presets"]}
+    data["profiles"] = ["Universal", "Potassium"]
+    for preset in data["presets"]:
+        preset["potassiumOptions"] = potassium_options(preset)
     return json.dumps(data, ensure_ascii=False, indent=2) + "\n"
 
 

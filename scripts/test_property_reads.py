@@ -15,6 +15,9 @@ local Anonymizers = nil
 local InstancesOverrides = {}
 local decompileIgnoreMap = {}
 local gethiddenproperty_fallback = nil
+local OPTIONS = {IgnoreSpecialProperties = false}
+local adapterBinaryReader
+local adapterBinaryReads = {attempts = 0, successes = 0, failures = 0}
 local calls = {}
 local function saveExecState() end
 local function ensureTextRendered() end
@@ -51,7 +54,30 @@ GHP = {BinaryString = "failed", string = "ok", NetAssetRef = "crashed"}
 __MIGRATION__
 assert(GHP.BinaryString == nil and GHP.string == "ok" and GHP.NetAssetRef == "crashed")
 assert(ExecState.ghpSchema == 2)
+GHP = {}
+GHPDatatypeState = {}
+adapterBinaryReader = function(_, key)
+    if key == "SmoothGrid" then return "\0\255RAW_TERRAIN" end
+    if key == "MeshData" then error("native reader rejected property") end
+    if key == "EmptyGrid" then return "" end
+    if key == "OptionalRef" then return false end
+    return "can't get value"
+end
+assert(readProperty({}, prop("SmoothGrid")) == "\0\255RAW_TERRAIN", "Adapter bytes must remain unchanged")
+assert(readProperty({}, prop("MeshData")) == "UNION_BYTES", "Native Lua error must fall back to the ordinary reader")
+assert(readProperty({}, prop("EmptyGrid")) == "", "Empty binary data remains valid")
+assert(readProperty({}, prop("OptionalRef", "Class")) == nil, "Invalid adapter return must use existing valid nil handling")
+assert(readProperty({}, prop("SerializedOverrides")) == __BREAK, "Error strings must not be serialized as geometry")
+assert(adapterBinaryReads.attempts == 5 and adapterBinaryReads.successes == 2 and adapterBinaryReads.failures == 3)
+local overridden = {}
+InstancesOverrides[overridden] = {Properties = {SmoothGrid = "OVERRIDE"}}
+assert(readProperty(overridden, prop("SmoothGrid")) == "OVERRIDE", "Explicit instance override must retain precedence")
+assert(adapterBinaryReads.attempts == 5)
+OPTIONS.IgnoreSpecialProperties = true
+assert(readProperty({}, prop("SmoothGrid")) == "TERRAIN_BYTES")
+assert(adapterBinaryReads.attempts == 5, "Special-property opt-out must bypass native adapter")
 print("Property-reader regression scenarios passed: unrelated failures, terrain, union data, valid nil, self-check block, crash block, persisted failure, cache migration.")
+print("Adapter-reader scenarios passed: raw binary, empty data, Lua errors, wrong type, error strings, counters, opt-out.")
 '''
 
 

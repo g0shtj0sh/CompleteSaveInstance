@@ -13,6 +13,7 @@ python scripts/generate_presets.py --check
 python scripts/generate_option_index.py --check
 python scripts/test_presets.py --luau luau
 python scripts/test_property_reads.py --luau luau
+python scripts/test_potassium.py --luau luau
 luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/DiagnosticSaveInstance.luau" "Script Presets/MapSaveInstance.luau" "Script Presets/ScriptsSaveInstance.luau" "Script Presets/UltraCompleteSveInstance.luau"
 git diff --check
 ```
@@ -26,6 +27,10 @@ a Studio reopening check before being described as validated.
 Edit `Script Presets/presets.json` and regenerate the executable wrappers with
 `python scripts/generate_presets.py`. They share the engine instead of copying it.
 The mock scenarios test wrapper behavior; they do not exercise Roblox APIs.
+The generator also produces `Executors/Potassium/Script Presets/` with explicit
+property-reader and writer overrides. Compile those wrappers and the dedicated
+entry point as well. Keep native adaptation in that entry point and the narrow
+shared adapter interface; do not duplicate the serializer.
 
 Build the website with Node 22+:
 

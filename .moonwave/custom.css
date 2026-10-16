@@ -204,6 +204,25 @@ html[data-theme='dark']:root {
 .csi-recipe pre { font-size: 11px; }
 .csi-alias-panel>p,.csi-return-panel p { font-size: 14px; }
 /* Developer portal. */
+/* Runnable preset launchers, shared by the guides and API Explorer. */
+.csi-launcher { margin: 24px 0 32px; border: 1px solid #315247; border-radius: 11px; background: #0c1720; overflow: hidden; max-width: 100%; }
+.csi-launcher-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 15px 18px; border-bottom: 1px solid #253e39; }
+.csi-launcher-top>span { font: 10px var(--ifm-font-family-monospace); letter-spacing: .08em; color: #a2ddc9; }
+.csi-launcher-top small { margin-left: 10px; color: #647e8a; font-size: 10px; }
+.csi-profile-picker { display: inline-flex; gap: 4px; padding: 3px; border: 1px solid #2d4149; border-radius: 6px; background: #09121b; }
+.csi-profile-picker button { border: 0; background: transparent; color: #8ea4b9; padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer; }
+.csi-profile-picker button[aria-pressed='true'] { background: #1a3b30; color: #a2f8d7; }
+.csi-launcher pre { margin: 0; background: #080f19; border: 0; border-radius: 0; color: #b0cce1; padding: 22px 18px; font-size: 12px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.csi-launcher-bottom { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 14px 18px; border-top: 1px solid #253e39; }
+.csi-launch-copy { border: 1px solid #84efc7; border-radius: 6px; color: #09271c; background: #84efc7; padding: 9px 15px; font: 600 12px var(--ifm-font-family-base); cursor: pointer; }
+.csi-launch-copy:hover { background: #b0ffdf; }
+.csi-launch-copy span { margin-left: 12px; }
+.csi-launch-feedback { font-size: 11px; color: #98baa9; }
+.csi-launcher textarea { display: block; width: calc(100% - 36px); min-height: 140px; margin: 0 18px 18px; padding: 12px; background: #09121b; color: #c9e3ef; border: 1px solid #49695b; }
+.csi-launcher-compact { margin: 0 0 24px; }
+.csi-launcher-compact .csi-launcher-top,.csi-launcher-compact .csi-launcher-bottom { padding: 14px; }
+.csi-launcher-compact pre { padding: 15px 14px; font-size: 11px; }
+.csi-recipe-column { position: static; }
 .csi-home { background: radial-gradient(ellipse at 75% 8%,#15372e66,transparent 45%),#080d15; }
 .csi-hero { max-width: 1250px; padding-top: 86px; padding-bottom: 74px; grid-template-columns: 1.2fr 1fr; gap: 45px; }
 .csi-hero h1 { font-size: clamp(3rem,5.7vw,5.3rem); font-weight: 600; line-height: 1.04; }

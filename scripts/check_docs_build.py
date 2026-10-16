@@ -26,6 +26,7 @@ def main() -> int:
         "index.html", "api/CompleteSaveInstance/index.html", "docs/intro/index.html",
         "docs/PRESETS/index.html", "docs/OPTIONS/index.html", "docs/USAGE/index.html", "docs/TROUBLESHOOTING/index.html",
         "docs/GEOMETRY/index.html",
+        "docs/POTASSIUM/index.html",
         "docs/ARCHITECTURE/index.html", "docs/ROADMAP/index.html", "changelog/index.html", "logo.png", "favicon.png",
     )
     errors = [f"Missing built route or asset: {name}" for name in required if not (BUILD / name).is_file()]
@@ -52,6 +53,15 @@ def main() -> int:
     for preset in catalog["presets"]:
         if preset["id"] not in presets_page:
             errors.append(f"Preset missing from website: {preset['id']}")
+        if f'data-preset="{preset["id"]}"' not in presets_page:
+            errors.append(f"Runnable copy launcher missing for {preset['id']}")
+        if preset["id"] + ".luau" not in presets_page:
+            errors.append(f"Runnable URL missing for {preset['id']}")
+    if presets_page.count('class="csi-launch-copy"') != 4:
+        errors.append("Expected a direct copy button for each universal preset section")
+    potassium = (BUILD / "docs/POTASSIUM/index.html").read_text(encoding="utf-8")
+    if potassium.count('data-profile="Potassium"') != 4 or potassium.count('class="csi-launch-copy"') != 4:
+        errors.append("Expected four Potassium preset copy launchers")
     if catalog["developmentTarget"] not in home:
         errors.append("Homepage does not identify the current development target")
     if not list(BUILD.glob("*search-doc*.json")) or not list(BUILD.glob("*lunr-index*.json")):

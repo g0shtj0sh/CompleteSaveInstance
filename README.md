@@ -48,7 +48,7 @@ projects, start with Roblox Studio's built-in save and export features.
 - **Existing diagnostics:** console messages, status display, and selected write probes.
 - **Two entry points:** the primary `saveinstance.luau` and an older `saveinstance.lua` variant.
 
-Version 0.3.0 adds an [interactive API Explorer](https://g0shtj0sh.github.io/CompleteSaveInstance/api/CompleteSaveInstance/),
+The project includes an [interactive API Explorer](https://g0shtj0sh.github.io/CompleteSaveInstance/api/CompleteSaveInstance/),
 fixes datatype-wide suppression after an individual hidden-property failure,
 and records binary geometry omissions in preset JSON reports. See the
 [missing geometry guide](docs/GEOMETRY.md) when an exported surface is absent.
@@ -65,7 +65,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.0/saveinstance.luau",
     true
 )
 local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()
@@ -94,6 +94,12 @@ are public. No access token is required. The root engine is pinned to the projec
 tag; inherited external helpers are not yet pinned.
 
 ## Script Presets
+
+The [preset documentation](https://g0shtj0sh.github.io/CompleteSaveInstance/docs/PRESETS/)
+has a **Copier le script** button for every configuration, with Universal and
+Potassium profiles. The [Potassium edition](Executors/Potassium/README.md)
+adds explicit native API bindings and raw binary-property reads to the shared
+engine; it includes its own four generated presets.
 
 Choose an executable configuration from [Script Presets](Script%20Presets/README.md):
 

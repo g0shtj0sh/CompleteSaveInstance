@@ -6,6 +6,10 @@
 -- License: AGPL-3.0; see LICENSE and NOTICE.md. No warranty.
 -- Upstream credit: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw
 
+-- Optional executor adapter supplied by the dedicated entry point, never a global hook.
+local RuntimeAdapter = ... or {}
+assert(type(RuntimeAdapter) == "table", "Runtime adapter must be a table")
+
 local function string_find(s, pattern, init)
 	return string.find(s, pattern, init, true)
 end
@@ -64,8 +68,8 @@ do
 	)()
 end
 
-local global_container
-do
+local global_container = RuntimeAdapter.globals
+if not global_container then
 	local filename = "UniversalMethodFinder"
 
 	local finder
@@ -103,7 +107,7 @@ local gethiddenproperty = global_container.gethiddenproperty
 local gethiddenproperty_fallback
 
 -- These should be universal enough
-local lz4compress = lz4compress
+local lz4compress = RuntimeAdapter.lz4compress or lz4compress
 local zstdcompress = zstdcompress
 local appendfile = appendfile
 local delfile = delfile
@@ -3661,7 +3665,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.0/",
 		SSI = "saveinstance",
 	}
 
@@ -3688,7 +3692,7 @@ local function completeSaveInstance(...)
 	GLOBAL_ENV.CSI = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.3.0",
+		engineVersion = "0.4.0",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -3697,6 +3701,18 @@ local function completeSaveInstance(...)
 		propertyFailures = {},
 		classCounts = {},
 	}
+	local adapterBinaryReader = RuntimeAdapter.readBinaryString
+	local adapterBinaryReads = { attempts = 0, successes = 0, failures = 0 }
+	if RuntimeAdapter.name then
+		ExportReport.runtimeAdapter = {
+			name = RuntimeAdapter.name,
+			executorVersion = RuntimeAdapter.executorVersion,
+			sharedCoreUrl = RuntimeAdapter.sharedCoreUrl,
+			sharedCoreBytes = RuntimeAdapter.sharedCoreBytes,
+			capabilities = RuntimeAdapter.capabilities,
+			binaryStringReads = adapterBinaryReads,
+		}
+	end
 	-- do -- ? Causes issues on SirHurt (Kick lacking Capability "Consequences"), let threads operate on their default/preferred identity set by the developers
 	-- 	local setthreadidentity = global_container.setthreadidentity
 	-- 	if setthreadidentity then
@@ -4927,6 +4943,17 @@ local function completeSaveInstance(...)
 		end
 
 		local Category, Optional = property.Category, property.Optional
+		-- Potassium's getbspval returns raw bytes when base64=false. Try it
+		-- independently of GHP's datatype guards; its Lua errors fall through.
+		if ValueType == "BinaryString" and adapterBinaryReader and not OPTIONS.IgnoreSpecialProperties then
+			adapterBinaryReads.attempts += 1
+			local ok, value = pcall(adapterBinaryReader, instance, PropertyName)
+			if ok and type(value) == "string" and not filterPropVal(value, property, Category, Optional) then
+				adapterBinaryReads.successes += 1
+				return anonymize(value, ValueType)
+			end
+			adapterBinaryReads.failures += 1
+		end
 
 		if CanRead ~= false then
 			local GHPKey = (Category == "Enum" or Category == "Class") and Category or ValueType
@@ -5422,7 +5449,7 @@ local function completeSaveInstance(...)
 							or propName == "Materials" or propName == "MeshData" or propName == "MeshData2"
 							or propName == "ChildData" or propName == "ChildData2" or propName == "AssetId"
 							or propName == "MeshId" or propName == "MeshID" or propName == "SolidMeshHolder"
-							or propName == "PhysicsData" or propName == "Content"
+							or propName == "PhysicsData" or propName == "PhysicalConfigData" or propName == "Content"
 						local critical = geometryClass and geometryProperty
 						if critical then
 							ExportReport.criticalGeometryOmissions += 1

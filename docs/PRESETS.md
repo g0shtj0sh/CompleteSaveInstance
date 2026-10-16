@@ -5,15 +5,23 @@ title: Script Presets
 
 # Script Presets
 
+import PresetLauncher from '@site/src/csi/PresetLauncher';
+
 Preset scripts select a configuration for the shared CompleteSaveInstance
 engine. They do not duplicate the serializer. The current development focus is
 **UltraCompleteSveInstance**, the experimental maximum-coverage configuration.
+
+Choose **Universal** or **Potassium**, then click **Copier le script**. Each
+button copies the complete runnable loader shown below it. Potassium has a
+[dedicated engine and guide](POTASSIUM.md) with native binary-property reads.
 
 ## DiagnosticSaveInstance
 
 An initial diagnostic with decompilation, bytecode capture, nil instances, and
 compression disabled. Uses fallback property access. Start here to separate
 file-writing and serialization failures from more advanced work.
+
+<PresetLauncher id="DiagnosticSaveInstance" />
 
 ## MapSaveInstance
 
@@ -22,11 +30,15 @@ scene properties and keeps default runtime-service exclusions. This is not a
 strict map-only filter: accessible UI, sound, and other non-script content can
 also be included.
 
+<PresetLauncher id="MapSaveInstance" />
+
 ## ScriptsSaveInstance
 
 An authorized script-focused export using the engine's `scripts` mode, bounded
 decompilation and bytecode timeouts. Server-only scripts remain unavailable.
 Structural instances can still appear as containers.
+
+<PresetLauncher id="ScriptsSaveInstance" />
 
 ## UltraCompleteSveInstance
 
@@ -40,13 +52,15 @@ accessible place content as possible. It is not a promise of complete capture
 or a previously verified fix. Timeouts are bounded. `SafeMode`, script
 termination, forced shutdown, and rendering changes stay disabled.
 
+<PresetLauncher id="UltraCompleteSveInstance" />
+
 ## Versioned loaders
 
 Run a preset in a compatible environment with HTTP access and file APIs:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.3.0/Script%20Presets/UltraCompleteSveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.0/Script%20Presets/UltraCompleteSveInstance.luau",
     true
 ))()
 ```
