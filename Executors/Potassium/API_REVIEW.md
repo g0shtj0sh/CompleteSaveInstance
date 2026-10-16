@@ -29,6 +29,10 @@ Downloaded reference text is not redistributed in this repository.
 - [identifyexecutor](https://docs.potassium.pro/api-reference/Miscellaneous%20Library/identifyexecutor):
   reject other runtimes before downloading the core and include the version in
   the export report. No device identifier is read.
+- [decompile](https://docs.potassium.pro/api-reference/Script%20Library/decompile):
+  since 0.4.2, use the bytecode-string overload when the primary engine already
+  read and cached a script's bytes. This avoids a second Instance lookup inside
+  the native decompiler. Deadlines still cannot preempt a blocked native call.
 
 ## Libraries reviewed
 

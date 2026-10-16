@@ -24,7 +24,7 @@ for _, scenario in {"success", "missing-bsp", "wrong-executor", "identify-error"
     env.crypt = {base64encode=function() return "B64" end, base64decode=function() return "RAW" end, lz4compress=function() return "LZ4" end}
     env.game = {HttpGet=function(_, url)
         fetched = true
-        assert(string.find(url, "/v0.4.1/saveinstance.luau", 1, true))
+        assert(string.find(url, "/v0.4.2/saveinstance.luau", 1, true))
         return "SHARED_CORE"
     end}
     env.warn = function() warned = true end
@@ -39,11 +39,13 @@ for _, scenario in {"success", "missing-bsp", "wrong-executor", "identify-error"
     end
     local chunk = assert(loadstring(source))
     setfenv(chunk, env)
-    local ok, engine = pcall(chunk)
+    local progressSink=function() end
+    local ok, engine = pcall(chunk,{onProgress=progressSink})
     local valid = scenario == "success" or scenario == "missing-bsp"
     assert(ok == valid, scenario)
     if valid then
         assert(fetched and captured.name == "Potassium" and captured.executorVersion == "test-build")
+        assert(captured.onProgress==progressSink, "Dedicated entry must preserve the wrapper's progress sink")
         assert(captured.globals.gethiddenproperty == env.gethiddenproperty)
         assert(captured.globals.base64encode == env.crypt.base64encode)
         assert(captured.lz4compress == env.crypt.lz4compress)

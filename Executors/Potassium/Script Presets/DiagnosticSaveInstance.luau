@@ -6,7 +6,7 @@
 -- Relative to the runtime's file workspace, not the Git checkout on your PC.
 local CORE_PATH = "CompleteSaveInstance/Executors/Potassium/saveinstance.luau"
 local USE_LOCAL_CORE = false -- opt in explicitly when developing a local engine
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/Executors/Potassium/saveinstance.luau"
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/Executors/Potassium/saveinstance.luau"
 local PRESET_ID = "DiagnosticSaveInstance"
 local options = {
 	mode = "optimized",
@@ -59,15 +59,41 @@ local started = os.clock()
 local exportReport
 local sourceOrigin
 local sourceBytes
+local progressPath = options.FilePath .. ".progress.json"
+local lastProgressLog, progressWriteFailed = -math.huge, false
+local latestProgress
+local function onProgress(progress)
+	latestProgress = progress
+	progress.preset = PRESET_ID
+	progress.profile = "Potassium"
+	progress.wrapperVersion = "0.4.2"
+	progress.sourceOrigin = sourceOrigin
+	progress.validation = "unverified"
+	local wrote, writeError = pcall(function()
+		writefile(progressPath, game:GetService("HttpService"):JSONEncode(progress))
+	end)
+	if not wrote and not progressWriteFailed then
+		progressWriteFailed = true
+		warn(prefix .. "Could not write progress checkpoint: " .. tostring(writeError))
+	end
+	if os.clock() - lastProgressLog >= 10 or progress.phase == "completed" or progress.phase == "failed" then
+		lastProgressLog = os.clock()
+		local detail = progress.detail or {}
+		print(prefix .. "Progress: " .. tostring(progress.phase) .. " | " .. tostring(detail.operation or detail.property or "") .. " | " .. tostring(detail.path or detail.class or detail.outputPath or ""))
+	end
+end
+print(prefix .. "Progress checkpoint: " .. progressPath)
 local ok, result = xpcall(function()
 	local source
 	if USE_LOCAL_CORE then
 		print(prefix .. "Loading local core: " .. CORE_PATH)
 		sourceOrigin = CORE_PATH
+		onProgress({ phase = "loading-core" })
 		source = readfile(CORE_PATH)
 	else
 		print(prefix .. "Loading pinned core: " .. CORE_URL)
 		sourceOrigin = CORE_URL
+		onProgress({ phase = "loading-core" })
 		source = game:HttpGet(CORE_URL, true)
 	end
 	sourceBytes = #source
@@ -76,7 +102,8 @@ local ok, result = xpcall(function()
 	if not chunk then
 		error("Core compilation failed: " .. tostring(compileError), 0)
 	end
-	local completeSaveInstance = chunk()
+	onProgress({ phase = "loading-dependencies" })
+	local completeSaveInstance = chunk({ onProgress = onProgress })
 	if type(completeSaveInstance) ~= "function" then
 		error("Core did not return an export function", 0)
 	end
@@ -95,10 +122,12 @@ local report = type(exportReport) == "table" and exportReport or {
 	propertyAudit = "unavailable_from_this_core",
 }
 report.preset = PRESET_ID
-report.wrapperVersion = "0.4.1"
+report.wrapperVersion = "0.4.2"
 report.profile = "Potassium"
 report.sourceOrigin = sourceOrigin
 report.sourceBytes = sourceBytes
+report.progressPath = progressPath
+report.lastProgress = report.lastProgress or latestProgress
 report.wrapperError = not ok and tostring(result) or nil
 report.outputPath = report.outputPath or options.FilePath
 local existenceChecked, outputExists
@@ -125,8 +154,8 @@ end
 if report.criticalGeometryOmissions and report.criticalGeometryOmissions > 0 then
 	warn(prefix .. tostring(report.criticalGeometryOmissions) .. " geometry/terrain property columns were omitted. See the report; missing road geometry is not repaired by a completed export.")
 end
-if report.engineVersion ~= "0.4.1" then
-	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.4.1. Check for an outdated local CORE_PATH.")
+if report.engineVersion ~= "0.4.2" then
+	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.4.2. Check for an outdated local CORE_PATH.")
 end
 if not ok then
 	fail("Export failed. Check CORE_PATH and console details: " .. tostring(result))

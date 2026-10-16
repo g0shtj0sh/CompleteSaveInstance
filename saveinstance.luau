@@ -3664,7 +3664,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/",
 		SSI = "saveinstance",
 	}
 
@@ -3691,7 +3691,7 @@ local function completeSaveInstance(...)
 	GLOBAL_ENV.CSI = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.4.1",
+		engineVersion = "0.4.2",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -3722,6 +3722,29 @@ local function completeSaveInstance(...)
 	local totalsize = 0
 
 	local StatusText
+	local progressStarted = os.clock()
+	local Progress = { phase = "preflight" }
+	ExportReport.lastProgress = Progress
+	ExportReport.scriptJobs = { bytecodeCalls = 0, decompileCalls = 0, timedOut = 0, failed = 0, failures = {} }
+	ExportReport.compression = { bypassedSource = 0, bypassedLarge = 0, failed = 0 }
+	local lastProgressSent = 0
+	local function publishProgress(force)
+		local now = os.clock()
+		if force or now - lastProgressSent >= 2 then
+			Progress.elapsed = now - progressStarted
+			Progress.engineVersion = ExportReport.engineVersion
+			lastProgressSent = now
+			if type(RuntimeAdapter.onProgress) == "function" then
+				pcall(RuntimeAdapter.onProgress, table.clone(Progress), force)
+			end
+		end
+	end
+	local function setProgress(phase, detail, force)
+		local changed = Progress.phase ~= phase
+		Progress.phase, Progress.detail = phase, detail
+		publishProgress(force or changed)
+	end
+	setProgress("preflight", nil, true)
 
 	local OPTIONS = {
 		mode = "optimized",
@@ -4472,7 +4495,8 @@ local function completeSaveInstance(...)
 	end
 
 	local function yieldIfDue() -- ? Watchdog kills scripts that run >30s without yielding
-		if os.clock() - lastYield > 10 then
+		if os.clock() - lastYield > 0.1 then
+			publishProgress(false)
 			yieldFrame()
 		end
 	end
@@ -4509,6 +4533,7 @@ local function completeSaveInstance(...)
 				previousStatus = StatusText.Text
 			end
 			LoadingText = text
+			StatusText.Text = text
 			IsLoading = true
 			ensureSpinner()
 			if waitForRender then
@@ -4516,7 +4541,7 @@ local function completeSaveInstance(...)
 			end
 		end
 
-		local result = { taskFunction(...) }
+		local result = table.pack(taskFunction(...))
 
 		if StatusText then
 			IsLoading = false
@@ -4524,7 +4549,7 @@ local function completeSaveInstance(...)
 				StatusText.Text = previousStatus
 			end
 		end
-		return unpack(result)
+		return table.unpack(result, 1, result.n)
 	end
 
 	local function makeTimeoutHandler(timeout, f, timeout_return)
@@ -4533,58 +4558,53 @@ local function completeSaveInstance(...)
 				return pcall(f, ...)
 			end
 		end
-
-		local worker
-		local pendingJob
-
-		local function spawnWorker()
-			return task.spawn(function()
-				while true do
-					while not pendingJob do
-						task.wait()
-					end
-
-					local job = pendingJob
-					pendingJob = nil
-
-					local ok, result = pcall(f, unpack(job.args))
-
-					if job.isCancelled then
-						return -- this worker is retired
-					end
-
-					task.cancel(job.timeoutThread)
-
-					local thread = job.thread
-					while coroutine.status(thread) ~= "suspended" do
-						task.wait()
-					end
-
-					coroutine.resume(thread, ok, result)
+		return function(...)
+			-- Each invocation owns its result and deadline. No shared pending slot
+			-- or manual resumption of the serializer's coroutine.
+			local args = table.pack(...)
+			local results, expired
+			local deadline = os.clock() + timeout
+			local worker = task.defer(function()
+				local values = table.pack(pcall(f, table.unpack(args, 1, args.n)))
+				if not expired and os.clock() < deadline then
+					results = values
 				end
 			end)
-		end
-
-		return function(...)
-			local thread = coroutine.running()
-			local job = {
-				thread = thread,
-				args = { ... },
-			}
-
-			job.timeoutThread = task.delay(timeout, function()
-				job.isCancelled = true
-				worker = nil -- retire this worker; a fresh one spawns for the next call
-				coroutine.resume(thread, nil, timeout_return)
-			end)
-
-			if not worker then
-				worker = spawnWorker()
+			while not results do
+				if os.clock() >= deadline then
+					expired = true
+					pcall(task.cancel, worker)
+					return false, timeout_return or "Job timed out", true
+				end
+				publishProgress(false)
+				task.wait()
 			end
-			pendingJob = job
-
-			return coroutine.yield()
+			return table.unpack(results, 1, results.n)
 		end
+	end
+
+	local function runScriptJob(operation, handler, instance, target)
+		local pathOk, path = pcall(instance.GetFullName, instance)
+		path = pathOk and path or instance.Name
+		local stats = ExportReport.scriptJobs
+		local key = operation == "bytecode" and "bytecodeCalls" or "decompileCalls"
+		stats[key] += 1
+		setProgress("scripts", { operation = operation, path = path, job = stats[key], targetType = type(target) }, true)
+		local started = os.clock()
+		local ok, value, timedOut = handler(target)
+		local seconds = os.clock() - started
+		stats.lastJob = { operation = operation, path = path, seconds = seconds, ok = ok, timedOut = timedOut == true }
+		if not ok then
+			stats.failed += 1
+			if timedOut then
+				stats.timedOut += 1
+			end
+			if #stats.failures < 128 then
+				table.insert(stats.failures, { operation = operation, path = path, seconds = seconds, timedOut = timedOut == true, reason = string.sub(tostring(value), 1, 240) })
+			end
+			warn("[CSI] Script job failed", operation, path, tostring(value))
+		end
+		return ok, value, timedOut
 	end
 
 	local decompileIgnoreMap = {}
@@ -4604,7 +4624,16 @@ local function completeSaveInstance(...)
 
 	local getbytecode
 	if getscriptbytecode then
-		getbytecode = makeTimeoutHandler(OPTIONS.BytecodeTimeout, getscriptbytecode) -- ? Solara fix
+		local handler = makeTimeoutHandler(OPTIONS.BytecodeTimeout, getscriptbytecode, "Bytecode read timed out")
+		local bytecodeCache = {}
+		getbytecode = function(script)
+			local cached = bytecodeCache[script]
+			if not cached then
+				cached = table.pack(run_with_loading("Reading bytecode: " .. script.Name, true, true, runScriptJob, "bytecode", handler, script, script))
+				bytecodeCache[script] = cached
+			end
+			return table.unpack(cached, 1, cached.n)
+		end
 	end
 
 	local SaveBytecode
@@ -4638,6 +4667,9 @@ local function completeSaveInstance(...)
 						return "-- The Script is Empty"
 					end
 					cached = ldeccache[bytecode]
+					if type(cached) == "string" and string.find(cached, "--[[ Failed to decompile.", 1, true) == 1 then
+						ldeccache[bytecode], cached = nil, nil -- Retry old cached failures.
+					end
 				else
 					bytecode = nil
 				end
@@ -4658,7 +4690,11 @@ local function completeSaveInstance(...)
 				-- task.wait() -- TODO Maybe remove?
 			end
 
-			local ok, result = run_with_loading("Decompiling " .. script.Name, true, nil, decomp, script)
+			local target = script
+			if string.find(string.lower(EXECUTOR_NAME), "potassium", 1, true) and type(bytecode) == "string" then
+				target = bytecode -- Documented Potassium overload; avoid rereading the Instance.
+			end
+			local ok, result = run_with_loading("Decompiling " .. script.Name, true, true, runScriptJob, "decompile", decomp, script, target)
 			if not result then
 				ok, result = false, "Empty Output"
 			end
@@ -4671,8 +4707,8 @@ local function completeSaveInstance(...)
 				output = "--[[ Failed to decompile. Reason:\n" .. (result or "") .. "\n]]"
 			end
 
-			if ScriptCache and bytecode then -- TODO there might(?) be an edgecase where it manages to decompile (built-in) even though getscriptbytecode failed, and the output won't get cached
-				ldeccache[bytecode] = output -- ? Should we cache even if it timed out?
+			if ok and ScriptCache and bytecode then
+				ldeccache[bytecode] = output
 				if __DEBUG_MODE then
 					__DEBUG_MODE("Cached", script:GetFullName())
 				end
@@ -5259,10 +5295,16 @@ local function completeSaveInstance(...)
 		local function readAll(objs, prop)
 			local n = #objs
 			local vals = table.create(n)
+			local detail = { class = ctx.entries[objs[1]].class, property = prop.Name, total = n, index = 1 }
+			setProgress("read-property", detail)
 
 			for i = 1, n do
+				detail.index = i
 				yieldIfDue()
 				local ok, raw = pcall(readProperty, objs[i], prop)
+				if Progress.phase == "scripts" then
+					setProgress("read-property", detail)
+				end
 				if not ok then
 					return nil, i, "read_error: " .. string.sub(tostring(raw), 1, 240)
 				end
@@ -5275,14 +5317,23 @@ local function completeSaveInstance(...)
 			return vals
 		end
 
-		local function buildChunk(name, chunkBuf, compress)
+		local function buildChunk(name, chunkBuf, compress, propertyName)
 			local uncompressedLen = chunkBuf.len
 			local head = buffer.create(16)
 			buffer.writestring(head, 0, name)
 
-			if compress then
-				local dataStr = compress(chunkBuf:tostring())
-				if dataStr and #dataStr < uncompressedLen then
+			local stats = ExportReport.compression
+			if compress and propertyName == "Source" then
+				stats.bypassedSource += 1
+			elseif compress and uncompressedLen > 8 * 1024 * 1024 then
+				stats.bypassedLarge += 1
+			elseif compress then
+				setProgress("compress", { chunk = name, property = propertyName, bytes = uncompressedLen }, true)
+				local ok, dataStr = pcall(compress, chunkBuf:tostring())
+				if not ok or type(dataStr) ~= "string" or #dataStr == 0 then
+					stats.failed += 1
+				end
+				if ok and type(dataStr) == "string" and #dataStr > 0 and #dataStr < uncompressedLen then
 					buffer.writeu32(head, 4, #dataStr)
 					buffer.writeu32(head, 8, uncompressedLen)
 					return { buf = head, len = 16, str = dataStr }
@@ -5483,8 +5534,9 @@ local function completeSaveInstance(...)
 						propBuf:writeLenString(propName)
 						propBuf:writeu8(typeId)
 
+						setProgress("encode-property", { class = class, property = propName, total = n })
 						encoder(propBuf, vals, #objs, refCtxArg)
-						local chunk = buildChunk("PROP", propBuf, compress)
+						local chunk = buildChunk("PROP", propBuf, compress, propName)
 						propChunks[#propChunks + 1] = chunk
 						totalsize += chunk.len + (chunk.str and #chunk.str or chunk.tailLen or 0)
 					else
@@ -6042,6 +6094,7 @@ local function completeSaveInstance(...)
 			end
 		end
 
+		setProgress("collect", nil, true)
 		local ctx = collect(allRoots)
 
 		-- collect filtered and deduped; recover each extra's surviving roots.
@@ -6117,7 +6170,9 @@ local function completeSaveInstance(...)
 			ExportReport.propertyAudit = "not_instrumented_for_xml"
 		end
 
+		setProgress("serialize", { instances = ctx.instCount }, true)
 		local chunks = OPTIONS.Binary and emitBinary(ctx) or emitXML(ctx)
+		setProgress("write", { outputPath = placename, bytes = totalsize }, true)
 
 		if OPTIONS.ReadMe then
 			stampElapsed(chunks, os.clock() - elapse_t)
@@ -6191,6 +6246,11 @@ local function completeSaveInstance(...)
 		table.insert(Connections, event:Connect(func))
 	end
 	local function Cleanup()
+		IsLoading = false
+		if LoadingThread then
+			pcall(task.cancel, LoadingThread)
+			LoadingThread = nil
+		end
 		for _, connection in Connections do
 			connection:Disconnect()
 		end
@@ -6858,6 +6918,10 @@ local function completeSaveInstance(...)
 	ExportReport.outputPath = placename
 	ExportReport.ghpDatatypes = table.clone(GHP)
 	ExportReport.elapsed = os.clock() - elapse_t
+	if not ok then
+		ExportReport.failureContext = table.clone(Progress)
+	end
+	setProgress(ok and "completed" or "failed", { outputPath = placename, error = ExportReport.error }, true)
 
 	if OPTIONS.BoostFPS then
 		pcall(function()

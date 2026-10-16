@@ -49,7 +49,8 @@ include large amounts of runtime content, so begin on a small test place.
 
 This is the configuration we will diagnose and improve to preserve as much
 accessible place content as possible. It is not a promise of complete capture
-or a previously verified fix. Timeouts are bounded. `SafeMode`, script
+or a previously verified fix. Per-job timeouts cannot interrupt a native call
+that blocks the entire client. `SafeMode`, script
 termination, forced shutdown, and rendering changes stay disabled.
 
 <PresetLauncher id="UltraCompleteSveInstance" />
@@ -60,7 +61,7 @@ Run a preset in a compatible environment with HTTP access and file APIs:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/Script%20Presets/UltraCompleteSveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/Script%20Presets/UltraCompleteSveInstance.luau",
     true
 ))()
 ```
@@ -99,6 +100,11 @@ Wrappers write `<output-path>.report.json` with engine identity, file evidence,
 class counts, and omitted binary property columns. A report-writing error is
 printed explicitly. Use the [missing geometry guide](GEOMETRY.md) when objects
 or surfaces are absent.
+
+Since 0.4.2, all presets also write `<output-path>.progress.json` during execution,
+before script jobs and compression calls. Keep this file if the client freezes
+before a final report is written. The final report includes `scriptJobs` and
+`compression` counters. See [frozen exports](TROUBLESHOOTING.md) for interpretation.
 
 ## Changing a configuration
 

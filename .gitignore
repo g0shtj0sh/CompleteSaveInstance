@@ -28,6 +28,10 @@ tempCodeRunnerFile.*
 *.rbxlx.report.json
 *.rbxm.report.json
 *.rbxmx.report.json
+*.rbxl.progress.json
+*.rbxlx.progress.json
+*.rbxm.progress.json
+*.rbxmx.progress.json
 completesaveinstance_cache/
 CompleteSaveInstance_Diagnostics/
 *.log

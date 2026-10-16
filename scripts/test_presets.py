@@ -14,17 +14,21 @@ local presetSource = __PRESET_SOURCE__
 local successes = 0
 local potassium = __POTASSIUM__
 local expectedCorePath = potassium and "CompleteSaveInstance/Executors/Potassium/saveinstance.luau" or "CompleteSaveInstance/saveinstance.luau"
-local expectedCoreUrl = potassium and "/v0.4.1/Executors/Potassium/saveinstance.luau" or "/v0.4.1/saveinstance.luau"
+local expectedCoreUrl = potassium and "/v0.4.2/Executors/Potassium/saveinstance.luau" or "/v0.4.2/saveinstance.luau"
 local function scenario(kind)
     local files, messages = {}, {}
     local capturedReport
+    local capturedProgress, runtimeParameters
     local localReads, remoteReads = 0, 0
     local called = false
     local env = setmetatable({}, { __index = getfenv() })
     env.game = { PlaceId = 123 }
     env.game.GetService = function(_, name)
         assert(name == "HttpService")
-        return {JSONEncode = function(_, value) capturedReport=value;return "REPORT_JSON" end}
+        return {JSONEncode = function(_, value)
+            if value.phase then capturedProgress=value else capturedReport=value end
+            return "REPORT_JSON"
+        end}
     end
     env.game.HttpGet = function(_, url)
         remoteReads += 1
@@ -37,6 +41,7 @@ local function scenario(kind)
     env.writefile = function(path, content)
         if kind == "probe-error" then error("disk unavailable") end
         if kind == "report-write-error" and string.find(path, ".report.json", 1, true) then error("report disk error") end
+        if kind == "progress-write-error" and string.find(path, ".progress.json", 1, true) then error("checkpoint disk error") end
         files[path] = kind == "corrupt-probe" and "wrong content" or content
     end
     env.readfile = function(path)
@@ -52,10 +57,13 @@ local function scenario(kind)
     env.loadstring = function(source, name)
         assert(source == "MOCK_CORE", "Unexpected core contents")
         if kind == "compile-error" then return nil, "mock syntax error" end
-        return function()
+        return function(parameters)
+            runtimeParameters=parameters
+            assert(type(parameters.onProgress)=="function", "Wrapper must forward the progress sink")
             if kind == "bad-core" then return {} end
             return function(options)
                 called = true
+                runtimeParameters.onProgress({phase="scripts",detail={operation="decompile",path="ReplicatedStorage.ExampleModule"}})
                 assert(options.SafeMode == false and options.KillAllScripts == false)
                 assert(options.ShutdownWhenDone == false and options.BoostFPS == false)
                 if potassium then assert(options.IgnoreSpecialProperties == false, "Potassium must enable its native reader") end
@@ -63,8 +71,8 @@ local function scenario(kind)
                 if kind == "runtime-error" then error("serializer failed") end
                 if kind ~= "missing-output" then files[options.FilePath] = "mock output" end
                 if kind == "legacy-core" then return nil end
-                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.4.1"} end
-                return {ok=true, engineVersion="0.4.1", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
+                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.4.2"} end
+                return {ok=true, engineVersion="0.4.2", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
             end
         end
     end
@@ -81,9 +89,17 @@ local function scenario(kind)
     local shouldFail = kind == "missing-api" or kind == "probe-error" or kind == "corrupt-probe"
         or kind == "missing-core" or kind == "local-core-missing" or kind == "compile-error" or kind == "bad-core" or kind == "runtime-error" or kind == "engine-reported-error"
     assert(ok ~= shouldFail, "Unexpected scenario outcome: " .. kind)
+    if called then
+        assert(capturedProgress.phase=="scripts" and capturedProgress.detail.path=="ReplicatedStorage.ExampleModule")
+        assert(capturedReport.progressPath)
+        if kind ~= "progress-write-error" then
+            assert(files[capturedReport.progressPath], "Progress must exist even after an export exception")
+        end
+        assert(capturedReport.lastProgress.detail.path=="ReplicatedStorage.ExampleModule")
+    end
     if kind == "success" or kind == "remote-core" then
         assert(localReads == 0 and remoteReads == 1, "Default must not silently load a stale local core")
-        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.4.1/", 1, true))
+        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.4.2/", 1, true))
     elseif kind == "local-core" or kind == "local-core-missing" then
         assert(localReads == 1 and remoteReads == 0, "Local development must use only its explicit source")
     end
@@ -102,13 +118,16 @@ local function scenario(kind)
         assert(capturedReport.engineVersion=="unknown" and string.find(text, "outdated local CORE_PATH", 1, true))
     elseif kind == "report-write-error" then
         assert(string.find(text, "Could not write diagnostic report", 1, true) and called)
+    elseif kind == "progress-write-error" then
+        assert(string.find(text, "Could not write progress checkpoint", 1, true) and called)
+        assert(capturedReport.ok and files[capturedReport.outputPath], "Checkpoint failure must not abort the export")
     elseif kind ~= "runtime-error" and kind ~= "engine-reported-error" then
         assert(not called, "Exporter must not run after failed preflight")
     end
     for path in files do assert(not string.find(path, "CSI_WriteProbe_", 1, true), "Probe was not cleaned up") end
     successes += 1
 end
-for _, kind in {"success", "remote-core", "local-core", "local-core-missing", "missing-api", "probe-error", "corrupt-probe", "missing-core", "compile-error", "bad-core", "runtime-error", "missing-output", "no-isfile", "geometry-omission", "legacy-core", "report-write-error", "engine-reported-error"} do
+for _, kind in {"success", "remote-core", "local-core", "local-core-missing", "missing-api", "probe-error", "corrupt-probe", "missing-core", "compile-error", "bad-core", "runtime-error", "missing-output", "no-isfile", "geometry-omission", "legacy-core", "report-write-error", "progress-write-error", "engine-reported-error"} do
     scenario(kind)
 end
 print("Preset runtime scenarios passed: " .. successes)

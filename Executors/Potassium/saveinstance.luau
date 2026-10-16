@@ -1,7 +1,8 @@
 -- CompleteSaveInstance / Potassium entry point
 -- Shared serializer, explicit native API bindings. AGPL-3.0; see LICENSE and NOTICE.md.
 -- Reference: https://docs.potassium.pro/api-reference
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/saveinstance.luau"
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/saveinstance.luau"
+local runtimeOptions = ... or {}
 local identify = identifyexecutor or getexecutorname
 assert(type(identify) == "function", "Potassium: identifyexecutor is unavailable")
 local identified, executorName, executorVersion = pcall(identify)
@@ -11,6 +12,7 @@ assert(identified and type(executorName) == "string" and string.find(string.lowe
 local nativeCrypt = type(crypt) == "table" and crypt or {}
 local nativeBsp = getbspval
 local adapter = {
+	onProgress = runtimeOptions.onProgress,
 	name = "Potassium",
 	executorVersion = tostring(executorVersion or "unknown"),
 	globals = {

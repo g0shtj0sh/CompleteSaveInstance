@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.2 — 2026-10-17
+
+- Replaced the primary engine's shared pending-job slot and manual coroutine
+  resumption with independent bytecode/decompilation jobs and deadline checks.
+- Memoized each script's bytecode per export; Potassium decompilation reuses
+  those bytes through its documented overload. Failed decompilations are no
+  longer cached as successful source.
+- Added progress checkpoints before script jobs, property extraction/encoding,
+  compression, and writing. Presets write `<output-path>.progress.json` while
+  running; final reports include script-job and compression counters.
+- Yield more frequently during collection and binary property reads. Binary
+  Source columns and chunks over 8 MiB bypass compression; compressor errors
+  fall back to the original bytes. Output can be larger without omitting data.
+- Added actual-function scheduler, bytecode-cache, and chunk-format regressions;
+  extended both preset profiles and Potassium adapter tests.
+
+These changes affect the shared Luau engine used by both Ultra presets. The
+reported client freeze still requires a fresh runtime test. Lua deadlines cannot
+interrupt a native call that blocks the entire client. The older `.lua` engine
+does not receive these runtime changes.
+
 ## 0.4.1 — 2026-10-17
 
 - Removed duplicated upstream branding and the Discord link from both engine

@@ -24,6 +24,40 @@ Test a smaller selection. Record final console messages, elapsed time, memory
 observations, runtime version, and whether a partial file exists. A crash alone
 does not identify its cause.
 
+## Frozen at “Saving… Size: …”
+
+Use a current versioned preset. The size on the old status display can remain
+unchanged during property and script extraction; it does not identify a disk
+write or the operation causing a freeze.
+
+Starting with 0.4.2, both preset profiles write
+`<output-path>.progress.json` in the runtime's file workspace while running.
+The console prints its exact path. Preserve it with the final console messages
+if the client stops responding; a final `.report.json` may not exist yet.
+
+- `phase: "scripts"`: `detail.operation` identifies bytecode or decompilation;
+  `detail.path` identifies the script, including ModuleScripts.
+- `read-property` / `encode-property`: inspect `detail.class` and
+  `detail.property`; binary read checkpoints also include an index and total.
+- `compress`: inspect the chunk, property, and byte count.
+- `write`: serialization reached the output stage. This checkpoint alone does
+  not prove the file was written successfully.
+
+A checkpoint records the last announced operation, not a proven root cause.
+It is written before each script job and compression call; other progress is
+updated at phase changes and periodically while Lua is running. No script
+source or bytecode is included in the checkpoint.
+
+The primary engine now uses independent script jobs, memoizes bytecode reads,
+and yields more frequently in collection and binary property reads. It skips
+native compression for Source columns and chunks over 8 MiB, preserving their
+uncompressed bytes. Final reports expose `scriptJobs` and `compression` counters.
+
+Per-job deadlines can stop yielding jobs, and reject results returned after a
+deadline. They cannot preempt native code that blocks the whole client. A total
+freeze can therefore still require an executor-side fix. A fresh runtime test
+and Studio inspection remain necessary.
+
 ## `PROP dropped` messages
 
 The binary encoder can omit a property column when reading or encoding fails.

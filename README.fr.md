@@ -53,6 +53,12 @@ Tous utilisent le même moteur avec des paramètres différents. Ultra active le
 options de couverture étendue, avec des délais par tâche bornés, mais ses
 résultats dans Roblox et Studio restent à valider.
 
+La version **0.4.2** corrige le gestionnaire des tâches de scripts et évite les
+lectures répétées du bytecode. Les deux profils écrivent un fichier
+`<export>.progress.json` pendant l'exécution pour identifier la dernière opération
+annoncée en cas de gel. Conserver ce fichier avec les logs ; un délai Lua ne
+peut pas interrompre un appel natif qui bloque tout le client.
+
 Une fonction terminée ne garantit pas l’existence du fichier. Vérifier sa
 présence, puis son ouverture et son contenu dans Roblox Studio. Les références
 d’assets ne constituent pas une copie de leurs fichiers binaires.

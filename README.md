@@ -53,6 +53,11 @@ fixes datatype-wide suppression after an individual hidden-property failure,
 and records binary geometry omissions in preset JSON reports. See the
 [missing geometry guide](docs/GEOMETRY.md) when an exported surface is absent.
 
+Presets also write a `.progress.json` checkpoint during export, identifying the
+latest operation if a final report cannot be produced. Version 0.4.2 improves
+script-job scheduling and avoids repeated bytecode reads; a native call that
+blocks the client still cannot be interrupted by a Lua timeout.
+
 Availability depends on the runtime, readable properties, and loaded instances.
 The Lua variant differs from the Luau source and is not feature-equivalent.
 
@@ -65,7 +70,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.2/saveinstance.luau",
     true
 )
 local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()

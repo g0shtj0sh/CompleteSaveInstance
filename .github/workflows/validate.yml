@@ -48,5 +48,7 @@ jobs:
         run: python scripts/test_property_reads.py --luau .tools/luau/luau
       - name: Check Potassium adapter contracts
         run: python scripts/test_potassium.py --luau .tools/luau/luau
+      - name: Check export deadlines, bytecode memoization, and chunk fallbacks
+        run: python scripts/test_export_jobs.py --luau .tools/luau/luau
       - name: Check whitespace errors
         run: git diff --check HEAD^ HEAD

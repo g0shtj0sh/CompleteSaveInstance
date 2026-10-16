@@ -43,15 +43,41 @@ local started = os.clock()
 local exportReport
 local sourceOrigin
 local sourceBytes
+local progressPath = options.FilePath .. ".progress.json"
+local lastProgressLog, progressWriteFailed = -math.huge, false
+local latestProgress
+local function onProgress(progress)
+	latestProgress = progress
+	progress.preset = PRESET_ID
+	progress.profile = "$PROFILE"
+	progress.wrapperVersion = "$VERSION"
+	progress.sourceOrigin = sourceOrigin
+	progress.validation = "unverified"
+	local wrote, writeError = pcall(function()
+		writefile(progressPath, game:GetService("HttpService"):JSONEncode(progress))
+	end)
+	if not wrote and not progressWriteFailed then
+		progressWriteFailed = true
+		warn(prefix .. "Could not write progress checkpoint: " .. tostring(writeError))
+	end
+	if os.clock() - lastProgressLog >= 10 or progress.phase == "completed" or progress.phase == "failed" then
+		lastProgressLog = os.clock()
+		local detail = progress.detail or {}
+		print(prefix .. "Progress: " .. tostring(progress.phase) .. " | " .. tostring(detail.operation or detail.property or "") .. " | " .. tostring(detail.path or detail.class or detail.outputPath or ""))
+	end
+end
+print(prefix .. "Progress checkpoint: " .. progressPath)
 local ok, result = xpcall(function()
 	local source
 	if USE_LOCAL_CORE then
 		print(prefix .. "Loading local core: " .. CORE_PATH)
 		sourceOrigin = CORE_PATH
+		onProgress({ phase = "loading-core" })
 		source = readfile(CORE_PATH)
 	else
 		print(prefix .. "Loading pinned core: " .. CORE_URL)
 		sourceOrigin = CORE_URL
+		onProgress({ phase = "loading-core" })
 		source = game:HttpGet(CORE_URL, true)
 	end
 	sourceBytes = #source
@@ -60,7 +86,8 @@ local ok, result = xpcall(function()
 	if not chunk then
 		error("Core compilation failed: " .. tostring(compileError), 0)
 	end
-	local completeSaveInstance = chunk()
+	onProgress({ phase = "loading-dependencies" })
+	local completeSaveInstance = chunk({ onProgress = onProgress })
 	if type(completeSaveInstance) ~= "function" then
 		error("Core did not return an export function", 0)
 	end
@@ -83,6 +110,8 @@ report.wrapperVersion = "$VERSION"
 report.profile = "$PROFILE"
 report.sourceOrigin = sourceOrigin
 report.sourceBytes = sourceBytes
+report.progressPath = progressPath
+report.lastProgress = report.lastProgress or latestProgress
 report.wrapperError = not ok and tostring(result) or nil
 report.outputPath = report.outputPath or options.FilePath
 local existenceChecked, outputExists

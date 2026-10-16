@@ -107,6 +107,8 @@ def render() -> dict[Path, str]:
         "The wrapper performs a basic text write/read probe, uses a unique output filename, and checks file existence when available.",
         "It never treats an existing file as proof of valid contents. Open the result in Studio.", "",
         "A `.report.json` sidecar records the engine version, source, class counts, output existence, and omitted binary property columns.",
+        "A `.progress.json` checkpoint records the latest operation while running; preserve it if the client freezes before a final report exists.",
+        "Per-job deadlines cannot interrupt native calls that block the entire client. See [troubleshooting](../docs/TROUBLESHOOTING.md).",
         "Geometry warnings identify omitted terrain or mesh data; they do not identify the missing road without further inspection.", "",
         "## Development", "",
         "Edit `presets.json`, then run `python scripts/generate_presets.py` from the repository root.",

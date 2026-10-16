@@ -56,6 +56,10 @@ native property access, and the append-based writer.
   The existing writer uses approximately 4 MB append batches where supported,
   reducing whole-file string concatenation. Binary probes and ordinary writer
   fallbacks remain active.
+- **Script extraction:** since 0.4.2, the shared engine reads each script's
+  bytecode once per export and passes cached bytes to Potassium's documented
+  `decompile` overload. Both Ultra configurations benefit when run on Potassium.
+  ModuleScripts are not excluded as a class.
 - **Reports:** `profile: "Potassium"` and `runtimeAdapter` identify the executor
   version, available APIs, and binary-read attempts, successes, and failures.
   `sharedCoreUrl` and `sharedCoreBytes` identify the second-stage source, while
@@ -63,7 +67,7 @@ native property access, and the append-based writer.
 
 Both entry points use the same serializer. The Potassium entry point is under
 `Executors/Potassium/saveinstance.luau`; its four presets are under
-`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.4.1.
+`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.4.2.
 For local adapter development, edit its `CORE_URL` as well as the preset's
 `CORE_PATH`; opting into a local adapter alone still downloads its pinned core.
 
@@ -84,6 +88,12 @@ Reading the reference establishes an API contract, not compatibility with the
 installed executor build. Mock tests and compilation cannot validate Roblox
 native calls or catch native crashes. Studio reopening and the missing road
 still require a fresh export. See [missing geometry](GEOMETRY.md).
+
+The 0.4.2 progress checkpoint is written before script jobs and compression.
+Keep `<output-path>.progress.json` if Potassium freezes. Lua deadlines cannot
+interrupt native code that blocks the entire client; see
+[troubleshooting](TROUBLESHOOTING.md). Source columns and chunks over 8 MiB are
+stored uncompressed, which can increase file size without dropping their data.
 
 Sources: [binary-property reads](https://docs.potassium.pro/api-reference/Reflection%20Library/getbspval),
 [LZ4](https://docs.potassium.pro/api-reference/Crypt%20Library/crypt.lz4compress),

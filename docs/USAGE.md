@@ -23,7 +23,7 @@ gh repo clone g0shtj0sh/CompleteSaveInstance
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. Presets download the root engine pinned to `v0.4.1` by default.
+is required. Presets download the root engine pinned to `v0.4.2` by default.
 For local development, explicitly set `USE_LOCAL_CORE = true` and configure
 `CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
@@ -68,11 +68,17 @@ Check the exact path, existence, plausible file size, and Studio opening.
 Inspect representative models, meshes, materials, UI, and authorized scripts.
 A return from the function does not prove that the output is valid.
 
-Version 0.3.0 presets write a companion `<output-path>.report.json`. It records
+Presets write a companion `<output-path>.report.json` after the attempt. It records
 the engine version, source origin, file existence, collected classes, and
 omitted binary property columns. `ok` means the export function completed;
 `validation` stays `unverified`. XML property omissions are not instrumented.
 See [missing geometry](GEOMETRY.md) for interpreting the report.
+
+Since 0.4.2, presets also write `<output-path>.progress.json` during the run.
+It identifies the latest phase and script job or binary property column, even
+when a final report cannot be produced. Script-job failures and compression
+fallbacks appear in the final report. If the client freezes, keep the progress
+file and console output; see [troubleshooting](TROUBLESHOOTING.md).
 
 Server-only data, private DataStores, unloaded streamed instances, and restricted
 assets can be absent. An asset ID is a reference, not an embedded binary asset.

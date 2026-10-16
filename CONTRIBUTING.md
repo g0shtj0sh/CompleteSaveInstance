@@ -14,6 +14,7 @@ python scripts/generate_option_index.py --check
 python scripts/test_presets.py --luau luau
 python scripts/test_property_reads.py --luau luau
 python scripts/test_potassium.py --luau luau
+python scripts/test_export_jobs.py --luau luau
 luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/DiagnosticSaveInstance.luau" "Script Presets/MapSaveInstance.luau" "Script Presets/ScriptsSaveInstance.luau" "Script Presets/UltraCompleteSveInstance.luau"
 git diff --check
 ```

@@ -43,7 +43,7 @@ Actions to GitHub Pages.
 
 `Script Presets/presets.json` defines the four configurations. The generator
 combines them with a shared wrapper template. Wrappers perform a basic text
-write/read probe and load the pinned `v0.4.1` engine by default. Local development
+write/read probe and load the pinned `v0.4.2` engine by default. Local development
 requires an explicit `USE_LOCAL_CORE = true`. They record source identity,
 exceptions, and file existence in a JSON sidecar separately from file validity.
 The actual serializer is not duplicated.
@@ -76,6 +76,33 @@ without global hooks or a second serializer. BinaryString reads can use its
 protected raw reader before the ordinary fallback chain; dedicated presets
 explicitly enable those reads. See [Potassium](POTASSIUM.md) for contracts and
 the reference review. The universal entry point still uses method discovery.
+
+## Script jobs and checkpoints in 0.4.2
+
+Each bounded bytecode/decompilation invocation owns its arguments, worker,
+result, and deadline. The caller polls through `task.wait`; it never manually
+resumes the serializer coroutine. Expired workers are cancelled when possible
+and late results are rejected. A native call blocking the client also blocks
+Lua scheduling, so this is not native preemption or a total export time budget.
+
+Bytecode results, including failures, are memoized per Instance for one export.
+Only successful decompilations enter the source cache. On Potassium, cached
+bytecode is passed to the documented decompile overload. ModuleScripts remain
+eligible under the existing selection and ignore options.
+
+The source chunk accepts `onProgress` through its runtime adapter. Generated
+wrappers forward it, including through the Potassium entry point, and write a
+JSON checkpoint while the engine runs. The final report contains script-job
+counts, limited failure samples, compression counters, and failure context.
+Property checkpoints currently instrument the binary path; they do not audit
+every native call or establish output validity.
+
+Binary Source columns and chunks larger than 8 MiB bypass compression. Native
+compressor exceptions and invalid empty/non-string results fall back to the
+original bytes with an uncompressed chunk header. This can increase output
+size; it does not remove source or geometry. Collection and binary reads yield
+when their work slice exceeds approximately 100 ms; individual native calls
+and encoders can still exceed that interval.
 
 ## Next engine work
 
