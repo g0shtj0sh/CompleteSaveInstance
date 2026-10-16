@@ -1,10 +1,9 @@
 --!native
 --!optimize 2
 --!divine-intellect
--- CompleteSaveInstance | modified 2026-10-16 by g0shtj0sh
+-- CompleteSaveInstance | modified 2026-10-17 by g0shtj0sh
 -- Source: https://github.com/g0shtj0sh/CompleteSaveInstance
 -- License: AGPL-3.0; see LICENSE and NOTICE.md. No warranty.
--- Upstream credit: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw
 
 -- Optional executor adapter supplied by the dedicated entry point, never a global hook.
 local RuntimeAdapter = ... or {}
@@ -3665,7 +3664,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.0/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/",
 		SSI = "saveinstance",
 	}
 
@@ -3692,7 +3691,7 @@ local function completeSaveInstance(...)
 	GLOBAL_ENV.CSI = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.4.0",
+		engineVersion = "0.4.1",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -4771,7 +4770,7 @@ local function completeSaveInstance(...)
 			end
 		end
 
-		value = "-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw\n\n"
+		value = "-- Saved by CompleteSaveInstance\n\n"
 			.. (hasLinkedSource and "-- Original Source: https://assetdelivery.roblox.com/v1/asset/?" .. (LinkedSource_type or "id") .. "=" .. (LinkedSource or LinkedSource_Url) .. "\n\n" or "")
 			.. value
 
@@ -5586,7 +5585,7 @@ local function completeSaveInstance(...)
 		local chunks = table.create(1)
 		local savebuffer, savebuffer_size = {}, 1
 		local header =
-			'<!-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw --><roblox version="4">'
+			'<!-- Saved by CompleteSaveInstance --><roblox version="4">'
 		local refs = ctx.refs
 
 		local function ReturnProperty(tag, propertyName, value)
@@ -6022,7 +6021,7 @@ local function completeSaveInstance(...)
 
 				return table.concat({
 					"--[[\n",
-					"\t\tThank you for using CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw\n\n",
+					"\t\tThank you for using CompleteSaveInstance\n\n",
 					recoveredNote,
 					ghpFailureHeader,
 					writerFailureHeader,

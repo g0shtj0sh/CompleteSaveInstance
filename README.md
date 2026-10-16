@@ -65,7 +65,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.0/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/saveinstance.luau",
     true
 )
 local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()
@@ -148,9 +148,7 @@ exported place.
 
 ## License and credits
 
-Distributed under [AGPL-3.0](LICENSE). Based on
-[UniversalSynSaveInstance](https://github.com/luau/UniversalSynSaveInstance);
-the inherited attribution is **UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw**.
-See [NOTICE.md](NOTICE.md) for provenance and acknowledgments.
+Distributed under [AGPL-3.0](LICENSE). Required attribution, source provenance,
+and acknowledgments are collected in [NOTICE.md](NOTICE.md).
 
 Independent, unofficial project. Not affiliated with Roblox Corporation.

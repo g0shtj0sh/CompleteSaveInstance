@@ -69,9 +69,7 @@ d’abord les exports proposés par Roblox Studio.
 
 ## Licence et origine
 
-Licence [AGPL-3.0](LICENSE). Code hérité de
-[UniversalSynSaveInstance](https://github.com/luau/UniversalSynSaveInstance).
-Crédit conservé : **UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw**.
-Les détails de provenance figurent dans [NOTICE.md](NOTICE.md).
+Licence [AGPL-3.0](LICENSE). Les crédits requis, la provenance du code et les
+remerciements sont regroupés dans [NOTICE.md](NOTICE.md).
 
 Projet indépendant, sans affiliation avec Roblox Corporation.

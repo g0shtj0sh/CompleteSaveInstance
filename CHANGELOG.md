@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1 — 2026-10-17
+
+- Removed duplicated upstream branding and the Discord link from both engine
+  headers, generated export text, and the English/French README presentation.
+- Centralized attribution and provenance in NOTICE.md and the unchanged LICENSE.
+- Updated versioned preset loaders and the Potassium entry point to v0.4.1.
+
 ## 0.4.0 — 2026-10-16
 
 - Added direct runnable-script copy buttons to all preset sections and the API

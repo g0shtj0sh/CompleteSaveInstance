@@ -1,10 +1,9 @@
 --!native
 --!optimize 2
 --!divine-intellect
--- CompleteSaveInstance | modified 2026-10-16 by g0shtj0sh
+-- CompleteSaveInstance | modified 2026-10-17 by g0shtj0sh
 -- Source: https://github.com/g0shtj0sh/CompleteSaveInstance
 -- License: AGPL-3.0; see LICENSE and NOTICE.md. No warranty.
--- Upstream credit: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw
 
 local function string_find(s, pattern, init)
 	return string.find(s, pattern, init, true)
@@ -3033,7 +3032,7 @@ local GLOBAL_ENV = getgenv and getgenv() or _G or shared
 	Saves instances with specified options. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.0/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.1/",
 		SSI = "saveinstance",
 	}
 
@@ -3064,7 +3063,7 @@ local function completeSaveInstance(CustomOptions, CustomOptions2)
 	local totalsize, chunks = 0, table.create(1)
 	local savebuffer, savebuffer_size = {}, 1
 	local header =
-		'<!-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw --><roblox version="4">'
+		'<!-- Saved by CompleteSaveInstance --><roblox version="4">'
 
 	local StatusText
 
@@ -4451,7 +4450,7 @@ local function completeSaveInstance(CustomOptions, CustomOptions2)
 													end
 												end
 
-												value = "-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw\n\n"
+												value = "-- Saved by CompleteSaveInstance\n\n"
 													.. (hasLinkedSource and "-- Original Source: https://assetdelivery.roblox.com/v1/asset/?" .. (LinkedSource_type or "id") .. "=" .. (LinkedSource or LinkedSource_Url) .. "\n\n" or "")
 													.. value
 											end
@@ -4656,7 +4655,7 @@ local function completeSaveInstance(CustomOptions, CustomOptions2)
 						RecoveredScripts
 					) .. "\n" or "")
 					.. [[
-		Thank you for using CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw.
+		Thank you for using CompleteSaveInstance.
 
 		If you didn't save in Binary (rbxl) - it's recommended to save the game right away to take advantage of the binary format & to preserve values of certain properties if you used IgnoreDefaultProperties setting (as they might change in the future).
 		You can do that by going to FILE -> Save to File As -> Make sure File Name ends with .rbxl -> Save
@@ -4730,7 +4729,7 @@ local function completeSaveInstance(CustomOptions, CustomOptions2)
 		end
 
 		savebuffer[savebuffer_size] =
-			"</roblox><!-- Saved by CompleteSaveInstance | Upstream: UniversalSynSaveInstance https://discord.gg/wx4ThpAsmw -->"
+			"</roblox><!-- Saved by CompleteSaveInstance -->"
 		savebuffer_size = savebuffer_size + 1
 		save_cache()
 		do
