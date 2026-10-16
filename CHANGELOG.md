@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.4.4 — 2026-10-17
+
+- Removed the forced display-frame wait before every primary-engine bytecode
+  and decompilation call. Script jobs use the existing periodic yield budget.
+- Start each independent worker immediately so synchronous results do not wait
+  for a deferred scheduler turn. Yielding jobs retain deadline polling,
+  cancellation, late-result rejection, and packed return values.
+- Track scheduler waits when enforcing the work-slice budget, avoiding another
+  redundant frame wait after an asynchronous job. Zero deadlines skip native work.
+- Added cumulative `scriptJobs.bytecodeSeconds` and `decompileSeconds` to reports.
+- Added regression coverage for fast batches through the actual UI/job/bytecode
+  pipeline, periodic yielding, and deadlines. A live mocked-API microbenchmark
+  confirms reduced scheduling overhead; real export throughput remains unmeasured.
+  A single native ModuleScript bytecode read also succeeded through the new path.
+
+Both Ultra profiles keep their selection, bytecode capture, decompilation,
+and timeout settings. These changes affect the shared Luau engine. Native API
+latency and native crash behavior are unchanged; an already-running export
+continues using the engine it originally loaded.
+
 ## 0.4.3 — 2026-10-17
 
 - Removed the exporter-added `Saved by CompleteSaveInstance` and `Original

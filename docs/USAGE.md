@@ -23,7 +23,7 @@ gh repo clone g0shtj0sh/CompleteSaveInstance
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. Presets download the root engine pinned to `v0.4.3` by default.
+is required. Presets download the root engine pinned to `v0.4.4` by default.
 For local development, explicitly set `USE_LOCAL_CORE = true` and configure
 `CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
@@ -95,6 +95,24 @@ not a guarantee of the original source text.
 
 `ReadMe = true` adds a separate export README; it does not add credits to each
 game script. Repository attribution is maintained in LICENSE and NOTICE.md.
+
+## Bytecode read speed
+
+Version 0.4.4 removes per-script display-frame waits and deferred dispatch for
+immediate script jobs. The engine keeps periodic yields, the per-export bytecode
+cache, and deadlines for yielding jobs. This reduces scheduling overhead without
+changing Ultra's instance selection or script extraction settings.
+
+Real speed depends on the native APIs, frame scheduling, and number of scripts.
+Ultra's empty exclusion list also includes Roblox's internal CorePackages and
+CoreGui content when accessible. Disabling bytecode or excluding these instances
+would change coverage; the optimization does neither. A native call that blocks
+the client still cannot be preempted. Reports include cumulative handler timings
+in `scriptJobs.bytecodeSeconds` and `decompileSeconds`.
+
+Start a new export with the new version to use the optimization. Existing runs
+keep their loaded engine; avoid starting another export in the same client
+while one is active.
 
 ## Namespace changes
 

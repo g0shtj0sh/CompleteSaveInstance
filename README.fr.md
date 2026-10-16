@@ -68,6 +68,11 @@ Depuis la **0.4.3**, aucun en-tête « Saved by CompleteSaveInstance » ni lien
 code récupéré ou du décompilateur sont conservés. Ultra conserve aussi le bloc
 de bytecode Base64 lorsque `SaveBytecode` est activé.
 
+La **0.4.4** réduit les attentes d'affichage et d'ordonnancement par script dans
+le moteur Luau commun. Les deux Ultra conservent leur couverture, le bytecode
+et leurs délais. Le gain sur un export complet dépend des appels natifs et du
+nombre de scripts ; un export déjà lancé garde son ancienne version du moteur.
+
 ## Suite du développement
 
 La priorité est le diagnostic : inventaire, logs bufferisés, rapport précis,

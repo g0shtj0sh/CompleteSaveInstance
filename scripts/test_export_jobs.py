@@ -19,7 +19,14 @@ function task.defer(f, ...)
     schedule(thread,now+0.001)
     return thread
 end
-task.spawn=task.defer
+function task.spawn(f, ...)
+    local args=table.pack(...)
+    local thread=coroutine.create(function() f(table.unpack(args,1,args.n)) end)
+    local ok,wait=coroutine.resume(thread)
+    assert(ok,tostring(wait))
+    if type(wait)=="table" and wait.seconds then schedule(thread,now+wait.seconds) end
+    return thread
+end
 function task.delay(delay,f)
     local thread=coroutine.create(f)
     schedule(thread,now+delay)
@@ -47,7 +54,23 @@ local function pump(duration)
     now=stop
 end
 local function publishProgress() end
+local lastYield=now
 __TIMEOUT__
+local fast=makeTimeoutHandler(0.5,function(value) return value end)
+local fastDuration
+task.defer(function()
+    local fastStart=now
+    for i=1,100 do
+        local ok,value=fast(i)
+        assert(ok and value==i)
+    end
+    fastDuration=now-fastStart
+end)
+pump(2)
+assert(fastDuration==0,"Immediate jobs must not require a scheduler tick per script")
+local zeroCalled=false
+local zeroOk,_,zeroTimeout=makeTimeoutHandler(0,function() zeroCalled=true end)()
+assert(not zeroOk and zeroTimeout and not zeroCalled,"A zero deadline must not start native work")
 local concurrent=makeTimeoutHandler(0.5,function(value) task.wait(0.03);return value end)
 local first,second
 task.defer(function() first=table.pack(concurrent("first")) end)
@@ -74,17 +97,29 @@ pump(0.3)
 assert(not result[1] and string.find(result[2],"native Lua error",1,true))
 local ok,value=makeTimeoutHandler(-1,function() return "unbounded" end)()
 assert(ok and value=="unbounded")
-print("Actual job handler passed: concurrent requests, trailing nils, yielding timeout, late result, errors, disabled timeout.")
+print("Actual job handler passed: 100 immediate jobs without scheduler ticks, concurrent requests, trailing nils, yielding/zero timeouts, late result, errors, disabled timeout.")
 
 local OPTIONS={BytecodeTimeout=0.2}
 local reads=0
 local function getscriptbytecode(script)
     reads+=1
     if script.Name=="bad" then error("unreadable bytecode") end
+    if script.Name=="costly" then now+=0.02 end
+    if script.Name=="waiting" then task.wait(0.15) end
     return "BYTES_"..script.Name
 end
-local function run_with_loading(_,_,_,f,...) return f(...) end
-local function runScriptJob(_,handler,_,target) return handler(target) end
+local StatusText={Text="Saving"}
+local IsLoading, LoadingText=false,nil
+local frameWaits=0
+lastYield=now
+local function yieldFrame() frameWaits+=1;task.wait();lastYield=now end
+local function ensureSpinner() end
+local function setProgress() end
+local function warn() end
+local ExportReport={scriptJobs={bytecodeCalls=0,decompileCalls=0,failed=0,timedOut=0,failures={}}}
+__YIELDIFDUE__
+__LOADING__
+__SCRIPT_JOB__
 __BYTECODE__
 local a,b,bad={Name="a"},{Name="b"},{Name="bad"}
 task.defer(function()
@@ -97,6 +132,38 @@ end)
 pump(1)
 assert(reads==3,"Bytecode cache must avoid duplicate native reads, including repeated failures")
 print("Actual bytecode wrapper passed: per-instance success and failure memoization.")
+
+local immediateBatchDuration,immediateBatchWaits
+task.defer(function()
+    lastYield=now
+    local started,waits=now,frameWaits
+    for i=1,100 do assert(select(2,getbytecode({Name="batch"..i}))=="BYTES_batch"..i) end
+    immediateBatchDuration,immediateBatchWaits=now-started,frameWaits-waits
+end)
+pump(3)
+assert(immediateBatchDuration==0 and immediateBatchWaits==0,"Fast bytecode jobs must not force a UI frame per script")
+local slicedWaits
+task.defer(function()
+    lastYield=now
+    local waits=frameWaits
+    for _=1,20 do assert(select(2,getbytecode({Name="costly"}))=="BYTES_costly") end
+    slicedWaits=frameWaits-waits
+end)
+pump(3)
+assert(slicedWaits and slicedWaits>0 and slicedWaits<20,"CPU work must yield periodically without waiting for every script")
+assert(StatusText.Text=="Saving" and IsLoading==false)
+assert(ExportReport.scriptJobs.bytecodeSeconds>=0.39 and ExportReport.scriptJobs.bytecodeSeconds<0.5)
+local asyncWaits
+task.defer(function()
+    lastYield=now
+    local waits=frameWaits
+    assert(select(2,getbytecode({Name="waiting"}))=="BYTES_waiting")
+    assert(select(2,getbytecode({Name="after-wait"}))=="BYTES_after-wait")
+    asyncWaits=frameWaits-waits
+end)
+pump(1)
+assert(asyncWaits==0,"A yielding job must not force another work-slice frame wait before the next call")
+print("Actual UI/job/bytecode pipeline passed: 100 fast jobs without frame waits, periodic yields for CPU work, no redundant yield after async work, timing counters, status restoration.")
 
 local ScriptCache, DecompileJobless = true, false
 local ldeccache, ldecompile = {}, nil
@@ -168,10 +235,13 @@ def main():
     source=args.source.read_text(encoding="utf-8-sig")
     timeout=source.split("\tlocal function makeTimeoutHandler(",1)[1].split("\tlocal decompileIgnoreMap",1)[0]
     timeout=timeout.split("\tlocal function runScriptJob",1)[0]
+    yielding=source.split("\tlocal function yieldIfDue()",1)[1].split("\tlocal IsLoading",1)[0]
+    loading=source.split("\tlocal function run_with_loading(",1)[1].split("\tlocal function makeTimeoutHandler",1)[0]
+    script_job=source.split("\tlocal function runScriptJob(",1)[1].split("\tlocal decompileIgnoreMap",1)[0]
     bytecode=source.split("\tlocal getbytecode\n",1)[1].split("\tlocal SaveBytecode",1)[0]
     decompile=source.split("\telseif decompile then\n",1)[1].split('\telse\n\t\tldecompile = function()\n\t\t\treturn "-- Your Executor',1)[0]
     chunk=source.split("\t\tlocal function buildChunk(",1)[1].split("\t\tlocal compress = CompressionMode",1)[0]
-    program=HARNESS.replace("__TIMEOUT__","local function makeTimeoutHandler("+timeout).replace("__BYTECODE__","local getbytecode\n"+bytecode).replace("__DECOMPILE__",decompile).replace("__CHUNK__","local function buildChunk("+chunk)
+    program=HARNESS.replace("__TIMEOUT__","local function makeTimeoutHandler("+timeout).replace("__YIELDIFDUE__","local function yieldIfDue()"+yielding).replace("__LOADING__","local function run_with_loading("+loading).replace("__SCRIPT_JOB__","local function runScriptJob("+script_job).replace("__BYTECODE__","local getbytecode\n"+bytecode).replace("__DECOMPILE__",decompile).replace("__CHUNK__","local function buildChunk("+chunk)
     with tempfile.TemporaryDirectory(prefix="csi-export-jobs-") as directory:
         path=Path(directory)/"jobs.luau"
         path.write_text(program,encoding="utf-8")

@@ -43,7 +43,7 @@ Actions to GitHub Pages.
 
 `Script Presets/presets.json` defines the four configurations. The generator
 combines them with a shared wrapper template. Wrappers perform a basic text
-write/read probe and load the pinned `v0.4.3` engine by default. Local development
+write/read probe and load the pinned `v0.4.4` engine by default. Local development
 requires an explicit `USE_LOCAL_CORE = true`. They record source identity,
 exceptions, and file existence in a JSON sidecar separately from file validity.
 The actual serializer is not duplicated.
@@ -103,6 +103,28 @@ original bytes with an uncompressed chunk header. This can increase output
 size; it does not remove source or geometry. Collection and binary reads yield
 when their work slice exceeds approximately 100 ms; individual native calls
 and encoders can still exceed that interval.
+
+## Job dispatch in 0.4.4
+
+Independent workers start with `task.spawn`. A synchronous result can return
+without waiting for another frame; a yielding call still uses deadline polling.
+Polling updates the last-yield timestamp so the next job does not add another
+frame wait after time already ceded to the scheduler. A zero timeout starts no
+native work.
+
+Bytecode and decompilation status updates no longer force a frame before each
+call. `runScriptJob` instead checks the existing approximately 100 ms work-slice
+budget. Cached bytecode remains shared between source caching and bytecode
+capture. Selection, decompilation settings, and deadlines are unchanged.
+`scriptJobs.bytecodeSeconds` and `decompileSeconds` accumulate handler wall time;
+they are not CPU timings or the total export duration.
+
+Actual-function tests cover fast batches, periodic yields, deadlines, independent
+jobs, cached failures, and packed values. A mock-API microbenchmark on the live
+client confirms lower scheduling/UI overhead; it does not establish a multiplier
+for real native reads or a complete place export.
+One native ModuleScript read also succeeded through the updated job pipeline;
+this is a compatibility sample, not a full export or Studio validation.
 
 ## Next engine work
 

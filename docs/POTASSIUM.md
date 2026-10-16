@@ -60,6 +60,9 @@ native property access, and the append-based writer.
   bytecode once per export and passes cached bytes to Potassium's documented
   `decompile` overload. Both Ultra configurations benefit when run on Potassium.
   ModuleScripts are not excluded as a class.
+  Version 0.4.4 removes forced per-script frame waits and deferral of immediately
+  completed jobs. Native API latency remains executor-dependent; the selection
+  and timeout settings are unchanged.
 - **Reports:** `profile: "Potassium"` and `runtimeAdapter` identify the executor
   version, available APIs, and binary-read attempts, successes, and failures.
   `sharedCoreUrl` and `sharedCoreBytes` identify the second-stage source, while
@@ -67,7 +70,7 @@ native property access, and the append-based writer.
 
 Both entry points use the same serializer. The Potassium entry point is under
 `Executors/Potassium/saveinstance.luau`; its four presets are under
-`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.4.3.
+`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.4.4.
 For local adapter development, edit its `CORE_URL` as well as the preset's
 `CORE_PATH`; opting into a local adapter alone still downloads its pinned core.
 

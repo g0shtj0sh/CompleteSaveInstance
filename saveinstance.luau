@@ -3664,7 +3664,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.3/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.4.4/",
 		SSI = "saveinstance",
 	}
 
@@ -3691,7 +3691,7 @@ local function completeSaveInstance(...)
 	GLOBAL_ENV.CSI = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.4.3",
+		engineVersion = "0.4.4",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -3725,7 +3725,7 @@ local function completeSaveInstance(...)
 	local progressStarted = os.clock()
 	local Progress = { phase = "preflight" }
 	ExportReport.lastProgress = Progress
-	ExportReport.scriptJobs = { bytecodeCalls = 0, decompileCalls = 0, timedOut = 0, failed = 0, failures = {} }
+	ExportReport.scriptJobs = { bytecodeCalls = 0, decompileCalls = 0, bytecodeSeconds = 0, decompileSeconds = 0, timedOut = 0, failed = 0, failures = {} }
 	ExportReport.compression = { bypassedSource = 0, bypassedLarge = 0, failed = 0 }
 	local lastProgressSent = 0
 	local function publishProgress(force)
@@ -4561,10 +4561,15 @@ local function completeSaveInstance(...)
 		return function(...)
 			-- Each invocation owns its result and deadline. No shared pending slot
 			-- or manual resumption of the serializer's coroutine.
+			if timeout == 0 then
+				return false, timeout_return or "Job timed out", true
+			end
 			local args = table.pack(...)
 			local results, expired
 			local deadline = os.clock() + timeout
-			local worker = task.defer(function()
+			-- Immediate calls can complete without waiting for another frame.
+			-- Yielding native calls still use the deadline/polling path below.
+			local worker = task.spawn(function()
 				local values = table.pack(pcall(f, table.unpack(args, 1, args.n)))
 				if not expired and os.clock() < deadline then
 					results = values
@@ -4578,12 +4583,14 @@ local function completeSaveInstance(...)
 				end
 				publishProgress(false)
 				task.wait()
+				lastYield = os.clock()
 			end
 			return table.unpack(results, 1, results.n)
 		end
 	end
 
 	local function runScriptJob(operation, handler, instance, target)
+		yieldIfDue()
 		local pathOk, path = pcall(instance.GetFullName, instance)
 		path = pathOk and path or instance.Name
 		local stats = ExportReport.scriptJobs
@@ -4593,6 +4600,8 @@ local function completeSaveInstance(...)
 		local started = os.clock()
 		local ok, value, timedOut = handler(target)
 		local seconds = os.clock() - started
+		local timingKey = operation == "bytecode" and "bytecodeSeconds" or "decompileSeconds"
+		stats[timingKey] = (stats[timingKey] or 0) + seconds
 		stats.lastJob = { operation = operation, path = path, seconds = seconds, ok = ok, timedOut = timedOut == true }
 		if not ok then
 			stats.failed += 1
@@ -4629,7 +4638,7 @@ local function completeSaveInstance(...)
 		getbytecode = function(script)
 			local cached = bytecodeCache[script]
 			if not cached then
-				cached = table.pack(run_with_loading("Reading bytecode: " .. script.Name, true, true, runScriptJob, "bytecode", handler, script, script))
+				cached = table.pack(run_with_loading("Reading bytecode: " .. script.Name, true, false, runScriptJob, "bytecode", handler, script, script))
 				bytecodeCache[script] = cached
 			end
 			return table.unpack(cached, 1, cached.n)
@@ -4694,7 +4703,7 @@ local function completeSaveInstance(...)
 			if string.find(string.lower(EXECUTOR_NAME), "potassium", 1, true) and type(bytecode) == "string" then
 				target = bytecode -- Documented Potassium overload; avoid rereading the Instance.
 			end
-			local ok, result = run_with_loading("Decompiling " .. script.Name, true, true, runScriptJob, "decompile", decomp, script, target)
+			local ok, result = run_with_loading("Decompiling " .. script.Name, true, false, runScriptJob, "decompile", decomp, script, target)
 			if not result then
 				ok, result = false, "Empty Output"
 			end
