@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.3 ? 2026-10-17
+
+- Preserved reloadable `MeshPart.MeshContent`, `MeshPart.TextureContent`, and
+  `PartOperation.Content` references when Reflection marks them non-serialized.
+  This fixes a metadata-dependent omission shared by universal and Potassium exports.
+- Verified on the connected client: the previous engine drops the two modern
+  road Content columns with Reflection enabled; the fixed engine produces a
+  byte-identical file to the isolated road model confirmed visible in Studio.
+- Added a regression test using the actual metadata selector, with conflicting
+  Reflection flags, a negative control, and checks that unrelated filters remain active.
+
+These fields preserve asset references; they do not embed private assets or
+restore unsupported native union data. Visual confirmation of a full affected
+place remains separate from the metadata regression test.
+
 ## 0.6.2 — 2026-10-17
 
 - Kept the preset label in export folder names only; the `.rbxl` uses the game

@@ -1,6 +1,6 @@
 {
-  "version": "0.6.2",
-  "sourceHash": "fb3072dce3180763006f9ead06920ff41213cc902004c49b8d15b1d4a43ee549",
+  "version": "0.6.3",
+  "sourceHash": "d26e44756e8d3e8a9768d5bd900081f1b6bd5801da791016edc32986b4c14e24",
   "groups": [
     "Output",
     "Selection",
@@ -18,7 +18,7 @@
       "description": "This will print debug logs to console about unusual scenarios. Recommended to enable if you wish to help us improve our products and find bugs / issues with it!",
       "default": "false",
       "group": "Diagnostics",
-      "line": 3746
+      "line": 3751
     },
     {
       "name": "ReadMe",
@@ -26,7 +26,7 @@
       "description": "Includes an embedded help document with export notes and limitations.",
       "default": "true",
       "group": "Output",
-      "line": 3747
+      "line": 3752
     },
     {
       "name": "Binary",
@@ -34,7 +34,7 @@
       "description": "Saves as a binary file (.rbxl/.rbxm) instead of XML (.rbxlx/.rbxmx). Much smaller and faster to load. Pass `XML = true` for the opposite.",
       "default": "true",
       "group": "Output",
-      "line": 3748
+      "line": 3753
     },
     {
       "name": "CompressionMode",
@@ -42,7 +42,7 @@
       "description": "How chunks are compressed in binary mode: \"zstd\", \"lz4\", or false for none.",
       "default": "\"zstd\"",
       "group": "Output",
-      "line": 3749
+      "line": 3754
     },
     {
       "name": "CompressionLevel",
@@ -50,7 +50,7 @@
       "description": "Compression strength, higher is smaller but slower. Range is -7 to 22 inclusive.",
       "default": "9",
       "group": "Output",
-      "line": 3750
+      "line": 3755
     },
     {
       "name": "CopyToClipboard",
@@ -58,7 +58,7 @@
       "description": "Puts the finished output on the clipboard instead of writing a file, so you can paste it straight into Studio. Best for small saves -- a full place is usually far too big for the clipboard to handle.",
       "default": "false",
       "group": "Output",
-      "line": 3751
+      "line": 3756
     },
     {
       "name": "RiskyServicesDisabled",
@@ -66,7 +66,7 @@
       "description": "Per-service kill switches for services games might detect. `UGC` skips UGCValidationService (GHP fallback reads, `MeshPart.VertexCount`). `Encoding` skips EncodingService (base64 encode/decode, zstd compression falls back to other funcs). `Reflection` skips ReflectionService (one of several API dump fallbacks, `Content` property lookups -- falls back to the other API dump sources). Examples: `{UGC = true}` disables only UGCValidationService; `{Encoding = true, Reflection = true}` disables both, leaving UGC untouched.",
       "default": "{UGC = true, Encoding = false, Reflection = false}",
       "group": "Runtime",
-      "line": 3752
+      "line": 3757
     },
     {
       "name": "SafeMode",
@@ -74,7 +74,7 @@
       "description": "Deliberately disconnects the client before saving and may enable script termination and rendering changes. It does not guarantee protection.",
       "default": "false",
       "group": "Runtime",
-      "line": 3753
+      "line": 3758
     },
     {
       "name": "KillAllScripts",
@@ -82,7 +82,7 @@
       "description": "Attempts to terminate other client scripts. SafeMode can enable this implicitly; it can prevent movement and disrupt the client.",
       "default": "false",
       "group": "Runtime",
-      "line": 3754
+      "line": 3759
     },
     {
       "name": "BoostFPS",
@@ -90,7 +90,7 @@
       "description": "Massively boosts FPS by disabling 3D rendering. Other options also enable it, like: SafeMode.",
       "default": "false",
       "group": "Runtime",
-      "line": 3755
+      "line": 3760
     },
     {
       "name": "ShutdownWhenDone",
@@ -98,7 +98,7 @@
       "description": "Shuts the game down after saveinstance is finished.",
       "default": "false",
       "group": "Runtime",
-      "line": 3756
+      "line": 3761
     },
     {
       "name": "AntiIdle",
@@ -106,7 +106,7 @@
       "description": "Prevents the 20-minute-Idle Kick.",
       "default": "true",
       "group": "Runtime",
-      "line": 3757
+      "line": 3762
     },
     {
       "name": "Anonymous",
@@ -114,7 +114,7 @@
       "description": "* **RISKY:** Removes your Name and UserId from the file -- useful for games that store them in GUIs or other Instances. Can also be a table with UserId and/or Name keys to pick the replacements. May mess up unrelated text or numbers that happen to match. Inside attributes and tags the replacement is padded to the same length, so a name shorter than yours comes out as for example `Roblox____`.",
       "default": "false",
       "group": "Runtime",
-      "line": 3758
+      "line": 3763
     },
     {
       "name": "ShowStatus",
@@ -122,7 +122,7 @@
       "description": "Displays the export progress interface while the engine runs.",
       "default": "true",
       "group": "Diagnostics",
-      "line": 3759
+      "line": 3764
     },
     {
       "name": "WorkBudgetMs",
@@ -130,7 +130,7 @@
       "description": "Cooperative Lua work budget in milliseconds, clamped to 1–16. Smaller budgets give the game more scheduler time but can lengthen exports. Native calls cannot be preempted.",
       "default": "4",
       "group": "Runtime",
-      "line": 3760
+      "line": 3765
     },
     {
       "name": "Callback",
@@ -138,7 +138,7 @@
       "description": "If set, the serialized data will be sent to the callback function instead of to file.",
       "default": "false",
       "group": "Output",
-      "line": 3761
+      "line": 3766
     },
     {
       "name": "mode",
@@ -146,7 +146,7 @@
       "description": "Valid modes: full, optimized, scripts. Change this to invalid mode like \"invalid\" if you only want ExtraInstances. \"optimized\" mode is **NOT** supported with *@Object* option.",
       "default": "\"optimized\"",
       "group": "Selection",
-      "line": 3762
+      "line": 3767
     },
     {
       "name": "Decompile",
@@ -154,7 +154,7 @@
       "description": "Script decompiling.",
       "default": "true",
       "group": "Scripts",
-      "line": 3763
+      "line": 3768
     },
     {
       "name": "scriptcache",
@@ -162,7 +162,7 @@
       "description": "Use decompiled script cache to avoid decompiling duplicate scripts.",
       "default": "true",
       "group": "Scripts",
-      "line": 3764
+      "line": 3769
     },
     {
       "name": "DecompileTimeout",
@@ -170,7 +170,7 @@
       "description": "If the decompilation run time exceeds this value it gets cancelled. Set to -1 to disable timeout.",
       "default": "10",
       "group": "Scripts",
-      "line": 3765
+      "line": 3770
     },
     {
       "name": "BytecodeTimeout",
@@ -178,7 +178,7 @@
       "description": "If the SaveBytecode run time exceeds this value it gets cancelled. Set to -1 to disable timeout.",
       "default": "3",
       "group": "Scripts",
-      "line": 3766
+      "line": 3771
     },
     {
       "name": "DecompileJobless",
@@ -186,7 +186,7 @@
       "description": "Includes already decompiled code in the output. No new scripts are decompiled.",
       "default": "false",
       "group": "Scripts",
-      "line": 3767
+      "line": 3772
     },
     {
       "name": "SaveBytecode",
@@ -194,7 +194,7 @@
       "description": "Includes bytecode in the output. Useful if you wish to be able to decompile it yourself later. Respects **@DecompileIgnore**.",
       "default": "false",
       "group": "Scripts",
-      "line": 3768
+      "line": 3773
     },
     {
       "name": "DecompileIgnore",
@@ -202,7 +202,7 @@
       "description": "Ignores matched instances and their descendants by default. To ignore only the instance itself, set the value to `false`. Examples: `\"Chat\"` matches any instance with ClassName \"Chat\"; `Players = {\"MyPlayerName\"}` matches class \"Players\" AND name \"MyPlayerName\" only; `workspace` matches a specific instance by reference; `[workspace] = false` matches a specific instance by reference, ignoring only itself and not its descendants.",
       "default": "{TextChatService}",
       "group": "Scripts",
-      "line": 3769
+      "line": 3774
     },
     {
       "name": "IgnoreList",
@@ -210,7 +210,7 @@
       "description": "Structure mirrors **@DecompileIgnore**, except `false` means keep the instance but ignore its descendants. Supports both instance references and ClassName strings. Examples: `\"CoreGui\"` skips entirely; `CorePackages = false` keeps the instance but skips its descendants; `Players = {\"SomePlayer\"}` skips a specific named instance with specific ClassName.",
       "default": "{CoreGui, CorePackages, Packages = false}",
       "group": "Selection",
-      "line": 3770
+      "line": 3775
     },
     {
       "name": "ExcludeModuleScripts",
@@ -218,7 +218,7 @@
       "description": "Exports ModuleScript containers as Folders, preserving their names and descendants without reading their Source or bytecode. Explicit IgnoreList rules still take priority.",
       "default": "false",
       "group": "Selection",
-      "line": 3771
+      "line": 3776
     },
     {
       "name": "ExtraInstances",
@@ -226,7 +226,7 @@
       "description": "If used with any invalid mode (like \"invalidmode\") it will only save these instances.",
       "default": "{}",
       "group": "Selection",
-      "line": 3772
+      "line": 3777
     },
     {
       "name": "IgnoreProperties",
@@ -234,7 +234,7 @@
       "description": "Ignores properties by Name.",
       "default": "{}",
       "group": "Properties",
-      "line": 3773
+      "line": 3778
     },
     {
       "name": "SaveCacheInterval",
@@ -242,7 +242,7 @@
       "description": "The less the value the more often it saves, but that would mean less performance due to constantly saving. XML Only.",
       "default": "0x1600 * 10",
       "group": "Output",
-      "line": 3774
+      "line": 3779
     },
     {
       "name": "FilePath",
@@ -250,7 +250,7 @@
       "description": "The name (can include a path) of the file to save to. If it has no extension, `.rbxmx/rbxm` (models) or `.rbxlx/rbxl` (places) is appended; an existing extension is left as-is. Ignores `OPTIONS.AvoidFileOverwrite`.",
       "default": "false",
       "group": "Output",
-      "line": 3775
+      "line": 3780
     },
     {
       "name": "AvoidFileOverwrite",
@@ -258,7 +258,7 @@
       "description": "Prevents writing to place file that already exists.",
       "default": "true",
       "group": "Output",
-      "line": 3776
+      "line": 3781
     },
     {
       "name": "Object",
@@ -266,7 +266,7 @@
       "description": "* If provided, saves as .rbxmx (Model file) instead. If Object is game, it will be saved as a .rbxl file. **MUST BE AN INSTANCE REFERENCE, FOR EXAMPLE - *game.Workspace***. `\"optimized\"` mode is **NOT** supported with this option. If IsModel is set to false then Object specified here will be saved as a place file.",
       "default": "false",
       "group": "Selection",
-      "line": 3777
+      "line": 3782
     },
     {
       "name": "IsModel",
@@ -274,7 +274,7 @@
       "description": "If Object is specified then sets to true automatically, unless you set it to false.",
       "default": "false",
       "group": "Selection",
-      "line": 3778
+      "line": 3783
     },
     {
       "name": "NilInstances",
@@ -282,7 +282,7 @@
       "description": "Save instances that aren't Parented (Parented to nil).",
       "default": "false",
       "group": "Selection",
-      "line": 3779
+      "line": 3784
     },
     {
       "name": "NilInstancesFixes",
@@ -290,7 +290,7 @@
       "description": "* This can cause some Classes to be fixed even though they might not need the fix (better be safe than sorry though). For example, Bones inherit from Attachment if we dont define them in the NilInstancesFixes then this will catch them anyways. **TO AVOID THIS BEHAVIOR USE THIS EXAMPLE:** {ClassName_That_Doesnt_Need_Fix = false}.",
       "default": "{Animator = function, AdPortal = function, BaseWrap = function, Attachment = function}",
       "group": "Advanced",
-      "line": 3780
+      "line": 3785
     },
     {
       "name": "IgnoreDefaultProperties",
@@ -298,7 +298,7 @@
       "description": "Ignores default properties during saving. XML Only (XML=true) because Binary (default) doesn't really need it.",
       "default": "true",
       "group": "Properties",
-      "line": 3781
+      "line": 3786
     },
     {
       "name": "IgnoreNotArchivable",
@@ -306,7 +306,7 @@
       "description": "Ignores the Archivable property and saves Non-Archivable instances.",
       "default": "true",
       "group": "Selection",
-      "line": 3782
+      "line": 3787
     },
     {
       "name": "IgnorePropertiesOfNotScriptsOnScriptsMode",
@@ -314,7 +314,7 @@
       "description": "Ignores property of every instance that is not a script in \"scripts\" mode.",
       "default": "false",
       "group": "Properties",
-      "line": 3783
+      "line": 3788
     },
     {
       "name": "IgnoreSpecialProperties",
@@ -322,7 +322,7 @@
       "description": "Prevents calls to `gethiddenproperty` and uses fallback methods instead. This also helps with crashes. If your file is corrupted after saving, you can try turning this on.",
       "default": "false",
       "group": "Properties",
-      "line": 3784
+      "line": 3789
     },
     {
       "name": "IsolateStarterPlayer",
@@ -330,7 +330,7 @@
       "description": "Saves StarterPlayer as separate folder, children of the original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3785
+      "line": 3790
     },
     {
       "name": "IsolatePlayers",
@@ -338,7 +338,7 @@
       "description": "Saves All Players as separate folder, children of the original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3786
+      "line": 3791
     },
     {
       "name": "IsolateLocalPlayer",
@@ -346,7 +346,7 @@
       "description": "Saves LocalPlayer as separate folder, original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3787
+      "line": 3792
     },
     {
       "name": "IsolateLocalPlayerCharacter",
@@ -354,7 +354,7 @@
       "description": "Saves LocalPlayer.Character as separate folder, original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3788
+      "line": 3793
     },
     {
       "name": "SavePlayerCharacters",
@@ -362,7 +362,7 @@
       "description": "Save player characters while saving.",
       "default": "false",
       "group": "Players",
-      "line": 3789
+      "line": 3794
     },
     {
       "name": "SaveNotCreatable",
@@ -370,7 +370,7 @@
       "description": "* Includes non-serializable instances as Folder objects (Name is misleading as this is mostly a fix for certain NilInstances and isn't always related to NotCreatable). Other options also enable it, like: IsolatePlayers, IsolateLocalPlayer, etc.",
       "default": "false",
       "group": "Selection",
-      "line": 3790
+      "line": 3795
     },
     {
       "name": "NotCreatableFixes",
@@ -378,7 +378,7 @@
       "description": "* {\"Player\"} is the same as {Player = \"Folder\"}; Format like {SpawnLocation = \"Part\"} is only to be used when SpawnLocation inherits from \"Part\" AND \"Part\" is Creatable.",
       "default": "{ \"\", \"Player\", \"PlayerScripts\", \"PlayerGui\", \"TouchTransmitter\" }",
       "group": "Advanced",
-      "line": 3791
+      "line": 3796
     },
     {
       "name": "AlternativeWritefile",
@@ -386,7 +386,7 @@
       "description": "* Splits file content string into segments and writes them using appendfile. This might help with crashes when it starts writing to file. Though there is a risk of appendfile working incorrectly on some execs.",
       "default": "true",
       "group": "Output",
-      "line": 3792
+      "line": 3797
     },
     {
       "name": "IgnoreDefaultPlayerScripts",
@@ -394,7 +394,7 @@
       "description": "* **RISKY**: Ignores Default PlayerScripts like PlayerModule & RbxCharacterSounds. Prevents crashes on some execs.",
       "default": "true",
       "group": "Scripts",
-      "line": 3793
+      "line": 3798
     },
     {
       "name": "SharedBinaryStrings",
@@ -402,7 +402,7 @@
       "description": "Stores BinaryString values in a shared pool so identical ones are only written once, instead of repeating them for every instance. Good when many instances hold the same data (like copies of the same mesh) -- can make files noticeably smaller. Slightly bigger when everything is unique. Roblox doesn't officially support this, so there's a small chance it confuses Studio.",
       "default": "false",
       "group": "Properties",
-      "line": 3794
+      "line": 3799
     },
     {
       "name": "TreatUnionsAsParts",
@@ -410,7 +410,7 @@
       "description": "* **RISKY:** Converts all UnionOperations to Parts. Useful if your Executor isn't able to save (read) Unions, because otherwise they will be invisible.",
       "default": "false (except Solara)",
       "group": "Properties",
-      "line": 3795
+      "line": 3800
     }
   ],
   "aliases": [

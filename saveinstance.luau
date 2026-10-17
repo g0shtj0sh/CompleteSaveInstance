@@ -1792,7 +1792,12 @@ local ClassList, FetchAPI
 local RiskyServicesDisabled
 do
 	local ClassPropertyExceptions = arrayToDict({
-		Whitelist = {},
+		-- Keep reloadable mesh URI references even when Reflection marks the modern
+		-- Content fields as non-serialized. CanLoad and the normal read checks still apply.
+		Whitelist = {
+			MeshPart = { "MeshContent", "TextureContent" },
+			PartOperation = { "Content" },
+		},
 		Blacklist = {
 			BillboardGui = { "PlayerToHideFrom" },
 			LuaSourceContainer = { "ScriptGuid" },
@@ -3836,7 +3841,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.3/",
 		SSI = "saveinstance",
 	}
 
@@ -3863,7 +3868,7 @@ local function completeSavePlace(...)
 	GLOBAL_ENV.CSP = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.6.2",
+		engineVersion = "0.6.3",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
