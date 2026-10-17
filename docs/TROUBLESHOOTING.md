@@ -31,9 +31,9 @@ unchanged during property and script extraction; it does not identify a disk
 write or the operation causing a freeze.
 
 Starting with 0.4.2, both preset profiles write
-`<output-path>.progress.json` in the runtime's file workspace while running.
+`<export-folder>/progress.json` in the runtime's file workspace while running.
 The console prints its exact path. Preserve it with the final console messages
-if the client stops responding; a final `.report.json` may not exist yet.
+if the client stops responding; a final `report.json` may not exist yet.
 
 - `phase: "scripts"`: `detail.operation` identifies bytecode or decompilation;
   `detail.path` identifies the script, including ModuleScripts.

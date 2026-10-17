@@ -6,7 +6,7 @@
 -- Relative to the runtime's file workspace, not the Git checkout on your PC.
 local CORE_PATH = "CompleteSavePlace/saveinstance.luau"
 local USE_LOCAL_CORE = false -- opt in explicitly when developing a local engine
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/saveinstance.luau"
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/saveinstance.luau"
 local PRESET_ID = "MapSavePlace"
 local options = {
 	mode = "full",
@@ -36,11 +36,72 @@ end
 if type(readfile) ~= "function" or type(writefile) ~= "function" or type(loadstring) ~= "function" then
 	fail("This preset requires readfile, writefile, and loadstring. Use a compatible local runtime.")
 end
+if type(makefolder) ~= "function" or type(isfolder) ~= "function" then
+	fail("This preset requires makefolder and isfolder to group each export in its own folder.")
+end
 
--- Unique names help avoid confusing an old file with this run's output.
+local function cleanName(value, maxBytes)
+	-- Retain Unicode; replace only path separators, control characters and Windows-invalid characters.
+	value = string.gsub(value, '[<>:"/\\|?*%c]', " ")
+	value = string.gsub(value, "%s+", " ")
+	value = string.gsub(value, "^ +", "")
+	if #value > maxBytes then
+		local boundary = maxBytes + 1
+		while boundary > 1 do
+			local byte = string.byte(value, boundary)
+			if byte < 128 or byte >= 192 then break end
+			boundary -= 1
+		end
+		value = string.sub(value, 1, boundary - 1)
+	end
+	return string.gsub(value, "[%. ]+$", "")
+end
+
+local placeName
+for _, method in { "GetProductInfoAsync", "GetProductInfo" } do
+	local nameOk, info = pcall(function()
+		local marketplace = game:GetService("MarketplaceService")
+		return marketplace[method](marketplace, game.PlaceId)
+	end)
+	if nameOk and type(info) == "table" and type(info.Name) == "string" and info.Name ~= "" then
+		placeName = info.Name
+		break
+	end
+end
+if not placeName then
+	local nameOk, name = pcall(function() return game.Name end)
+	if nameOk and type(name) == "string" and name ~= "Game" and name ~= "Place" then
+		placeName = name
+	end
+end
+local titleBudget = 80 - #PRESET_ID - 3
+local title = cleanName(placeName or "", titleBudget)
+if title == "" then title = "Place " .. tostring(game.PlaceId) end
+local baseName = title .. " - " .. PRESET_ID
+local outputFolder, outputName
+for attempt = 1, 9999 do
+	local candidate = baseName .. (attempt == 1 and "" or " (" .. tostring(attempt) .. ")")
+	local checked, exists = pcall(isfolder, candidate)
+	if not checked or type(exists) ~= "boolean" then fail("Could not check output folder: " .. candidate) end
+	if not exists and type(isfile) == "function" then
+		local fileChecked, fileExists = pcall(isfile, candidate)
+		if not fileChecked then fail("Could not check output path: " .. candidate) end
+		exists = fileExists
+	end
+	if not exists then
+		local created, createError = pcall(makefolder, candidate)
+		if not created then fail("Could not create output folder: " .. tostring(createError)) end
+		local verified, folderExists = pcall(isfolder, candidate)
+		if not verified or folderExists ~= true then fail("Output folder was not created: " .. candidate) end
+		outputFolder, outputName = candidate, candidate
+		break
+	end
+end
+if not outputFolder then fail("No available output folder name; archive or move older exports.") end
+options.FilePath = outputFolder .. "/" .. outputName .. ".rbxl"
+
 local runId = tostring(game.PlaceId) .. "_" .. tostring(os.time()) .. "_" .. tostring(math.random(100000, 999999))
-options.FilePath = PRESET_ID .. "_" .. runId .. ".rbxl"
-local probePath = "CSP_WriteProbe_" .. runId .. ".txt"
+local probePath = outputFolder .. "/write-test.tmp"
 local marker = "CompleteSavePlace write probe " .. runId
 local probeOk, probeError = pcall(function()
 	writefile(probePath, marker)
@@ -61,14 +122,14 @@ local started = os.clock()
 local exportReport
 local sourceOrigin
 local sourceBytes
-local progressPath = options.FilePath .. ".progress.json"
+local progressPath = outputFolder .. "/progress.json"
 local lastProgressLog, progressWriteFailed = -math.huge, false
 local latestProgress
 local function onProgress(progress)
 	latestProgress = progress
 	progress.preset = PRESET_ID
 	progress.profile = "Universal"
-	progress.wrapperVersion = "0.6.0"
+	progress.wrapperVersion = "0.6.1"
 	progress.sourceOrigin = sourceOrigin
 	progress.validation = "unverified"
 	local wrote, writeError = pcall(function()
@@ -124,11 +185,13 @@ local report = type(exportReport) == "table" and exportReport or {
 	propertyAudit = "unavailable_from_this_core",
 }
 report.preset = PRESET_ID
-report.wrapperVersion = "0.6.0"
+report.wrapperVersion = "0.6.1"
 report.profile = "Universal"
 report.sourceOrigin = sourceOrigin
 report.sourceBytes = sourceBytes
 report.progressPath = progressPath
+report.outputFolder = outputFolder
+report.placeName = placeName or title
 report.lastProgress = report.lastProgress or latestProgress
 report.wrapperError = not ok and tostring(result) or nil
 report.outputPath = report.outputPath or options.FilePath
@@ -143,7 +206,7 @@ if type(isfile) == "function" then
 else
 	report.outputExistenceError = "isfile_unavailable"
 end
-local reportPath = options.FilePath .. ".report.json"
+local reportPath = outputFolder .. "/report.json"
 local reportOk, reportError = pcall(function()
 	local json = game:GetService("HttpService"):JSONEncode(report)
 	writefile(reportPath, json)
@@ -156,8 +219,8 @@ end
 if report.criticalGeometryOmissions and report.criticalGeometryOmissions > 0 then
 	warn(prefix .. tostring(report.criticalGeometryOmissions) .. " geometry/terrain property columns were omitted. See the report; missing road geometry is not repaired by a completed export.")
 end
-if report.engineVersion ~= "0.6.0" then
-	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.6.0. Check for an outdated local CORE_PATH.")
+if report.engineVersion ~= "0.6.1" then
+	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.6.1. Check for an outdated local CORE_PATH.")
 end
 if not ok then
 	fail("Export failed. Check CORE_PATH and console details: " .. tostring(result))

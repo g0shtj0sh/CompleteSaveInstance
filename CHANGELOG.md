@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.6.1 — 2026-10-17
+
+- Grouped preset exports in a `Game title - Preset` folder, with a matching
+  `.rbxl` filename and concise `progress.json` / `report.json` companions.
+- Preserved Unicode titles, sanitized filesystem-invalid characters, and bounded
+  title length without splitting UTF-8. Metadata failures use a name/ID fallback.
+- Added numbered folder/file suffixes for repeated exports instead of long
+  timestamp/random filenames. Folder checks and an in-folder write probe run
+  before loading the exporter; existing runs are not overwritten.
+- Applied the shared wrapper change to all Universal and Potassium presets,
+  with regression cases for Unicode, collisions, fallbacks, and folder errors.
+
 ## 0.6.0 — 2026-10-17
 
 - Renamed the project, repository links, API, presets, runtime namespace, and

@@ -7,7 +7,7 @@ or execute this versioned Ultra loader:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Executors/Potassium/Script%20Presets/UltraCompleteSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Executors/Potassium/Script%20Presets/UltraCompleteSavePlace.luau",
     true
 ))()
 ```
@@ -31,13 +31,13 @@ existing block-format check before selection. Reports include profile,
 executor version, capabilities, and binary-read counters.
 
 Since 0.4.2, script jobs reuse cached bytecode and presets write a
-`<output-path>.progress.json` checkpoint while running. Preserve it if the client
+`<export-folder>/progress.json` checkpoint while running. Preserve it if the client
 freezes before producing a final report. Lua deadlines cannot preempt a blocked
 native call. Source columns and chunks over 8 MiB are stored uncompressed,
 preserving their data at the cost of potentially larger files.
 
 No general-purpose globals are overwritten. Both stages download code pinned
-to v0.6.0; inherited helper dependencies remain unpinned. Local adapter
+to v0.6.1; inherited helper dependencies remain unpinned. Local adapter
 development also requires changing its core URL if the shared engine is local.
 Regenerate presets with `python scripts/generate_presets.py` at repository root.
 

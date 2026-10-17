@@ -14,7 +14,7 @@ Use the versioned [Ultra loader](PRESETS.md#versioned-loaders). Version 0.3.0
 downloads its pinned engine by default, so an old local engine cannot silently
 replace it. The console records the source origin and byte count.
 
-The wrapper writes the place and `<output-path>.report.json` to the runtime's
+The wrapper writes the place and `<export-folder>/report.json` to the runtime's
 file workspace. Keep the JSON and console output from the same run. If report
 writing fails, the wrapper prints the reason.
 

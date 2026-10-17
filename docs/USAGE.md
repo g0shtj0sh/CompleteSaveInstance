@@ -23,7 +23,7 @@ gh repo clone g0shtj0sh/CompleteSavePlace
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. Presets download the root engine pinned to `v0.6.0` by default.
+is required. Presets download the root engine pinned to `v0.6.1` by default.
 For local development, explicitly set `USE_LOCAL_CORE = true` and configure
 `CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
@@ -67,17 +67,23 @@ The inline `CustomOptions` documentation in `saveinstance.luau` gives more detai
 
 ## Verify the result
 
+Preset runs create `Game title - Preset/Game title - Preset.rbxl` with
+`progress.json` and `report.json` in the same folder. Repeated exports use a
+numbered folder/file suffix. See [output folders](PRESETS.md#output-folders)
+for Unicode names, title fallbacks, and folder API requirements. Direct engine
+calls continue to honor the `FilePath` you supply.
+
 Check the exact path, existence, plausible file size, and Studio opening.
 Inspect representative models, meshes, materials, UI, and authorized scripts.
 A return from the function does not prove that the output is valid.
 
-Presets write a companion `<output-path>.report.json` after the attempt. It records
+Presets write a companion `<export-folder>/report.json` after the attempt. It records
 the engine version, source origin, file existence, collected classes, and
 omitted binary property columns. `ok` means the export function completed;
 `validation` stays `unverified`. XML property omissions are not instrumented.
 See [missing geometry](GEOMETRY.md) for interpreting the report.
 
-Since 0.4.2, presets also write `<output-path>.progress.json` during the run.
+Since 0.4.2, presets also write `<export-folder>/progress.json` during the run.
 It identifies the latest phase and script job or binary property column, even
 when a final report cannot be produced. Script-job failures and compression
 fallbacks appear in the final report. If the client freezes, keep the progress

@@ -18,7 +18,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Script%20Presets/DiagnosticSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/DiagnosticSavePlace.luau",
     true
 ))()
 ```
@@ -56,7 +56,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Script%20Presets/MapSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/MapSavePlace.luau",
     true
 ))()
 ```
@@ -95,7 +95,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Script%20Presets/ScriptsSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/ScriptsSavePlace.luau",
     true
 ))()
 ```
@@ -136,7 +136,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Script%20Presets/UltraCompleteSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/UltraCompleteSavePlace.luau",
     true
 ))()
 ```
@@ -185,7 +185,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Script%20Presets/UltraNoModuleScripts.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/UltraNoModuleScripts.luau",
     true
 ))()
 ```
@@ -224,6 +224,12 @@ Options:
 }
 ```
 
+## Export files
+
+Each run creates `Game title - Preset/Game title - Preset.rbxl`, with `progress.json` and `report.json` in that folder.
+Existing folders get numbered suffixes, such as ` (2)`, on both the folder and place file. Unicode titles are preserved; invalid path characters are replaced.
+The runtime needs `makefolder` and `isfolder`. A temporary `write-test.tmp` probes writing and is removed when `delfile` is available.
+
 ## Running a preset
 
 Use a versioned loader above, or copy the engine and preset into your runtime's file workspace:
@@ -237,15 +243,15 @@ CompleteSavePlace/
 
 Execute the chosen preset through the runtime's local script facility, or use the versioned loader above.
 
-The preset downloads the engine pinned to `v0.6.0` by default, avoiding stale local copies.
+The preset downloads the engine pinned to `v0.6.1` by default, avoiding stale local copies.
 For local development, explicitly set `USE_LOCAL_CORE = true` and adjust `CORE_PATH`.
 No GitHub token is required. The runtime still needs HTTP access and file APIs.
 
-The wrapper performs a basic text write/read probe, uses a unique output filename, and checks file existence when available.
+The wrapper performs a basic text write/read probe, creates a separate game-and-preset folder, and checks file existence when available.
 It never treats an existing file as proof of valid contents. Open the result in Studio.
 
-A `.report.json` sidecar records the engine version, source, class counts, output existence, and omitted binary property columns.
-A `.progress.json` checkpoint records the latest operation while running; preserve it if the client freezes before a final report exists.
+A `report.json` sidecar records the engine version, source, class counts, output existence, and omitted binary property columns.
+A `progress.json` checkpoint records the latest operation while running; preserve it if the client freezes before a final report exists.
 Per-job deadlines cannot interrupt native calls that block the entire client. See [troubleshooting](../docs/TROUBLESHOOTING.md).
 Geometry warnings identify omitted terrain or mesh data; they do not identify the missing road without further inspection.
 

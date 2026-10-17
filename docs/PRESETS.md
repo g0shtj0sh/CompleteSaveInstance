@@ -73,7 +73,7 @@ Run a preset in a compatible environment with HTTP access and file APIs:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Script%20Presets/UltraCompleteSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/UltraCompleteSavePlace.luau",
     true
 ))()
 ```
@@ -106,19 +106,46 @@ layout differs, change `CORE_PATH` at the top of the preset. Set
 the pinned version. A missing local file produces an error. External helpers are
 still fetched by the engine and are not yet pinned.
 
-Every preset performs a basic text write/read probe, chooses a unique output name,
+Every preset performs a basic text write/read probe inside its own export folder,
 and distinguishes a returned function from an existing file. Output contents
 and Studio compatibility remain unverified until you inspect them.
 
-Wrappers write `<output-path>.report.json` with engine identity, file evidence,
+Wrappers write `<export-folder>/report.json` with engine identity, file evidence,
 class counts, and omitted binary property columns. A report-writing error is
 printed explicitly. Use the [missing geometry guide](GEOMETRY.md) when objects
 or surfaces are absent.
 
-Since 0.4.2, all presets also write `<output-path>.progress.json` during execution,
+Since 0.4.2, all presets also write `<export-folder>/progress.json` during execution,
 before script jobs and compression calls. Keep this file if the client freezes
 before a final report is written. The final report includes `scriptJobs` and
 `compression` counters. See [frozen exports](TROUBLESHOOTING.md) for interpretation.
+
+## Output folders
+
+Since 0.6.1, Universal and Potassium presets group each run in a folder named
+after the game and selected preset. For example:
+
+```text
+(学乱) Gakuran - UltraNoModuleScripts/
+  (学乱) Gakuran - UltraNoModuleScripts.rbxl
+  progress.json
+  report.json
+```
+
+The place file has the same name as its folder. If that folder already exists,
+the next run uses ` (2)`, then ` (3)`, for both names. Earlier exports and their
+reports are preserved, including incomplete runs.
+
+Game titles come from MarketplaceService, falling back to the DataModel name
+or `Place <placeId>` when metadata is unavailable. Unicode characters are kept;
+filesystem-invalid characters are replaced with spaces and long titles are
+shortened without splitting a UTF-8 character. The preset name stays intact.
+
+The runtime must provide `makefolder` and `isfolder` alongside the existing file
+APIs. A short-lived `write-test.tmp` checks writing inside the chosen folder;
+it is removed when `delfile` is available. If folder creation or verification
+fails, the preset stops before loading the exporter. The shared engine cache
+remains in `completesaveplace_cache/`.
 
 ## Changing a configuration
 
@@ -167,7 +194,7 @@ Select **Potassium** above any preset and click **Copier le script**. The loader
 
 Both entry points use the same serializer. The Potassium entry point is under
 `Executors/Potassium/saveinstance.luau`; its five presets are under
-`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.6.0.
+`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.6.1.
 For local adapter development, edit its `CORE_URL` as well as the preset's
 `CORE_PATH`; opting into a local adapter alone still downloads its pinned core.
 
@@ -190,7 +217,7 @@ native calls or catch native crashes. Studio reopening and the missing road
 still require a fresh export. See [missing geometry](GEOMETRY.md).
 
 The 0.4.2 progress checkpoint is written before script jobs and compression.
-Keep `<output-path>.progress.json` if Potassium freezes. Lua deadlines cannot
+Keep `<export-folder>/progress.json` if Potassium freezes. Lua deadlines cannot
 interrupt native code that blocks the entire client; see
 [troubleshooting](TROUBLESHOOTING.md). Source columns and chunks over 8 MiB are
 stored uncompressed, which can increase file size without dropping their data.

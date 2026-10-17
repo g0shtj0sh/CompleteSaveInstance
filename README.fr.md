@@ -55,9 +55,14 @@ Tous utilisent le même moteur avec des paramètres différents. Ultra active le
 options de couverture étendue, avec des délais par tâche bornés, mais ses
 résultats dans Roblox et Studio restent à valider.
 
+Depuis la **0.6.1**, chaque export utilise un dossier **Nom du jeu - Preset**.
+Le fichier `.rbxl` porte le même nom ; les fichiers annexes sont `progress.json`
+et `report.json`. Les noms japonais sont conservés. Si le dossier existe déjà,
+un suffixe `(2)`, `(3)`, etc. préserve les anciennes sauvegardes.
+
 La version **0.4.2** corrige le gestionnaire des tâches de scripts et évite les
 lectures répétées du bytecode. Les deux profils écrivent un fichier
-`<export>.progress.json` pendant l'exécution pour identifier la dernière opération
+`<dossier>/progress.json` pendant l'exécution pour identifier la dernière opération
 annoncée en cas de gel. Conserver ce fichier avec les logs ; un délai Lua ne
 peut pas interrompre un appel natif qui bloque tout le client.
 
