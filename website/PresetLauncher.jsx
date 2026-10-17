@@ -3,7 +3,7 @@ import data from './api-data.json';
 
 export function loader(id, profile='Universal') {
   const folder=profile==='Potassium'?'Executors/Potassium/Script%20Presets':'Script%20Presets';
-  return 'loadstring(game:HttpGet(\n    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v'+data.version+'/'+folder+'/'+id+'.luau",\n    true\n))()';
+  return 'loadstring(game:HttpGet(\n    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v'+data.version+'/'+folder+'/'+id+'.luau",\n    true\n))()';
 }
 
 export default function PresetLauncher({id, initialProfile='Universal', compact=false, onProfileChange}) {
@@ -21,10 +21,10 @@ export default function PresetLauncher({id, initialProfile='Universal', compact=
     }
     setTimeout(()=>setFeedback(''),3000);
   }
-  return <div className={'csi-launcher '+(compact?'csi-launcher-compact':'')} data-preset={id} data-profile={profile}>
-    <div className="csi-launcher-top"><span>RUN THIS PRESET <small>v{data.version}</small></span><div className="csi-profile-picker" aria-label={'Executor profile for '+id}>{data.profiles.map(p=><button type="button" key={p} aria-pressed={profile===p} onClick={()=>choose(p)}>{p}</button>)}</div></div>
+  return <div className={'csp-launcher '+(compact?'csp-launcher-compact':'')} data-preset={id} data-profile={profile}>
+    <div className="csp-launcher-top"><span>RUN THIS PRESET <small>v{data.version}</small></span><div className="csp-profile-picker" aria-label={'Executor profile for '+id}>{data.profiles.map(p=><button type="button" key={p} aria-pressed={profile===p} onClick={()=>choose(p)}>{p}</button>)}</div></div>
     <pre tabIndex="0" aria-label={profile+' '+id+' runnable script'}><code>{script}</code></pre>
-    <div className="csi-launcher-bottom"><button type="button" className="csi-launch-copy" aria-label={'Copier le script '+profile+' '+id} onClick={copy}>{feedback==='Copié !'?feedback:'Copier le script'} <span aria-hidden="true">⧉</span></button><span className="csi-launch-feedback" role="status">{feedback==='Copié !'?'Prêt à coller dans ton exécuteur.':feedback}</span></div>
+    <div className="csp-launcher-bottom"><button type="button" className="csp-launch-copy" aria-label={'Copier le script '+profile+' '+id} onClick={copy}>{feedback==='Copié !'?feedback:'Copier le script'} <span aria-hidden="true">⧉</span></button><span className="csp-launch-feedback" role="status">{feedback==='Copié !'?'Prêt à coller dans ton exécuteur.':feedback}</span></div>
     {failed&&<textarea readOnly aria-label="Script à copier manuellement" value={script} onFocus={e=>e.target.select()}/>}
   </div>;
 }

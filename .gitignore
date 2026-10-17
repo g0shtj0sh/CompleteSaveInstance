@@ -8,7 +8,7 @@ __pycache__/
 # Generated documentation, tools, and scratch space
 /build/
 /.tools/
-/.csi-tmp/
+/.csp-tmp/
 /node_modules/
 .moonwave/node_modules/
 .moonwave/build/
@@ -16,8 +16,12 @@ __pycache__/
 .moonwave/.docusaurus/
 tempCodeRunnerFile.*
 
-# Original downloaded snapshot: retained locally, excluded from this repository
+# Historical local import; the original source is recoverable from Git history
 /UniversalSynSaveInstance-main/
+
+# Regenerable metadata output
+/Tools/**/Dump
+/Tools/common/api_dump_cache.json
 
 # Local exports, diagnostics, and credentials
 *.rbxl
@@ -32,8 +36,9 @@ tempCodeRunnerFile.*
 *.rbxlx.progress.json
 *.rbxm.progress.json
 *.rbxmx.progress.json
+completesaveplace_cache/
 completesaveinstance_cache/
-CompleteSaveInstance_Diagnostics/
+CompleteSavePlace_Diagnostics/
 *.log
 .env
 .env.*

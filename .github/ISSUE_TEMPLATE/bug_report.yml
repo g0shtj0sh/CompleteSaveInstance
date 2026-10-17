@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a reproducible CompleteSaveInstance issue.
+description: Report a reproducible CompleteSavePlace issue.
 title: "[Bug] "
 labels: [bug]
 body:
@@ -12,7 +12,7 @@ body:
     attributes:
       label: Source revision
       description: Tag or full commit SHA, and entry point used.
-      placeholder: v0.3.0 / UltraCompleteSveInstance
+      placeholder: v0.3.0 / UltraCompleteSavePlace
     validations:
       required: true
   - type: input

@@ -24,7 +24,7 @@ for _, scenario in {"success", "missing-bsp", "wrong-executor", "identify-error"
     env.crypt = {base64encode=function() return "B64" end, base64decode=function() return "RAW" end, lz4compress=function() return "LZ4" end}
     env.game = {HttpGet=function(_, url)
         fetched = true
-        assert(string.find(url, "/v0.5.1/saveinstance.luau", 1, true))
+        assert(string.find(url, "/v0.6.0/saveinstance.luau", 1, true))
         return "SHARED_CORE"
     end}
     env.warn = function() warned = true end
@@ -69,7 +69,7 @@ def main():
     args = parser.parse_args()
     source = (ROOT / "Executors/Potassium/saveinstance.luau").read_text(encoding="utf-8")
     program = HARNESS.replace("__ENTRY_SOURCE__", "[====[" + source + "]====]")
-    with tempfile.TemporaryDirectory(prefix="csi-potassium-") as directory:
+    with tempfile.TemporaryDirectory(prefix="csp-potassium-") as directory:
         path = Path(directory) / "entry.luau"
         path.write_text(program, encoding="utf-8")
         result = subprocess.run([args.luau, str(path)], capture_output=True, text=True)

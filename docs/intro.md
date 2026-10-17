@@ -3,7 +3,7 @@ sidebar_position: 1
 title: Getting started
 ---
 
-# CompleteSaveInstance
+# CompleteSavePlace
 
 Archive the Roblox instances your environment can actually access, with explicit
 options and evidence about the resulting file.
@@ -13,9 +13,9 @@ it does not certify runtime compatibility or a valid export.
 
 ## Choose a preset
 
-Start with **DiagnosticSaveInstance** on a small authorized test place.
-Use **MapSaveInstance** for a map-focused export or **ScriptsSaveInstance** for
-an authorized script-focused investigation. **UltraCompleteSveInstance** is the
+Start with **DiagnosticSavePlace** on a small authorized test place.
+Use **MapSavePlace** for a map-focused export or **ScriptsSavePlace** for
+an authorized script-focused investigation. **UltraCompleteSavePlace** is the
 experimental preset we are developing for the widest accessible coverage.
 
 The [preset guide](PRESETS.md) explains each configuration and how to run it.
@@ -23,7 +23,7 @@ All presets share the same serializer; their options and output names differ.
 
 ## Read the API
 
-The [CompleteSaveInstance API](/api/CompleteSaveInstance) lists option types,
+The [CompleteSavePlace API](/api/CompleteSavePlace) lists option types,
 default values, aliases, and the exported function. It is generated from the
 primary `saveinstance.luau`, without mixing in the older Lua implementation.
 Use the [option index](OPTIONS.md) to find individual settings through the

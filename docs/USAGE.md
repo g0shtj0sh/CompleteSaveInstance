@@ -9,21 +9,21 @@ Support varies by runtime; this distribution has no validated compatibility
 matrix yet.
 
 `saveinstance.luau` is the primary entry point. It returns the
-`completeSaveInstance` function, which accepts an options table. Existing file
-names are retained for compatibility. `saveinstance.lua` is an older variant
-with a different implementation; do not assume feature parity or binary support.
+`completeSavePlace` function, which accepts an options table. Existing file
+names are retained for compatibility. The Potassium adapter returns the same
+function with explicit executor bindings; the obsolete Lua variant was removed.
 
 ## Access to the source and presets
 
 The repository and documentation are public. Clone the project:
 
 ```powershell
-gh repo clone g0shtj0sh/CompleteSaveInstance
+gh repo clone g0shtj0sh/CompleteSavePlace
 ```
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. Presets download the root engine pinned to `v0.5.1` by default.
+is required. Presets download the root engine pinned to `v0.6.0` by default.
 For local development, explicitly set `USE_LOCAL_CORE = true` and configure
 `CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
@@ -36,7 +36,7 @@ The project tag pins the entry point. External helpers still load from upstream
 2. Record the source revision, Roblox version, and runtime version.
 3. Find the runtime's real file workspace; relative paths are resolved there.
 4. Write and read back a small unique text file using its file APIs.
-5. Start with the DiagnosticSaveInstance configuration in [Script Presets](PRESETS.md).
+5. Start with the DiagnosticSavePlace configuration in [Script Presets](PRESETS.md).
 6. Confirm the output exists, then open and inspect it in Studio.
 
 ## Important options in the primary source
@@ -88,7 +88,7 @@ assets can be absent. An asset ID is a reference, not an embedded binary asset.
 
 ## Exported script comments
 
-Since 0.4.3, neither engine adds a `Saved by CompleteSaveInstance` credit or
+The engine adds no exporter credit or
 `Original Source` URL above recovered/decompiled script Source. Existing source
 comments and anything returned by the native decompiler are preserved. With
 `SaveBytecode = true`, the separate Base64 bytecode comment is still prepended;
@@ -144,6 +144,8 @@ in the same client while one is active.
 
 ## Namespace changes
 
-Runtime globals now use `CSI`, including `CSI_scriptcache` and `CSI_placeName`.
-The disk cache is `completesaveinstance_cache/`. Existing old caches are not
-migrated or deleted. Avoid running both distributions against the same file.
+Runtime globals now use `CSP`, including `CSP_scriptcache` and `CSP_placeName`.
+The disk cache is `completesaveplace_cache/`. Executor safety state is also read
+from the previous cache when available, preserving datatype self-check failures
+and native-crash markers. Old cache files are not deleted. Avoid running two
+versions against the same output file.

@@ -1,16 +1,7 @@
 module.exports = {
   guides: [
     'intro',
-    {
-      type: 'category',
-      label: 'Script Presets',
-      collapsible: true,
-      collapsed: false,
-      items: [
-        {type: 'doc', id: 'PRESETS', label: 'Script Presets'},
-        {type: 'doc', id: 'POTASSIUM', label: 'Potassium'},
-      ],
-    },
+    {type: 'doc', id: 'PRESETS', label: 'Script Presets'},
     'OPTIONS',
     'ARCHITECTURE',
     'GEOMETRY',

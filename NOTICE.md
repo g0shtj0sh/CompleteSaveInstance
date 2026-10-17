@@ -1,8 +1,9 @@
-# CompleteSaveInstance — provenance and attribution
+# CompleteSavePlace — provenance and attribution
 
-CompleteSaveInstance is a modified distribution maintained by
+CompleteSavePlace is a modified distribution maintained by
 [g0shtj0sh](https://github.com/g0shtj0sh). Branding, documentation, repository
 configuration, and the project namespace were changed on **2026-10-16**.
+The project was renamed and its banner updated on **2026-10-17**.
 These changes do not transfer authorship of the inherited source code.
 
 ## Upstream

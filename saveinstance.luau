@@ -1,8 +1,8 @@
 --!native
 --!optimize 2
 --!divine-intellect
--- CompleteSaveInstance | modified 2026-10-17 by g0shtj0sh
--- Source: https://github.com/g0shtj0sh/CompleteSaveInstance
+-- CompleteSavePlace | modified 2026-10-17 by g0shtj0sh
+-- Source: https://github.com/g0shtj0sh/CompleteSavePlace
 -- License: AGPL-3.0; see LICENSE and NOTICE.md. No warranty.
 
 -- Optional executor adapter supplied by the dedicated entry point, never a global hook.
@@ -136,7 +136,7 @@ local function index(self, index_name)
 	return self[index_name]
 end
 
-local cachedPlaceName = GLOBAL_ENV.CSI_placeName
+local cachedPlaceName = GLOBAL_ENV.CSP_placeName
 
 local FULL_VERSION
 
@@ -156,10 +156,10 @@ end
 
 local CLIENT_VERSION = tonumber(string.match(FULL_VERSION, "%d+%.(%d+)")) or 9e9
 local __BREAK = "__BREAK" .. service.HttpService:GenerateGUID(false)
-local CSI_FOLDER = "completesaveinstance_cache/"
+local CSP_FOLDER = "completesaveplace_cache/"
 
 pcall(function()
-	makefolder(CSI_FOLDER)
+	makefolder(CSP_FOLDER)
 end)
 
 local REFLECTION_FILTER = {
@@ -2102,8 +2102,8 @@ do
 
 	--[[
 		For more info:
-		- https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/Tools/NotScriptable-Related/Potentially%20Missing%20Properties%20Dumper/Potentially%20Missing%20Properties%20Dumper.luau
-		- https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/Tools/NotScriptable-Related/NotScriptable%20Dumper/NotScriptable%20Dumper.py
+		- https://github.com/g0shtj0sh/CompleteSavePlace/blob/main/Tools/NotScriptable-Related/Potentially%20Missing%20Properties%20Dumper/Potentially%20Missing%20Properties%20Dumper.luau
+		- https://github.com/g0shtj0sh/CompleteSavePlace/blob/main/Tools/NotScriptable-Related/NotScriptable%20Dumper/NotScriptable%20Dumper.py
 		]]
 	local NotScriptableFixes = {
 		Instance = {
@@ -3118,7 +3118,7 @@ do
 	end
 
 	FetchAPI = function()
-		local FILE_NAME = CSI_FOLDER .. "API_DUMP.json"
+		local FILE_NAME = CSP_FOLDER .. "API_DUMP.json"
 
 		local API_Dump
 
@@ -3623,9 +3623,38 @@ local function progressView(progress, now)
 	}
 end
 
+local function loadExecutorState(read, decode, key, paths)
+	local state
+	if type(read) ~= "function" then
+		return {}
+	end
+	for _, path in paths do
+		local ok, decoded = pcall(function()
+			return decode(read(path))
+		end)
+		local entry = ok and type(decoded) == "table" and decoded[key]
+		if type(entry) == "table" then
+			if not state then
+				state = entry
+			elseif type(entry.ghp) == "table" then
+				-- A rename must never retry a native call previously marked as crashed.
+				if type(state.ghp) ~= "table" then
+					state.ghp = {}
+				end
+				for datatype, status in entry.ghp do
+					if status == "crashed" then
+						state.ghp[datatype] = status
+					end
+				end
+			end
+		end
+	end
+	return state or {}
+end
+
 local function createStatusDisplay()
 	local gui = Instance.new("ScreenGui")
-	gui.Name = "CSI_ExportStatus"
+	gui.Name = "CSP_ExportStatus"
 	gui.DisplayOrder = 2e9
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
@@ -3660,7 +3689,7 @@ local function createStatusDisplay()
 	status.TextColor3 = Color3.fromRGB(239, 247, 255)
 	status.TextXAlignment = Enum.TextXAlignment.Left
 	status.TextTruncate = Enum.TextTruncate.AtEnd
-	status.Text = "CSI | Preparing export..."
+	status.Text = "CSP | Preparing export..."
 	status.Parent = panel
 	local track = Instance.new("Frame")
 	track.Name = "ProgressTrack"
@@ -3706,14 +3735,14 @@ local function renderStatusDisplay(display, progress, now)
 end
 
 --[=[
-    @class CompleteSaveInstance
-    Represents the options for saving instances with custom settings using the completeSaveInstance function.
+    @class CompleteSavePlace
+    Represents the options for saving instances with custom settings using the completeSavePlace function.
 ]=]
 
 --- @interface CustomOptions table
 --- * Structure of the main CustomOptions table.
 --- * Note: Options are case-insensitive, meaning you can type `NilInstances` option as `nilInStaNces` and it still will be valid.
---- @within CompleteSaveInstance
+--- @within CompleteSavePlace
 --- @field __DEBUG_MODE boolean -- This will print debug logs to console about unusual scenarios. Recommended to enable if you wish to help us improve our products and find bugs / issues with it! ___Default:___ false
 --- @field ReadMe boolean -- Includes an embedded help document with export notes and limitations. ___Default:___ true
 --- @field Binary boolean -- Saves as a binary file (.rbxl/.rbxm) instead of XML (.rbxlx/.rbxmx). Much smaller and faster to load. Pass `XML = true` for the opposite. ___Default:___ true
@@ -3765,8 +3794,8 @@ end
 --- @field TreatUnionsAsParts boolean -- * **RISKY:** Converts all UnionOperations to Parts. Useful if your Executor isn't able to save (read) Unions, because otherwise they will be invisible. ___Default:___ false (except Solara)
 
 --- @interface OptionsAliases
---- @within CompleteSaveInstance
---- Alias → Canonical option mapping for the [CompleteSaveInstance.CustomOptions] table.
+--- @within CompleteSavePlace
+--- Alias → Canonical option mapping for the [CompleteSavePlace.CustomOptions] table.
 --- Format: { Alias = CanonicalOption }
 --- These are resolved before user options are processed and cannot be modified at runtime.
 --- @field Clipboard string -- CopyToClipboard
@@ -3787,7 +3816,7 @@ end
 --- @field timeout string -- DecompileTimeout
 
 --- @interface OptionsAliasesInverse
---- @within CompleteSaveInstance
+--- @within CompleteSavePlace
 --- Alias → Canonical option mapping with boolean inversion.
 --- Format: { Alias = CanonicalOption }
 --- These aliases invert the provided boolean value before applying it.
@@ -3806,34 +3835,34 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/",
 		SSI = "saveinstance",
 	}
 
-	local completeSaveInstance = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
+	local completeSavePlace = loadstring(game:HttpGet(Params.RepoURL .. Params.SSI .. ".luau", true), Params.SSI)()
 
 	local CustomOptions = { Decompile = false, SaveBytecode = false, SafeMode = false, KillAllScripts = false, BoostFPS = false }
 
-	completeSaveInstance(CustomOptions)
+	completeSavePlace(CustomOptions)
 	```
-	@within CompleteSaveInstance
+	@within CompleteSavePlace
 	@yields
-	@param Parameter_1 variant<table, table<Instance>> -- Can either be [CompleteSaveInstance.CustomOptions table] or a filled with instances ({Instance}), (then it will be treated as ExtraInstances with an invalid mode and IsModel will be true).
-	@param Parameter_2 table -- [OPTIONAL] If present, then Parameter_2 will be assumed to be [CompleteSaveInstance.CustomOptions table]. And then if the Parameter_1 is an Instance, then it will be assumed to be [CompleteSaveInstance.CustomOptions table].Object. If Parameter_1 is a table filled with instances ({Instance}), then it will be assumed to be [CompleteSaveInstance.CustomOptions table].ExtraInstances and IsModel will be true). This exists for sake compatibility with `saveinstance(game, {})`
+	@param Parameter_1 variant<table, table<Instance>> -- Can either be [CompleteSavePlace.CustomOptions table] or a filled with instances ({Instance}), (then it will be treated as ExtraInstances with an invalid mode and IsModel will be true).
+	@param Parameter_2 table -- [OPTIONAL] If present, then Parameter_2 will be assumed to be [CompleteSavePlace.CustomOptions table]. And then if the Parameter_1 is an Instance, then it will be assumed to be [CompleteSavePlace.CustomOptions table].Object. If Parameter_1 is a table filled with instances ({Instance}), then it will be assumed to be [CompleteSavePlace.CustomOptions table].ExtraInstances and IsModel will be true). This exists for sake compatibility with `saveinstance(game, {})`
 ]=]
 
 -- * Accepts any number of arguments, of any type, in any order:
 -- *   table    -> options (an array of Instances is treated as ExtraInstances)
 -- *   string   -> FilePath option
 -- *   Instance -> Object option
-local function completeSaveInstance(...)
-	if GLOBAL_ENV.CSI then
+local function completeSavePlace(...)
+	if GLOBAL_ENV.CSP then
 		return
 	end
-	GLOBAL_ENV.CSI = true
+	GLOBAL_ENV.CSP = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.5.1",
+		engineVersion = "0.6.0",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -4193,7 +4222,7 @@ local function completeSaveInstance(...)
 
 		warn(text)
 
-		GLOBAL_ENV.CSI = nil
+		GLOBAL_ENV.CSP = nil
 		return
 	end
 
@@ -4349,7 +4378,7 @@ local function completeSaveInstance(...)
 		return string.sub(string.gsub(string.gsub(string.gsub(str, "[^%w _]", ""), " +", " "), " +$", ""), 1, 240)
 	end
 
-	local EXEC_STATE_FILE = CSI_FOLDER .. "EXEC_STATE.json"
+	local EXEC_STATE_FILE = CSP_FOLDER .. "EXEC_STATE.json"
 	local EXEC_STATE_KEY
 	local ExecState = {}
 	local GHP = {} -- datatype -> "ok"|"failed" (self-check)|"property_failed"|"crashed"
@@ -4362,14 +4391,9 @@ local function completeSaveInstance(...)
 			end
 		end
 		EXEC_STATE_KEY = sanitizeFileName(execName .. "_" .. execVersion .. "_" .. FULL_VERSION)
-		if readfile then
-			local ok, decoded = pcall(function()
-				return service.HttpService:JSONDecode(readfile(EXEC_STATE_FILE))
-			end)
-			if ok and decoded[EXEC_STATE_KEY] then
-				ExecState = decoded[EXEC_STATE_KEY]
-			end
-		end
+		ExecState = loadExecutorState(readfile, function(contents)
+			return service.HttpService:JSONDecode(contents)
+		end, EXEC_STATE_KEY, { EXEC_STATE_FILE, "completesaveinstance_cache/EXEC_STATE.json" })
 		GHP = ExecState["ghp"] or {}
 		if ExecState.ghpSchema ~= 2 then
 			-- Legacy property failures poisoned whole datatypes. Recheck those,
@@ -4396,7 +4420,7 @@ local function completeSaveInstance(...)
 	-- * Byte-mangling writers (NUL truncation, newline translation, non-ASCII
 	-- * stripping) corrupt a binary save while still reporting success (#216).
 	if OPTIONS.Binary and readfile and not (OPTIONS.Callback or OPTIONS.CopyToClipboard) then
-		local PROBE_PATH = CSI_FOLDER .. "WRITE_PROBE"
+		local PROBE_PATH = CSP_FOLDER .. "WRITE_PROBE"
 		local probeChars = table.create(256)
 		for i = 0, 255 do
 			probeChars[i + 1] = string.char(i)
@@ -4486,7 +4510,7 @@ local function completeSaveInstance(...)
 					pcall(service.MarketplaceService.GetProductInfoAsync, service.MarketplaceService, game.PlaceId)
 				if ok then
 					cachedPlaceName = info.Name
-					GLOBAL_ENV.CSI_placeName = cachedPlaceName
+					GLOBAL_ENV.CSP_placeName = cachedPlaceName
 				end
 			end
 
@@ -4518,7 +4542,7 @@ local function completeSaveInstance(...)
 		end
 
 		GLOBAL_ENV[placename] = true
-		GLOBAL_ENV.CSI = nil
+		GLOBAL_ENV.CSP = nil
 
 		if mode ~= "scripts" then
 			IgnorePropertiesOfNotScriptsOnScriptsMode = nil
@@ -4777,7 +4801,7 @@ local function completeSaveInstance(...)
 			if #stats.failures < 128 then
 				table.insert(stats.failures, { operation = operation, path = path, seconds = seconds, timedOut = timedOut == true, reason = string.sub(tostring(value), 1, 240) })
 			end
-			warn("[CSI] Script job failed", operation, path, tostring(value))
+			warn("[CSP] Script job failed", operation, path, tostring(value))
 		end
 		return ok, value, timedOut
 	end
@@ -4790,11 +4814,11 @@ local function completeSaveInstance(...)
 		OPTIONS.scriptcache = true
 	end
 	local ScriptCache = OPTIONS.scriptcache and getscriptbytecode
-	local ldeccache = ScriptCache and GLOBAL_ENV.CSI_scriptcache
+	local ldeccache = ScriptCache and GLOBAL_ENV.CSP_scriptcache
 
 	if ScriptCache and not ldeccache then
 		ldeccache = {}
-		GLOBAL_ENV.CSI_scriptcache = ldeccache
+		GLOBAL_ENV.CSP_scriptcache = ldeccache
 	end
 
 	local getbytecode
@@ -5828,7 +5852,7 @@ local function completeSaveInstance(...)
 		local chunks = table.create(1)
 		local savebuffer, savebuffer_size = {}, 1
 		local header =
-			'<!-- Saved by CompleteSaveInstance --><roblox version="4">'
+			'<roblox version="4">'
 		local refs = ctx.refs
 
 		local function ReturnProperty(tag, propertyName, value)
@@ -6267,7 +6291,7 @@ local function completeSaveInstance(...)
 
 				return table.concat({
 					"--[[\n",
-					"\t\tThank you for using CompleteSaveInstance\n\n",
+					"\t\tThank you for using CompleteSavePlace\n\n",
 					recoveredNote,
 					ghpFailureHeader,
 					writerFailureHeader,
@@ -6498,8 +6522,8 @@ local function completeSaveInstance(...)
 		OPTIONS.KillAllScripts = true
 	end
 
-	if OPTIONS.KillAllScripts and not GLOBAL_ENV.CSI_KAS then
-		GLOBAL_ENV.CSI_KAS = true
+	if OPTIONS.KillAllScripts and not GLOBAL_ENV.CSP_KAS then
+		GLOBAL_ENV.CSP_KAS = true
 		-- * partial credits @centerepic
 		game:GetService("ScriptContext"):SetTimeout(math.clamp(SaveCacheInterval * 0.000047, 20, 30))
 
@@ -6554,7 +6578,7 @@ local function completeSaveInstance(...)
 
 	if OPTIONS.ShowStatus then
 		do
-			local Exists = GLOBAL_ENV.CSI_statustext
+			local Exists = GLOBAL_ENV.CSP_statustext
 			if Exists then
 				Exists:Destroy()
 			end
@@ -6564,7 +6588,7 @@ local function completeSaveInstance(...)
 		local StatusGui = ProgressDisplay.gui
 		StatusText = ProgressDisplay.status
 		IgnoreList[StatusGui] = true -- The exporter's own overlay is not place content.
-		GLOBAL_ENV.CSI_statustext = StatusGui
+		GLOBAL_ENV.CSP_statustext = StatusGui
 		Connect(service.RunService.Heartbeat, function()
 			refreshProgressDisplay(false)
 		end)
@@ -6598,10 +6622,10 @@ local function completeSaveInstance(...)
 			end
 		end
 	end
-	local kickSnapshot = GLOBAL_ENV.CSI_kicksnapshot
+	local kickSnapshot = GLOBAL_ENV.CSP_kicksnapshot
 	if not kickSnapshot then
 		kickSnapshot = {}
-		GLOBAL_ENV.CSI_kicksnapshot = kickSnapshot
+		GLOBAL_ENV.CSP_kicksnapshot = kickSnapshot
 	end
 
 	local function snapshotKick(LocalPlayer)
@@ -6637,7 +6661,7 @@ local function completeSaveInstance(...)
 			snapshotKick(LocalPlayer)
 
 			local msg =
-				"[CompleteSaveInstance / SafeMode]\nSaving..\nDo NOT leave\nLVL7 Executor RECOMMENDED for more SAFETY\nTo Disable this: SafeMode=false (Less Protection)"
+				"[CompleteSavePlace / SafeMode]\nSaving..\nDo NOT leave\nLVL7 Executor RECOMMENDED for more SAFETY\nTo Disable this: SafeMode=false (Less Protection)"
 			local function Kick()
 				LocalPlayer:Kick(msg)
 			end
@@ -7168,4 +7192,4 @@ local function completeSaveInstance(...)
 	return ExportReport
 end
 
-return completeSaveInstance
+return completeSavePlace

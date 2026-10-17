@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "developmentTarget": "UltraCompleteSveInstance",
+  "developmentTarget": "UltraCompleteSavePlace",
   "presets": [
     {
-      "id": "DiagnosticSaveInstance",
+      "id": "DiagnosticSavePlace",
       "summary": "Initial serializer and writer diagnosis, without script extraction.",
       "status": "runtime-unverified",
       "options": {
@@ -26,7 +26,7 @@
       }
     },
     {
-      "id": "MapSaveInstance",
+      "id": "MapSavePlace",
       "summary": "Map-focused full-root export without decompilation or bytecode capture.",
       "status": "runtime-unverified",
       "options": {
@@ -50,7 +50,7 @@
       }
     },
     {
-      "id": "ScriptsSaveInstance",
+      "id": "ScriptsSavePlace",
       "summary": "Authorized script-focused export with per-job decompilation and bytecode timeouts.",
       "status": "runtime-unverified",
       "options": {
@@ -76,7 +76,7 @@
       }
     },
     {
-      "id": "UltraCompleteSveInstance",
+      "id": "UltraCompleteSavePlace",
       "summary": "Experimental development target: preserve the widest accessible place content.",
       "status": "experimental-runtime-unverified",
       "options": {

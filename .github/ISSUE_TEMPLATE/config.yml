@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Usage and compatibility
-    url: https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/docs/USAGE.md
+    url: https://github.com/g0shtj0sh/CompleteSavePlace/blob/main/docs/USAGE.md
     about: Runtime requirements and first diagnostic.
   - name: Troubleshooting
-    url: https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/docs/TROUBLESHOOTING.md
+    url: https://github.com/g0shtj0sh/CompleteSavePlace/blob/main/docs/TROUBLESHOOTING.md
     about: Missing output, crashes, and property omissions.

@@ -174,7 +174,7 @@ def main():
     budget='local WorkBudgetMs ='+source.split('\tlocal WorkBudgetMs =',1)[1].split('\tlocal function yieldFrame()',1)[0]
     read_all='local function readAll('+source.split('\t\tlocal function readAll(',1)[1].split('\t\tlocal function buildChunk',1)[0]
     program=HARNESS.replace('__VIEW_AND_GUI__',view).replace('__PROGRESS_STATE__',state).replace('__WORK_BUDGET__',budget).replace('__READ_ALL__',read_all).replace('__APPEND_WRITER__',writer).replace('__CLEANUP__',cleanup)
-    with tempfile.TemporaryDirectory(prefix='csi-progress-ui-') as directory:
+    with tempfile.TemporaryDirectory(prefix='csp-progress-ui-') as directory:
         path=Path(directory)/'progress.luau'
         path.write_text(program,encoding='utf-8')
         result=subprocess.run([args.luau,str(path)],capture_output=True,text=True)

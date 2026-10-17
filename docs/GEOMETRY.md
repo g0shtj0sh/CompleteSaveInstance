@@ -42,7 +42,7 @@ does not mean every property was readable.
 
 ## Reader changes
 
-For Potassium, the [dedicated profile](POTASSIUM.md) in 0.4.0 additionally
+For Potassium, the [dedicated profile](PRESETS.md#potassium-profile) in 0.4.0 additionally
 attempts raw `getbspval` reads before the ordinary hidden-property reader.
 Its report includes `runtimeAdapter.capabilities.getbspval` and
 `runtimeAdapter.binaryStringReads` counters. A successful byte read does not

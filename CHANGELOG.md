@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.0 — 2026-10-17
+
+- Renamed the project, repository links, API, presets, runtime namespace, and
+  branding to CompleteSavePlace. The shared engine keeps `saveinstance.luau`.
+- Replaced the banner and consolidated presets into one page, keeping the
+  Universal/Potassium switch and copy button beside every loader.
+- Removed remaining XML exporter-credit comments. Recovered script source
+  retains original/native decompiler comments and optional bytecode data.
+- Removed the obsolete Lua variant, placeholder TODO file, and generated
+  metadata dumps; retained metadata tools and runtime regression coverage.
+- Preserved prior executor safety state during cache migration, including
+  native-crash markers.
+
 ## 0.5.1 — 2026-10-17
 
 - Added UltraNoModuleScripts in Universal and Potassium: the Ultra configuration
@@ -52,7 +65,7 @@ continues using the engine it originally loaded.
 
 ## 0.4.3 — 2026-10-17
 
-- Removed the exporter-added `Saved by CompleteSaveInstance` and `Original
+- Removed the exporter-added `Saved by CompleteSavePlace` and `Original
   Source` comment prefixes from recovered/decompiled script Source in both
   engine variants. Both preset profiles use the updated shared Luau engine.
 - Preserved comments returned with recovered source, native decompiler output,
@@ -126,9 +139,9 @@ and Studio inspection. XML property omission auditing is not implemented.
 
 - Public repository and public GitHub Pages documentation.
 - Moonwave API reference generated from the primary Luau source, with guides,
-  local search, responsive homepage, and the CompleteSaveInstance theme.
-- Added `Script Presets`: DiagnosticSaveInstance, MapSaveInstance,
-  ScriptsSaveInstance, and the experimental UltraCompleteSveInstance target.
+  local search, responsive homepage, and the CompleteSavePlace theme.
+- Added `Script Presets`: DiagnosticSavePlace, MapSavePlace,
+  ScriptsSavePlace, and the experimental UltraCompleteSavePlace target.
 - Presets share the engine, prefer local source, and otherwise use the
   `v0.2.0` engine. Each includes a basic write/read probe and explicit output
   evidence without claiming file validity.
@@ -140,11 +153,11 @@ establishes the configuration we will diagnose, not a complete-backup guarantee.
 
 ## 0.1.0 — 2026-10-16
 
-First CompleteSaveInstance foundation, based on the supplied upstream snapshot.
+First CompleteSavePlace foundation, based on the supplied upstream snapshot.
 
 - New identity, logo, README banner, and Moonwave assets.
 - Updated project links, examples, documentation classes, and function names.
-- Dedicated `CSI` global namespace and `completesaveinstance_cache/` disk cache.
+- Dedicated `CSP` global namespace and `completesaveplace_cache/` disk cache.
 - English and French presentation, usage, troubleshooting, architecture, roadmap.
 - Issue forms, contribution guide, repository validation, and compilation CI.
 - Preserved original license, required attribution, and source import history.

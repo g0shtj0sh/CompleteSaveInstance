@@ -1,4 +1,4 @@
-# Contributing to CompleteSaveInstance
+# Contributing to CompleteSavePlace
 
 Keep changes focused and preserve the inherited attribution and AGPL license.
 Use experiences you own or are authorized to test.
@@ -17,7 +17,7 @@ python scripts/test_potassium.py --luau luau
 python scripts/test_export_jobs.py --luau luau
 python scripts/test_progress_ui.py --luau luau
 python scripts/test_binary_scheduling.py --luau luau
-luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/DiagnosticSaveInstance.luau" "Script Presets/MapSaveInstance.luau" "Script Presets/ScriptsSaveInstance.luau" "Script Presets/UltraCompleteSveInstance.luau"
+luau-compile --null saveinstance.luau Executors/Potassium/saveinstance.luau "Script Presets/"*.luau "Executors/Potassium/Script Presets/"*.luau
 git diff --check
 ```
 
@@ -48,7 +48,7 @@ python scripts/check_docs_build.py
 python scripts/serve_docs.py
 ```
 
-Open `http://127.0.0.1:4173/CompleteSaveInstance/`. The API is extracted from the
+Open `http://127.0.0.1:4173/CompleteSavePlace/`. The API is extracted from the
 primary Luau source only. Markdown guides live in `docs/`, the homepage in
 `pages/index.js`, and the visual theme in `.moonwave/custom.css`.
 The API UI lives in `website/ApiReference.jsx`; `scripts/docs.mjs` installs its

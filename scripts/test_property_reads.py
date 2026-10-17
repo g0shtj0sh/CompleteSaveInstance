@@ -91,7 +91,32 @@ def main():
     migration = source.split("\t\tif ExecState.ghpSchema ~= 2 then", 1)[1].split('\t\tExecState["ghp"] = GHP', 1)[0]
     migration = "if ExecState.ghpSchema ~= 2 then" + migration
     program = FIXTURE.replace("__FUNCTIONS__", functions).replace("__MIGRATION__", migration)
-    with tempfile.TemporaryDirectory(prefix="csi-reader-tests-") as directory:
+    cache_reader = source.split("local function loadExecutorState(", 1)[1].split("local function createStatusDisplay()", 1)[0]
+    program += "\nlocal function loadExecutorState(" + cache_reader + r'''
+local files = {}
+local function read(path)
+    if files[path] == nil then error("missing file") end
+    return files[path]
+end
+local function decode(value) return value end
+local paths = {"new", "legacy"}
+assert(next(loadExecutorState(nil, decode, "executor", paths)) == nil)
+files.legacy = {executor = {ghpSchema=2, ghp={BinaryString="crashed", NetAssetRef="failed"}}}
+local state=loadExecutorState(read, decode, "executor", paths)
+assert(state.ghp.BinaryString=="crashed" and state.ghp.NetAssetRef=="failed" and state.ghpSchema==2)
+files.new = {executor = {ghpSchema=2, ghp={BinaryString="ok", string="ok"}, writer="new-setting"}}
+state=loadExecutorState(read, decode, "executor", paths)
+assert(state.ghp.BinaryString=="crashed", "Renaming must not reset native-crash guards")
+assert(state.ghp.string=="ok" and state.writer=="new-setting", "Prefer current cache settings")
+files.new = "invalid JSON shape"
+assert(loadExecutorState(read, decode, "executor", paths).ghp.BinaryString=="crashed")
+files.legacy = {otherExecutor={ghp={BinaryString="crashed"}}}
+assert(next(loadExecutorState(read, decode, "executor", paths))==nil, "Do not mix executor or client revisions")
+files.new = false
+assert(next(loadExecutorState(read, function() error("bad JSON") end, "executor", paths))==nil)
+print("Actual cache migration passed: legacy safety state, crash preservation, current settings, malformed files, executor isolation.")
+'''
+    with tempfile.TemporaryDirectory(prefix="csp-reader-tests-") as directory:
         script = Path(directory) / "reader.luau"
         script.write_text(program, encoding="utf-8")
         result = subprocess.run([args.luau, str(script)], capture_output=True, text=True)

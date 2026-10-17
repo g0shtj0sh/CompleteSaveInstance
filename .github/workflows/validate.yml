@@ -40,8 +40,8 @@ jobs:
           echo "152058b98c60ff1f5b5ec9bca0b8eb37793cae161dd3a05608cc3d8738ba1a4d  .tools/luau.zip" | sha256sum --check
           unzip -q .tools/luau.zip -d .tools/luau
           chmod +x .tools/luau/luau-compile .tools/luau/luau
-      - name: Compile both entry points without executing Roblox code
-        run: .tools/luau/luau-compile --null saveinstance.luau saveinstance.lua "Script Presets/"*.luau Executors/Potassium/saveinstance.luau "Executors/Potassium/Script Presets/"*.luau
+      - name: Compile shared engine, adapter, and presets without executing Roblox code
+        run: .tools/luau/luau-compile --null saveinstance.luau "Script Presets/"*.luau Executors/Potassium/saveinstance.luau "Executors/Potassium/Script Presets/"*.luau
       - name: Exercise preset preflight and output evidence with a mocked engine
         run: python scripts/test_presets.py --luau .tools/luau/luau
       - name: Check actual property-reader regressions

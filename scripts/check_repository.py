@@ -24,16 +24,20 @@ def main() -> int:
 
     required = (
         "LICENSE", "NOTICE.md", "README.md", "README.fr.md",
-        "saveinstance.luau", "saveinstance.lua", "moonwave.toml",
+        "saveinstance.luau", "moonwave.toml",
         "docs/USAGE.md", "docs/TROUBLESHOOTING.md", "docs/ROADMAP.md",
         "assets/brand/logo.png", "assets/brand/banner.png",
         ".moonwave/static/logo.png", ".moonwave/static/favicon.png",
         "docs/intro.md", "docs/PRESETS.md", "Script Presets/presets.json",
-        "Script Presets/README.md", "Script Presets/UltraCompleteSveInstance.luau",
+        "Script Presets/README.md", "Script Presets/UltraCompleteSavePlace.luau",
     )
     for name in required:
         if not (ROOT / name).is_file():
             errors.append(f"Missing distribution file: {name}")
+
+    source = (ROOT / "saveinstance.luau").read_text(encoding="utf-8")
+    if re.search(r"--\s*Saved by|<!--\s*Saved by", source):
+        errors.append("Exporter credit headers must not be inserted into saved content")
 
     # Validate actual PNG headers so accidental text/LFS placeholders cannot pass.
     for name in ("assets/brand/logo.png", "assets/brand/banner.png"):
@@ -59,7 +63,7 @@ def main() -> int:
             parsed = urlsplit(link)
             if parsed.scheme or parsed.netloc or not parsed.path:
                 continue
-            if parsed.path.rstrip("/") == "/api/CompleteSaveInstance":
+            if parsed.path.rstrip("/") == "/api/CompleteSavePlace":
                 # This is a generated Moonwave route, not a source file.
                 continue
             target = (path.parent / unquote(parsed.path)).resolve()

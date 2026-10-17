@@ -10,7 +10,7 @@ title: Option index
 Searchable names, types, descriptions, and defaults extracted from the primary source.
 These describe the implementation; they do not establish runtime compatibility.
 
-See the [full API reference](/api/CompleteSaveInstance) for aliases and function signatures.
+See the [full API reference](/api/CompleteSavePlace) for aliases and function signatures.
 Preset overrides are listed in [Script Presets](PRESETS.md).
 
 ## __DEBUG_MODE

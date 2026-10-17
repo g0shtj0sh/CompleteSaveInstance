@@ -1,8 +1,8 @@
-title = "CompleteSaveInstance"
-gitRepoUrl = "https://github.com/g0shtj0sh/CompleteSaveInstance"
+title = "CompleteSavePlace"
+gitRepoUrl = "https://github.com/g0shtj0sh/CompleteSavePlace"
 gitSourceBranch = "main"
 changelog = true
-classOrder = ["CompleteSaveInstance"]
+classOrder = ["CompleteSavePlace"]
 
 [home]
 enabled = true
@@ -10,37 +10,29 @@ bannerImage = "logo.png"
 
 [docusaurus]
 url = "https://g0shtj0sh.github.io"
-baseUrl = "/CompleteSaveInstance/"
+baseUrl = "/CompleteSavePlace/"
 organizationName = "g0shtj0sh"
-projectName = "CompleteSaveInstance"
+projectName = "CompleteSavePlace"
 trailingSlash = true
 favicon = "favicon.png"
-tagline = "Roblox instance archival. Accessible data. Explicit limits. Evidence before success."
+tagline = "Roblox place archival. Accessible data. Explicit limits. Evidence before success."
 
 [[navbar.items]]
-type = "dropdown"
+to = "/docs/PRESETS"
 label = "Script Presets"
 position = "left"
 
-[[navbar.items.items]]
-to = "/docs/PRESETS"
-label = "Script Presets"
-
-[[navbar.items.items]]
-to = "/docs/POTASSIUM"
-label = "Potassium"
-
 [[navbar.items]]
-href = "https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/README.fr.md"
+href = "https://github.com/g0shtj0sh/CompleteSavePlace/blob/main/README.fr.md"
 label = "Français"
 position = "right"
 
 [navbar.logo]
 src = "favicon.png"
-alt = "CompleteSaveInstance"
+alt = "CompleteSavePlace"
 
 [[footer.links]]
-href = "https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/NOTICE.md"
+href = "https://github.com/g0shtj0sh/CompleteSavePlace/blob/main/NOTICE.md"
 label = "License & credits"
 
 [footer.logo]

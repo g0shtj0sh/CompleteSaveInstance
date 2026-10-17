@@ -7,7 +7,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "/CompleteSaveInstance/"
+BASE = "/CompleteSavePlace/"
 
 
 class Handler(SimpleHTTPRequestHandler):

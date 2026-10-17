@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/brand/banner.png" alt="CompleteSaveInstance — Roblox instance archival" width="100%" />
+  <img src="assets/brand/banner.png" alt="CompleteSavePlace — Roblox instance archival" width="100%" />
 </p>
 
 <p align="center">
@@ -14,7 +14,7 @@
 </p>
 
 <p align="center">
-  <a href="https://g0shtj0sh.github.io/CompleteSaveInstance/">Documentation</a> ·
+  <a href="https://g0shtj0sh.github.io/CompleteSavePlace/">Documentation</a> ·
   <a href="Script%20Presets/README.md">Script Presets</a> ·
   <a href="#getting-started">Get started</a> ·
   <a href="docs/USAGE.md">Usage</a> ·
@@ -29,7 +29,7 @@ The [UltraNoModuleScripts preset](docs/PRESETS.md#ultranomodulescripts) keeps Ul
 
 ## The project
 
-**CompleteSaveInstance** is a Luau toolkit for exporting accessible Roblox
+**CompleteSavePlace** is a Luau toolkit for exporting accessible Roblox
 instances to place and model files. It builds on an existing serializer and
 establishes a separate identity for future diagnostics, verification, and
 reliability work.
@@ -51,9 +51,9 @@ projects, start with Roblox Studio's built-in save and export features.
   console messages, and selected write probes.
 - **Cooperative scheduling:** configurable Lua work slices, including large binary
   loops, to leave more scheduler time to the game. Native pauses remain possible.
-- **Two entry points:** the primary `saveinstance.luau` and an older `saveinstance.lua` variant.
+- **One shared engine:** `saveinstance.luau`, with a dedicated Potassium adapter.
 
-The project includes an [interactive API Explorer](https://g0shtj0sh.github.io/CompleteSaveInstance/api/CompleteSaveInstance/),
+The project includes an [interactive API Explorer](https://g0shtj0sh.github.io/CompleteSavePlace/api/CompleteSavePlace/),
 fixes datatype-wide suppression after an individual hidden-property failure,
 and records binary geometry omissions in preset JSON reports. See the
 [missing geometry guide](docs/GEOMETRY.md) when an exported surface is absent.
@@ -75,13 +75,13 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/saveinstance.luau",
     true
 )
-local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()
+local completeSavePlace = assert(loadstring(source, "CompleteSavePlace"))()
 
-completeSaveInstance({
-    FilePath = "CompleteSaveInstance_Diagnostic.rbxl",
+completeSavePlace({
+    FilePath = "CompleteSavePlace_Diagnostic.rbxl",
     mode = "optimized",
     Binary = true,
     CompressionMode = false,
@@ -99,24 +99,24 @@ completeSaveInstance({
 })
 ```
 
-The repository and [documentation website](https://g0shtj0sh.github.io/CompleteSaveInstance/)
+The repository and [documentation website](https://g0shtj0sh.github.io/CompleteSavePlace/)
 are public. No access token is required. The root engine is pinned to the project
 tag; inherited external helpers are not yet pinned.
 
 ## Script Presets
 
-The [preset documentation](https://g0shtj0sh.github.io/CompleteSaveInstance/docs/PRESETS/)
+The [preset documentation](https://g0shtj0sh.github.io/CompleteSavePlace/docs/PRESETS/)
 has a **Copier le script** button for every configuration, with Universal and
 Potassium profiles. The [Potassium edition](Executors/Potassium/README.md)
 adds explicit native API bindings and raw binary-property reads to the shared
-engine; it includes its own four generated presets.
+engine; it includes its own five generated presets.
 
 Choose an executable configuration from [Script Presets](Script%20Presets/README.md):
 
-- [DiagnosticSaveInstance](Script%20Presets/DiagnosticSaveInstance.luau): initial serializer and file-writing diagnosis.
-- [MapSaveInstance](Script%20Presets/MapSaveInstance.luau): map-focused export without decompilation or bytecode.
-- [ScriptsSaveInstance](Script%20Presets/ScriptsSaveInstance.luau): authorized script-focused export with per-job timeouts.
-- [UltraCompleteSveInstance](Script%20Presets/UltraCompleteSveInstance.luau): **experimental development target** for the widest accessible coverage.
+- [DiagnosticSavePlace](Script%20Presets/DiagnosticSavePlace.luau): initial serializer and file-writing diagnosis.
+- [MapSavePlace](Script%20Presets/MapSavePlace.luau): map-focused export without decompilation or bytecode.
+- [ScriptsSavePlace](Script%20Presets/ScriptsSavePlace.luau): authorized script-focused export with per-job timeouts.
+- [UltraCompleteSavePlace](Script%20Presets/UltraCompleteSavePlace.luau): **experimental development target** for the widest accessible coverage.
 
 All presets share the same engine. Ultra is the configuration we are diagnosing
 and improving to preserve as much of a place as possible; it is not a verified
@@ -135,8 +135,8 @@ entire instance was lost. See [troubleshooting](docs/TROUBLESHOOTING.md).
 
 ## Explore the documentation
 
-- [Documentation website](https://g0shtj0sh.github.io/CompleteSaveInstance/) — searchable guides and API.
-- [API reference](https://g0shtj0sh.github.io/CompleteSaveInstance/api/CompleteSaveInstance/) — source-generated types, defaults, and aliases.
+- [Documentation website](https://g0shtj0sh.github.io/CompleteSavePlace/) — searchable guides and API.
+- [API reference](https://g0shtj0sh.github.io/CompleteSavePlace/api/CompleteSavePlace/) — source-generated types, defaults, and aliases.
 
 - [Usage and compatibility](docs/USAGE.md) — entry points, first run, important options.
 - [Troubleshooting](docs/TROUBLESHOOTING.md) — missing files, crashes, property omissions.
@@ -149,7 +149,7 @@ entire instance was lost. See [troubleshooting](docs/TROUBLESHOOTING.md).
 
 ```powershell
 python scripts/check_repository.py
-luau-compile --null saveinstance.luau saveinstance.lua
+luau-compile --null saveinstance.luau Executors/Potassium/saveinstance.luau
 ```
 
 GitHub Actions validates repository consistency and compiles both entry points

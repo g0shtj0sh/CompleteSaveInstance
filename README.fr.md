@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="assets/brand/banner.png" alt="CompleteSaveInstance — archivage d’instances Roblox" width="100%" />
+  <img src="assets/brand/banner.png" alt="CompleteSavePlace — archivage d’instances Roblox" width="100%" />
 </p>
 
-# CompleteSaveInstance
+# CompleteSavePlace
 
-La [documentation des presets](https://g0shtj0sh.github.io/CompleteSaveInstance/docs/PRESETS/)
+La [documentation des presets](https://g0shtj0sh.github.io/CompleteSavePlace/docs/PRESETS/)
 propose un bouton **Copier le script** pour chaque configuration, avec le choix
 **Universal / Potassium**. Le [dossier Potassium](Executors/Potassium/README.md)
 contient une entrée adaptée et cinq presets : lectures binaires natives,
@@ -13,15 +13,15 @@ vérifier dans Studio.
 
 **Une base claire pour sauvegarder les instances Roblox accessibles.**
 
-[Site de documentation](https://g0shtj0sh.github.io/CompleteSaveInstance/) · [Script Presets](Script%20Presets/README.md) · [English](README.md) · [Utilisation](docs/USAGE.md) · [Dépannage](docs/TROUBLESHOOTING.md) · [Feuille de route](docs/ROADMAP.md)
+[Site de documentation](https://g0shtj0sh.github.io/CompleteSavePlace/) · [Script Presets](Script%20Presets/README.md) · [English](README.md) · [Utilisation](docs/USAGE.md) · [Dépannage](docs/TROUBLESHOOTING.md) · [Feuille de route](docs/ROADMAP.md)
 
-CompleteSaveInstance est un projet Luau d’export de places et de modèles Roblox.
+CompleteSavePlace est un projet Luau d’export de places et de modèles Roblox.
 Cette première étape apporte son identité visuelle, sa documentation, ses
 espaces de noms et les contrôles du dépôt. La fiabilité des exports dans Roblox
 et leur ouverture dans Studio restent à valider pour cette distribution.
 
 Le site public comprend maintenant la référence API, un index des options,
-la recherche et le guide des presets. **UltraCompleteSveInstance** est notre
+la recherche et le guide des presets. **UltraCompleteSavePlace** est notre
 configuration expérimentale de travail pour la couverture maximale.
 
 Le preset [UltraNoModuleScripts](docs/PRESETS.md#ultranomodulescripts) conserve les réglages Ultra en excluant les ModuleScript et leurs descendants. Disponible en Universal et Potassium, avec un bouton de copie dans la documentation.
@@ -45,10 +45,10 @@ lancement vers une version précise du moteur.
 
 ## Script Presets
 
-- **DiagnosticSaveInstance** : premier diagnostic de sérialisation et d’écriture.
-- **MapSaveInstance** : export orienté map, sans décompilation ni bytecode.
-- **ScriptsSaveInstance** : export des scripts accessibles et autorisés.
-- **UltraCompleteSveInstance** : notre preset expérimental en cours de mise au point,
+- **DiagnosticSavePlace** : premier diagnostic de sérialisation et d’écriture.
+- **MapSavePlace** : export orienté map, sans décompilation ni bytecode.
+- **ScriptsSavePlace** : export des scripts accessibles et autorisés.
+- **UltraCompleteSavePlace** : notre preset expérimental en cours de mise au point,
   pour récupérer le plus de contenu accessible possible d’une place.
 
 Tous utilisent le même moteur avec des paramètres différents. Ultra active les
@@ -65,7 +65,7 @@ Une fonction terminée ne garantit pas l’existence du fichier. Vérifier sa
 présence, puis son ouverture et son contenu dans Roblox Studio. Les références
 d’assets ne constituent pas une copie de leurs fichiers binaires.
 
-Depuis la **0.4.3**, aucun en-tête « Saved by CompleteSaveInstance » ni lien
+Depuis la **0.4.3**, aucun crédit ajouté par l’exporteur ni lien
 « Original Source » n'est ajouté aux scripts exportés. Les commentaires du
 code récupéré ou du décompilateur sont conservés. Ultra conserve aussi le bloc
 de bytecode Base64 lorsque `SaveBytecode` est activé.

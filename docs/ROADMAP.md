@@ -2,7 +2,7 @@
 
 ## 0.1 — project foundation
 
-- [x] CompleteSaveInstance identity, logo, banner, and repository links.
+- [x] CompleteSavePlace identity, logo, banner, and repository links.
 - [x] Preserved license, attribution, and original source snapshot.
 - [x] Runtime requirements, limitations, and troubleshooting documentation.
 - [x] Repository checks and Luau compilation workflow.
@@ -10,7 +10,7 @@
 ## Next — observable diagnostics
 
 - [x] Publish a source-generated API reference and searchable guides.
-- [x] Add a preset catalog with UltraCompleteSveInstance as the development target.
+- [x] Add a preset catalog with UltraCompleteSavePlace as the development target.
 - [x] Test preset preflight and file-existence reporting with a mocked engine.
 
 - [ ] Audit every supported option against the primary source.

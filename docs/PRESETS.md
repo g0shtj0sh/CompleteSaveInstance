@@ -5,42 +5,42 @@ title: Script Presets
 
 # Script Presets
 
-import PresetLauncher from '@site/src/csi/PresetLauncher';
+import PresetLauncher from '@site/src/csp/PresetLauncher';
 
-Preset scripts select a configuration for the shared CompleteSaveInstance
+Preset scripts select a configuration for the shared CompleteSavePlace
 engine. They do not duplicate the serializer. The current development focus is
-**UltraCompleteSveInstance**, the experimental maximum-coverage configuration.
+**UltraCompleteSavePlace**, the experimental maximum-coverage configuration.
 
 Choose **Universal** or **Potassium**, then click **Copier le script**. Each
 button copies the complete runnable loader shown below it. Potassium has a
-[dedicated engine and guide](POTASSIUM.md) with native binary-property reads.
+[dedicated adapter](#potassium-profile) with native binary-property reads.
 
-## DiagnosticSaveInstance
+## DiagnosticSavePlace
 
 An initial diagnostic with decompilation, bytecode capture, nil instances, and
 compression disabled. Uses fallback property access. Start here to separate
 file-writing and serialization failures from more advanced work.
 
-<PresetLauncher id="DiagnosticSaveInstance" />
+<PresetLauncher id="DiagnosticSavePlace" />
 
-## MapSaveInstance
+## MapSavePlace
 
 A full-root, map-focused export without decompilation or bytecode. It favors
 scene properties and keeps default runtime-service exclusions. This is not a
 strict map-only filter: accessible UI, sound, and other non-script content can
 also be included.
 
-<PresetLauncher id="MapSaveInstance" />
+<PresetLauncher id="MapSavePlace" />
 
-## ScriptsSaveInstance
+## ScriptsSavePlace
 
 An authorized script-focused export using the engine's `scripts` mode, bounded
 decompilation and bytecode timeouts. Server-only scripts remain unavailable.
 Structural instances can still appear as containers.
 
-<PresetLauncher id="ScriptsSaveInstance" />
+<PresetLauncher id="ScriptsSavePlace" />
 
-## UltraCompleteSveInstance
+## UltraCompleteSavePlace
 
 **Experimental / current development target.** Uses full mode, decompilation,
 bytecode capture, nil instances, special property access, non-archivable
@@ -53,7 +53,7 @@ or a previously verified fix. Per-job timeouts cannot interrupt a native call
 that blocks the entire client. `SafeMode`, script
 termination, forced shutdown, and rendering changes stay disabled.
 
-<PresetLauncher id="UltraCompleteSveInstance" />
+<PresetLauncher id="UltraCompleteSavePlace" />
 
 ## UltraNoModuleScripts
 
@@ -73,15 +73,15 @@ Run a preset in a compatible environment with HTTP access and file APIs:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Script%20Presets/UltraCompleteSveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/Script%20Presets/UltraCompleteSavePlace.luau",
     true
 ))()
 ```
 
-Replace the final filename with `DiagnosticSaveInstance.luau`,
-`MapSaveInstance.luau`, `ScriptsSaveInstance.luau`, or
+Replace the final filename with `DiagnosticSavePlace.luau`,
+`MapSavePlace.luau`, `ScriptsSavePlace.luau`, or
 `UltraNoModuleScripts.luau` for a different goal.
-The [catalog on GitHub](https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/Script%20Presets/README.md)
+The [catalog on GitHub](https://github.com/g0shtj0sh/CompleteSavePlace/blob/main/Script%20Presets/README.md)
 shows each loader and its exact option values.
 
 ## Local installation
@@ -90,13 +90,13 @@ For local development, copy the engine and selected preset into the runtime's
 file workspace:
 
 ```text
-CompleteSaveInstance/
+CompleteSavePlace/
   saveinstance.luau
   Script Presets/
-    DiagnosticSaveInstance.luau
-    MapSaveInstance.luau
-    ScriptsSaveInstance.luau
-    UltraCompleteSveInstance.luau
+    DiagnosticSavePlace.luau
+    MapSavePlace.luau
+    ScriptsSavePlace.luau
+    UltraCompleteSavePlace.luau
     UltraNoModuleScripts.luau
 ```
 
@@ -131,3 +131,71 @@ python scripts/generate_presets.py
 The generated scripts and catalog stay in sync. Run the repository checks and
 compile the generated scripts before committing. Runtime observations belong
 in the issue report, including the exact preset revision and options.
+
+## Potassium profile
+
+Select **Potassium** above any preset and click **Copier le script**. The loader uses the dedicated adapter with the same shared serializer. Switch back to **Universal** to use ordinary capability discovery.
+
+### What the adapter adds
+
+
+- **Binary geometry:** `getbspval(instance, property, false)` attempts raw
+  `BinaryString` reads before ordinary hidden-property fallbacks. No Base64
+  text is written as binary geometry. Lua errors or invalid return types fall
+  through to the existing reader. Empty strings remain valid byte sequences.
+- **Explicit bindings:** documented `gethiddenproperty`, `getnilinstances`,
+  `getscriptbytecode`, Base64 codecs, and GUI/clipboard helpers are bound
+  directly, avoiding heuristic method discovery for this edition.
+- **Compression:** `crypt.lz4compress` is offered to the existing format check
+  and benchmark. Availability does not guarantee it is selected; incompatible
+  output is rejected and existing fallbacks remain available.
+- **Large writes:** Map, Scripts, and Ultra enable `AlternativeWritefile`.
+  The existing writer uses approximately 4 MB append batches where supported,
+  reducing whole-file string concatenation. Binary probes and ordinary writer
+  fallbacks remain active.
+- **Script extraction:** since 0.4.2, the shared engine reads each script's
+  bytecode once per export and passes cached bytes to Potassium's documented
+  `decompile` overload. Both Ultra configurations benefit when run on Potassium.
+  The standard Ultra includes ModuleScripts; UltraNoModuleScripts excludes them.
+  Version 0.4.4 removes forced per-script frame waits and deferral of immediately
+  completed jobs. Native API latency remains executor-dependent; the selection
+  and timeout settings are unchanged.
+- **Reports:** `profile: "Potassium"` and `runtimeAdapter` identify the executor
+  version, available APIs, and binary-read attempts, successes, and failures.
+  `sharedCoreUrl` and `sharedCoreBytes` identify the second-stage source, while
+  the wrapper's `sourceOrigin` identifies the dedicated entry point.
+
+Both entry points use the same serializer. The Potassium entry point is under
+`Executors/Potassium/saveinstance.luau`; its five presets are under
+`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.6.0.
+For local adapter development, edit its `CORE_URL` as well as the preset's
+`CORE_PATH`; opting into a local adapter alone still downloads its pinned core.
+
+### Reference review and limits
+
+The official [reference index](https://docs.potassium.pro/llms.txt) and
+[complete reference](https://docs.potassium.pro/llms-full.txt) were read on
+2026-10-16. All **198 indexed pages** were present in the complete reference.
+The repository's `Executors/Potassium/API_REVIEW.md` records the selection and
+the snapshot hashes, including APIs considered but not integrated.
+
+`getpcd` returns a hash and binary data. Its page does not specify how to pack
+those values into the serializer's `PhysicalConfigData` property, so this
+adapter does not invent a packing scheme. It also does not substitute
+Potassium's built-in `saveinstance`, whose options and serializer differ.
+
+Reading the reference establishes an API contract, not compatibility with the
+installed executor build. Mock tests and compilation cannot validate Roblox
+native calls or catch native crashes. Studio reopening and the missing road
+still require a fresh export. See [missing geometry](GEOMETRY.md).
+
+The 0.4.2 progress checkpoint is written before script jobs and compression.
+Keep `<output-path>.progress.json` if Potassium freezes. Lua deadlines cannot
+interrupt native code that blocks the entire client; see
+[troubleshooting](TROUBLESHOOTING.md). Source columns and chunks over 8 MiB are
+stored uncompressed, which can increase file size without dropping their data.
+
+Sources: [binary-property reads](https://docs.potassium.pro/api-reference/Reflection%20Library/getbspval),
+[LZ4](https://docs.potassium.pro/api-reference/Crypt%20Library/crypt.lz4compress),
+[physical configuration](https://docs.potassium.pro/api-reference/Reflection%20Library/getpcd),
+[file appending](https://docs.potassium.pro/api-reference/FileSystem%20Library/appendfile).

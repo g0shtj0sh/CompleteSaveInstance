@@ -1,7 +1,7 @@
--- CompleteSaveInstance / Potassium entry point
+-- CompleteSavePlace / Potassium entry point
 -- Shared serializer, explicit native API bindings. AGPL-3.0; see LICENSE and NOTICE.md.
 -- Reference: https://docs.potassium.pro/api-reference
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/saveinstance.luau"
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.0/saveinstance.luau"
 local runtimeOptions = ... or {}
 local identify = identifyexecutor or getexecutorname
 assert(type(identify) == "function", "Potassium: identifyexecutor is unavailable")
@@ -40,14 +40,14 @@ if type(nativeBsp) == "function" then
 		return nativeBsp(instance, property, false) -- Raw bytes; never write base64 text as geometry.
 	end
 else
-	warn("[CSI / Potassium] getbspval unavailable in this build; using ordinary property fallbacks.")
+	warn("[CSP / Potassium] getbspval unavailable in this build; using ordinary property fallbacks.")
 end
 
 local source = game:HttpGet(CORE_URL, true)
 assert(type(source) == "string" and #source > 0, "Potassium: empty shared engine response")
 adapter.sharedCoreUrl = CORE_URL
 adapter.sharedCoreBytes = #source
-local chunk, compileError = loadstring(source, "CompleteSaveInstance/PotassiumCore")
+local chunk, compileError = loadstring(source, "CompleteSavePlace/PotassiumCore")
 assert(chunk, "Potassium: shared engine compilation failed: " .. tostring(compileError))
 local engine = chunk(adapter)
 assert(type(engine) == "function", "Potassium: shared core did not return an exporter")

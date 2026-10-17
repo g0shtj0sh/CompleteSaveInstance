@@ -1,8 +1,8 @@
 {
-  "name": "completesaveinstance-docs",
-  "version": "0.5.1",
+  "name": "completesaveplace-docs",
+  "version": "0.6.0",
   "private": true,
-  "description": "API documentation and preset catalog for CompleteSaveInstance",
+  "description": "API documentation and preset catalog for CompleteSavePlace",
   "scripts": {
     "docs:build": "node scripts/docs.mjs build",
     "docs:dev": "node scripts/docs.mjs dev"

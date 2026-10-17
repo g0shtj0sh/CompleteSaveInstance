@@ -19,7 +19,7 @@ await run('python', ['scripts/generate_option_index.py', '--check']);
 const {tempDir} = prepareProject(root, {
   codePaths: ['saveinstance.luau'], fresh: true, binaryPath: await getBinaryPath(),
 });
-const componentDir = path.join(tempDir, 'src', 'csi');
+const componentDir = path.join(tempDir, 'src', 'csp');
 await fs.cp(path.join(root, 'website'), componentDir, {recursive: true});
 const configPath = path.join(tempDir, 'docusaurus.config.js');
 const originalConfig = await fs.readFile(configPath, 'utf8');
@@ -27,8 +27,8 @@ const alias = path.join(tempDir, 'node_modules/docusaurus-plugin-moonwave/src/co
 const replacement = path.join(componentDir, 'ApiReference.jsx');
 await fs.writeFile(configPath, originalConfig + `;
 module.exports.themeConfig.colorMode = {defaultMode: 'dark', disableSwitch: true, respectPrefersColorScheme: false};
-module.exports.plugins.push(function csiApiExplorer() {
-  return {name: 'csi-api-explorer', configureWebpack() {
+module.exports.plugins.push(function cspApiExplorer() {
+  return {name: 'csp-api-explorer', configureWebpack() {
     return {resolve: {alias: {${JSON.stringify(alias)}: ${JSON.stringify(replacement)}}}};
   }};
 });

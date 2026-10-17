@@ -244,7 +244,7 @@ def main():
     decompile=source.split("\telseif decompile then\n",1)[1].split('\telse\n\t\tldecompile = function()\n\t\t\treturn "-- Your Executor',1)[0]
     chunk=source.split("\t\tlocal function buildChunk(",1)[1].split("\t\tlocal compress = CompressionMode",1)[0]
     program=HARNESS.replace("__TIMEOUT__","local function makeTimeoutHandler("+timeout).replace("__YIELDIFDUE__","local function yieldIfDue()"+yielding).replace("__LOADING__","local function run_with_loading("+loading).replace("__SCRIPT_JOB__","local function runScriptJob("+script_job).replace("__BYTECODE__","local getbytecode\n"+bytecode).replace("__DECOMPILE__",decompile).replace("__CHUNK__","local function buildChunk("+chunk)
-    with tempfile.TemporaryDirectory(prefix="csi-export-jobs-") as directory:
+    with tempfile.TemporaryDirectory(prefix="csp-export-jobs-") as directory:
         path=Path(directory)/"jobs.luau"
         path.write_text(program,encoding="utf-8")
         result=subprocess.run([args.luau,str(path)],capture_output=True,text=True)

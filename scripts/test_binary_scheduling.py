@@ -107,7 +107,7 @@ def main():
     source=args.source.read_text(encoding='utf-8')
     encoders='local Type_Ids ='+source.split('local Type_Ids =',1)[1].split('local ESCAPES_PATTERN',1)[0]
     program=HARNESS.replace('__ENCODERS__',encoders).replace('__REQUIRE_YIELDS__','false' if args.record else 'true')
-    with tempfile.TemporaryDirectory(prefix='csi-binary-scheduling-') as directory:
+    with tempfile.TemporaryDirectory(prefix='csp-binary-scheduling-') as directory:
         path=Path(directory)/'encoders.luau'
         path.write_text(program,encoding='utf-8')
         result=subprocess.run([args.luau,str(path)],capture_output=True,text=True)

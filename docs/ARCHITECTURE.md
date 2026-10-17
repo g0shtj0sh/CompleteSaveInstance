@@ -2,10 +2,10 @@
 
 ## Current implementation
 
-The runtime remains in two inherited entry points. `saveinstance.luau` is primary;
-`saveinstance.lua` is an older, separate variant. `Tools/` contains development
-dumpers and metadata snapshots. `TODO/` contains exploratory patches. They are
-not a supported exporter API.
+The runtime uses one shared engine, `saveinstance.luau`, and a dedicated
+Potassium adapter. The obsolete Lua variant, placeholder TODO file, and stale
+generated metadata dumps were removed in 0.6.0. `Tools/` retains metadata
+dumpers for future property investigations; their outputs are ignored.
 
 The implementation performs capability discovery, metadata loading, option
 resolution, instance selection, property extraction, serialization, and output.
@@ -15,7 +15,7 @@ end-to-end diagnostics pipeline.
 ## External dependencies
 
 The Luau entry point loads `StreamBuffer` and `UniversalMethodFinder` from
-`luau/SomeHub`; the older Lua entry point also loads the method finder. These
+`luau/SomeHub`. These
 names identify external dependencies, so their URLs remain intact.
 
 The runtime also queries external metadata and API dumps. Pinning the root
@@ -24,10 +24,10 @@ their provenance and licenses, is future work.
 
 ## Foundation changes — 2026-10-16
 
-- CompleteSaveInstance logo, banner, documentation, and repository configuration.
+- CompleteSavePlace logo, banner, documentation, and repository configuration.
 - Updated project links, function names, and documentation classes.
-- Global state prefix changed to `CSI`; disk cache to `completesaveinstance_cache/`.
-- Generated-file credits identify this distribution and preserve its upstream.
+- Global state prefix changed to `CSP`; disk cache to `completesaveplace_cache/`.
+- Repository attribution is preserved separately from recovered script source.
 - Repository consistency checks and Luau compilation CI.
 
 Serializer algorithms, compression, property coverage, and output verification
@@ -36,19 +36,18 @@ original files for comparison.
 
 ## Documentation and preset layer
 
-Moonwave 1.4.2 generates the API from `saveinstance.luau`; the older variant is
-excluded to avoid mixing different defaults and features. Guides and a local
+Moonwave 1.4.2 generates the API from `saveinstance.luau`. Guides and a local
 search index are built into the static Docusaurus website, deployed by GitHub
 Actions to GitHub Pages.
 
-`Script Presets/presets.json` defines the four configurations. The generator
+`Script Presets/presets.json` defines the five configurations. The generator
 combines them with a shared wrapper template. Wrappers perform a basic text
-write/read probe and load the pinned `v0.5.1` engine by default. Local development
+write/read probe and load the pinned `v0.6.0` engine by default. Local development
 requires an explicit `USE_LOCAL_CORE = true`. They record source identity,
 exceptions, and file existence in a JSON sidecar separately from file validity.
 The actual serializer is not duplicated.
 
-UltraCompleteSveInstance is the experimental configuration for the next
+UltraCompleteSavePlace is the experimental configuration for the next
 diagnostic work. Mock tests validate wrapper branches, not Roblox serialization.
 
 ## Property reads and reports in 0.3.0
@@ -74,7 +73,7 @@ Version 0.4.0 adds a narrow adapter argument to the primary source chunk.
 `Executors/Potassium/saveinstance.luau` supplies canonical native functions
 without global hooks or a second serializer. BinaryString reads can use its
 protected raw reader before the ordinary fallback chain; dedicated presets
-explicitly enable those reads. See [Potassium](POTASSIUM.md) for contracts and
+explicitly enable those reads. See [Potassium](PRESETS.md#potassium-profile) for contracts and
 the reference review. The universal entry point still uses method discovery.
 
 ## Script jobs and checkpoints in 0.4.2
@@ -160,3 +159,11 @@ The next pipeline should expose preflight, write probe, inventory, extraction,
 serialization, writing, validation, and reporting as measurable phases. Logs
 should be buffered and repetitive failures aggregated. A backup needs evidence
 about its actual output. See [the roadmap](ROADMAP.md) for unimplemented work.
+
+## Rename and cleanup in 0.6.0
+
+The public project, presets, API class, function, runtime globals, and cache
+namespace now use CompleteSavePlace. The executable filename remains
+`saveinstance.luau`. Presets share one documentation page with per-loader
+Universal/Potassium switches. XML output contains no exporter credit comment.
+The cache reader preserves prior executor safety state across the rename.
