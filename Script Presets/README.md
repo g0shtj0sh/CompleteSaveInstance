@@ -18,7 +18,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/DiagnosticSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/Script%20Presets/DiagnosticSavePlace.luau",
     true
 ))()
 ```
@@ -56,7 +56,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/MapSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/Script%20Presets/MapSavePlace.luau",
     true
 ))()
 ```
@@ -95,7 +95,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/ScriptsSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/Script%20Presets/ScriptsSavePlace.luau",
     true
 ))()
 ```
@@ -136,7 +136,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/UltraCompleteSavePlace.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/Script%20Presets/UltraCompleteSavePlace.luau",
     true
 ))()
 ```
@@ -177,7 +177,7 @@ Options:
 
 ## [UltraNoModuleScripts](UltraNoModuleScripts.luau)
 
-Ultra coverage excluding ModuleScript instances and their descendants; Script and LocalScript extraction stays enabled.
+Ultra without ModuleScript code: keep module containers as Folders and preserve descendant models.
 
 Status: `experimental-runtime-unverified`.
 
@@ -185,7 +185,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Script%20Presets/UltraNoModuleScripts.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/Script%20Presets/UltraNoModuleScripts.luau",
     true
 ))()
 ```
@@ -205,7 +205,7 @@ Options:
 	NilInstances = true,
 	IgnoreNotArchivable = true,
 	SaveNotCreatable = true,
-	IgnoreList = { "ModuleScript" },
+	IgnoreList = {},
 	DecompileIgnore = {},
 	IgnoreSpecialProperties = false,
 	IgnoreDefaultPlayerScripts = false,
@@ -221,13 +221,14 @@ Options:
 	ShowStatus = true,
 	__DEBUG_MODE = true,
 	WorkBudgetMs = 4,
+	ExcludeModuleScripts = true,
 }
 ```
 
 ## Export files
 
-Each run creates `Game title - Preset/Game title - Preset.rbxl`, with `progress.json` and `report.json` in that folder.
-Existing folders get numbered suffixes, such as ` (2)`, on both the folder and place file. Unicode titles are preserved; invalid path characters are replaced.
+Each run creates `Game title - Preset/Game title.rbxl`, with `progress.json` and `report.json` in that folder.
+Existing folders get numbered suffixes, such as ` (2)`, on the folder only. Unicode titles are preserved; invalid path characters are replaced.
 The runtime needs `makefolder` and `isfolder`. A temporary `write-test.tmp` probes writing and is removed when `delfile` is available.
 
 ## Running a preset
@@ -243,7 +244,7 @@ CompleteSavePlace/
 
 Execute the chosen preset through the runtime's local script facility, or use the versioned loader above.
 
-The preset downloads the engine pinned to `v0.6.1` by default, avoiding stale local copies.
+The preset downloads the engine pinned to `v0.6.2` by default, avoiding stale local copies.
 For local development, explicitly set `USE_LOCAL_CORE = true` and adjust `CORE_PATH`.
 No GitHub token is required. The runtime still needs HTTP access and file APIs.
 

@@ -23,7 +23,7 @@ gh repo clone g0shtj0sh/CompleteSavePlace
 
 Choose a versioned preset loader from [Script Presets](PRESETS.md), or load the
 checked-out script using your runtime's local script facility. No GitHub token
-is required. Presets download the root engine pinned to `v0.6.1` by default.
+is required. Presets download the root engine pinned to `v0.6.2` by default.
 For local development, explicitly set `USE_LOCAL_CORE = true` and configure
 `CORE_PATH` in the wrapper. A missing local file then fails visibly.
 
@@ -67,9 +67,9 @@ The inline `CustomOptions` documentation in `saveinstance.luau` gives more detai
 
 ## Verify the result
 
-Preset runs create `Game title - Preset/Game title - Preset.rbxl` with
+Preset runs create `Game title - Preset/Game title.rbxl` with
 `progress.json` and `report.json` in the same folder. Repeated exports use a
-numbered folder/file suffix. See [output folders](PRESETS.md#output-folders)
+numbered folder suffix. See [output folders](PRESETS.md#output-folders)
 for Unicode names, title fallbacks, and folder API requirements. Direct engine
 calls continue to honor the `FilePath` you supply.
 

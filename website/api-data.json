@@ -1,6 +1,6 @@
 {
-  "version": "0.6.1",
-  "sourceHash": "3baeb2560e87ca750c0e96b49020225e5373c730bc09aaa55deafcba6ab526fa",
+  "version": "0.6.2",
+  "sourceHash": "fb3072dce3180763006f9ead06920ff41213cc902004c49b8d15b1d4a43ee549",
   "groups": [
     "Output",
     "Selection",
@@ -213,12 +213,20 @@
       "line": 3770
     },
     {
+      "name": "ExcludeModuleScripts",
+      "type": "boolean",
+      "description": "Exports ModuleScript containers as Folders, preserving their names and descendants without reading their Source or bytecode. Explicit IgnoreList rules still take priority.",
+      "default": "false",
+      "group": "Selection",
+      "line": 3771
+    },
+    {
       "name": "ExtraInstances",
       "type": "{Instance}",
       "description": "If used with any invalid mode (like \"invalidmode\") it will only save these instances.",
       "default": "{}",
       "group": "Selection",
-      "line": 3771
+      "line": 3772
     },
     {
       "name": "IgnoreProperties",
@@ -226,7 +234,7 @@
       "description": "Ignores properties by Name.",
       "default": "{}",
       "group": "Properties",
-      "line": 3772
+      "line": 3773
     },
     {
       "name": "SaveCacheInterval",
@@ -234,7 +242,7 @@
       "description": "The less the value the more often it saves, but that would mean less performance due to constantly saving. XML Only.",
       "default": "0x1600 * 10",
       "group": "Output",
-      "line": 3773
+      "line": 3774
     },
     {
       "name": "FilePath",
@@ -242,7 +250,7 @@
       "description": "The name (can include a path) of the file to save to. If it has no extension, `.rbxmx/rbxm` (models) or `.rbxlx/rbxl` (places) is appended; an existing extension is left as-is. Ignores `OPTIONS.AvoidFileOverwrite`.",
       "default": "false",
       "group": "Output",
-      "line": 3774
+      "line": 3775
     },
     {
       "name": "AvoidFileOverwrite",
@@ -250,7 +258,7 @@
       "description": "Prevents writing to place file that already exists.",
       "default": "true",
       "group": "Output",
-      "line": 3775
+      "line": 3776
     },
     {
       "name": "Object",
@@ -258,7 +266,7 @@
       "description": "* If provided, saves as .rbxmx (Model file) instead. If Object is game, it will be saved as a .rbxl file. **MUST BE AN INSTANCE REFERENCE, FOR EXAMPLE - *game.Workspace***. `\"optimized\"` mode is **NOT** supported with this option. If IsModel is set to false then Object specified here will be saved as a place file.",
       "default": "false",
       "group": "Selection",
-      "line": 3776
+      "line": 3777
     },
     {
       "name": "IsModel",
@@ -266,7 +274,7 @@
       "description": "If Object is specified then sets to true automatically, unless you set it to false.",
       "default": "false",
       "group": "Selection",
-      "line": 3777
+      "line": 3778
     },
     {
       "name": "NilInstances",
@@ -274,7 +282,7 @@
       "description": "Save instances that aren't Parented (Parented to nil).",
       "default": "false",
       "group": "Selection",
-      "line": 3778
+      "line": 3779
     },
     {
       "name": "NilInstancesFixes",
@@ -282,7 +290,7 @@
       "description": "* This can cause some Classes to be fixed even though they might not need the fix (better be safe than sorry though). For example, Bones inherit from Attachment if we dont define them in the NilInstancesFixes then this will catch them anyways. **TO AVOID THIS BEHAVIOR USE THIS EXAMPLE:** {ClassName_That_Doesnt_Need_Fix = false}.",
       "default": "{Animator = function, AdPortal = function, BaseWrap = function, Attachment = function}",
       "group": "Advanced",
-      "line": 3779
+      "line": 3780
     },
     {
       "name": "IgnoreDefaultProperties",
@@ -290,7 +298,7 @@
       "description": "Ignores default properties during saving. XML Only (XML=true) because Binary (default) doesn't really need it.",
       "default": "true",
       "group": "Properties",
-      "line": 3780
+      "line": 3781
     },
     {
       "name": "IgnoreNotArchivable",
@@ -298,7 +306,7 @@
       "description": "Ignores the Archivable property and saves Non-Archivable instances.",
       "default": "true",
       "group": "Selection",
-      "line": 3781
+      "line": 3782
     },
     {
       "name": "IgnorePropertiesOfNotScriptsOnScriptsMode",
@@ -306,7 +314,7 @@
       "description": "Ignores property of every instance that is not a script in \"scripts\" mode.",
       "default": "false",
       "group": "Properties",
-      "line": 3782
+      "line": 3783
     },
     {
       "name": "IgnoreSpecialProperties",
@@ -314,7 +322,7 @@
       "description": "Prevents calls to `gethiddenproperty` and uses fallback methods instead. This also helps with crashes. If your file is corrupted after saving, you can try turning this on.",
       "default": "false",
       "group": "Properties",
-      "line": 3783
+      "line": 3784
     },
     {
       "name": "IsolateStarterPlayer",
@@ -322,7 +330,7 @@
       "description": "Saves StarterPlayer as separate folder, children of the original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3784
+      "line": 3785
     },
     {
       "name": "IsolatePlayers",
@@ -330,7 +338,7 @@
       "description": "Saves All Players as separate folder, children of the original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3785
+      "line": 3786
     },
     {
       "name": "IsolateLocalPlayer",
@@ -338,7 +346,7 @@
       "description": "Saves LocalPlayer as separate folder, original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3786
+      "line": 3787
     },
     {
       "name": "IsolateLocalPlayerCharacter",
@@ -346,7 +354,7 @@
       "description": "Saves LocalPlayer.Character as separate folder, original instance will be ignored.",
       "default": "false",
       "group": "Players",
-      "line": 3787
+      "line": 3788
     },
     {
       "name": "SavePlayerCharacters",
@@ -354,7 +362,7 @@
       "description": "Save player characters while saving.",
       "default": "false",
       "group": "Players",
-      "line": 3788
+      "line": 3789
     },
     {
       "name": "SaveNotCreatable",
@@ -362,7 +370,7 @@
       "description": "* Includes non-serializable instances as Folder objects (Name is misleading as this is mostly a fix for certain NilInstances and isn't always related to NotCreatable). Other options also enable it, like: IsolatePlayers, IsolateLocalPlayer, etc.",
       "default": "false",
       "group": "Selection",
-      "line": 3789
+      "line": 3790
     },
     {
       "name": "NotCreatableFixes",
@@ -370,7 +378,7 @@
       "description": "* {\"Player\"} is the same as {Player = \"Folder\"}; Format like {SpawnLocation = \"Part\"} is only to be used when SpawnLocation inherits from \"Part\" AND \"Part\" is Creatable.",
       "default": "{ \"\", \"Player\", \"PlayerScripts\", \"PlayerGui\", \"TouchTransmitter\" }",
       "group": "Advanced",
-      "line": 3790
+      "line": 3791
     },
     {
       "name": "AlternativeWritefile",
@@ -378,7 +386,7 @@
       "description": "* Splits file content string into segments and writes them using appendfile. This might help with crashes when it starts writing to file. Though there is a risk of appendfile working incorrectly on some execs.",
       "default": "true",
       "group": "Output",
-      "line": 3791
+      "line": 3792
     },
     {
       "name": "IgnoreDefaultPlayerScripts",
@@ -386,7 +394,7 @@
       "description": "* **RISKY**: Ignores Default PlayerScripts like PlayerModule & RbxCharacterSounds. Prevents crashes on some execs.",
       "default": "true",
       "group": "Scripts",
-      "line": 3792
+      "line": 3793
     },
     {
       "name": "SharedBinaryStrings",
@@ -394,7 +402,7 @@
       "description": "Stores BinaryString values in a shared pool so identical ones are only written once, instead of repeating them for every instance. Good when many instances hold the same data (like copies of the same mesh) -- can make files noticeably smaller. Slightly bigger when everything is unique. Roblox doesn't officially support this, so there's a small chance it confuses Studio.",
       "default": "false",
       "group": "Properties",
-      "line": 3793
+      "line": 3794
     },
     {
       "name": "TreatUnionsAsParts",
@@ -402,7 +410,7 @@
       "description": "* **RISKY:** Converts all UnionOperations to Parts. Useful if your Executor isn't able to save (read) Unions, because otherwise they will be invisible.",
       "default": "false (except Solara)",
       "group": "Properties",
-      "line": 3794
+      "line": 3795
     }
   ],
   "aliases": [
@@ -709,7 +717,7 @@
     },
     {
       "id": "UltraNoModuleScripts",
-      "summary": "Ultra coverage excluding ModuleScript instances and their descendants; Script and LocalScript extraction stays enabled.",
+      "summary": "Ultra without ModuleScript code: keep module containers as Folders and preserve descendant models.",
       "status": "experimental-runtime-unverified",
       "options": {
         "mode": "full",
@@ -723,9 +731,7 @@
         "NilInstances": true,
         "IgnoreNotArchivable": true,
         "SaveNotCreatable": true,
-        "IgnoreList": [
-          "ModuleScript"
-        ],
+        "IgnoreList": [],
         "DecompileIgnore": [],
         "IgnoreSpecialProperties": false,
         "IgnoreDefaultPlayerScripts": false,
@@ -740,7 +746,8 @@
         "ShutdownWhenDone": false,
         "ShowStatus": true,
         "__DEBUG_MODE": true,
-        "WorkBudgetMs": 4
+        "WorkBudgetMs": 4,
+        "ExcludeModuleScripts": true
       },
       "potassiumOptions": {
         "mode": "full",
@@ -754,9 +761,7 @@
         "NilInstances": true,
         "IgnoreNotArchivable": true,
         "SaveNotCreatable": true,
-        "IgnoreList": [
-          "ModuleScript"
-        ],
+        "IgnoreList": [],
         "DecompileIgnore": [],
         "IgnoreSpecialProperties": false,
         "IgnoreDefaultPlayerScripts": false,
@@ -771,7 +776,8 @@
         "ShutdownWhenDone": false,
         "ShowStatus": true,
         "__DEBUG_MODE": true,
-        "WorkBudgetMs": 4
+        "WorkBudgetMs": 4,
+        "ExcludeModuleScripts": true
       }
     }
   ],

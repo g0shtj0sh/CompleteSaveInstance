@@ -25,7 +25,7 @@
 
 ---
 
-The [UltraNoModuleScripts preset](docs/PRESETS.md#ultranomodulescripts) keeps Ultra settings while excluding ModuleScripts and their descendants. Universal and Potassium copy launchers are available in the documentation.
+The [UltraNoModuleScripts preset](docs/PRESETS.md#ultranomodulescripts) keeps Ultra settings without module code. Module containers become Folders to preserve descendant models. Universal and Potassium copy launchers are available in the documentation.
 
 ## The project
 
@@ -75,7 +75,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/saveinstance.luau",
     true
 )
 local completeSavePlace = assert(loadstring(source, "CompleteSavePlace"))()

@@ -3768,6 +3768,7 @@ end
 --- @field SaveBytecode boolean -- Includes bytecode in the output. Useful if you wish to be able to decompile it yourself later. Respects **@DecompileIgnore**. ___Default:___ false
 --- .DecompileIgnore {Instance | Instance.ClassName | [Instance.ClassName] = {Instance.Name}} -- Ignores matched instances and their descendants by default. To ignore only the instance itself, set the value to `false`. Examples: `"Chat"` matches any instance with ClassName "Chat"; `Players = {"MyPlayerName"}` matches class "Players" AND name "MyPlayerName" only; `workspace` matches a specific instance by reference; `[workspace] = false` matches a specific instance by reference, ignoring only itself and not its descendants. ___Default:___ {TextChatService}
 --- .IgnoreList {Instance | Instance.ClassName | [Instance.ClassName] = {Instance.Name | false}} -- Structure mirrors **@DecompileIgnore**, except `false` means keep the instance but ignore its descendants. Supports both instance references and ClassName strings. Examples: `"CoreGui"` skips entirely; `CorePackages = false` keeps the instance but skips its descendants; `Players = {"SomePlayer"}` skips a specific named instance with specific ClassName. ___Default:___ {CoreGui, CorePackages, Packages = false}
+--- @field ExcludeModuleScripts boolean -- Exports ModuleScript containers as Folders, preserving their names and descendants without reading their Source or bytecode. Explicit IgnoreList rules still take priority. ___Default:___ false
 --- .ExtraInstances {Instance} -- If used with any invalid mode (like "invalidmode") it will only save these instances. ___Default:___ {}
 --- @field IgnoreProperties table -- Ignores properties by Name. ___Default:___ {}
 --- @field SaveCacheInterval number -- The less the value the more often it saves, but that would mean less performance due to constantly saving. XML Only. ___Default:___ 0x1600 * 10
@@ -3835,7 +3836,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/",
 		SSI = "saveinstance",
 	}
 
@@ -3862,7 +3863,7 @@ local function completeSavePlace(...)
 	GLOBAL_ENV.CSP = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.6.1",
+		engineVersion = "0.6.2",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",
@@ -3962,6 +3963,7 @@ local function completeSavePlace(...)
 		IgnoreProperties = {},
 
 		IgnoreList = { "CoreGui", "CorePackages", Packages = false },
+		ExcludeModuleScripts = false,
 
 		ExtraInstances = {},
 		NilInstances = false,
@@ -5055,6 +5057,9 @@ local function completeSavePlace(...)
 			return false
 		end
 		local className = target.ClassName
+		if OPTIONS.ExcludeModuleScripts and className == "ModuleScript" then
+			return valueType ~= "Instance" and valueType ~= "Folder"
+		end
 
 		local fix = NotCreatableFixes[className] or nil
 		if fix then
@@ -5356,6 +5361,19 @@ local function completeSavePlace(...)
 					skipEntirely = false -- keep this instance, skip its descendants
 				elseif onIgnoredList and (onIgnoredList == true or onIgnoredList[name]) then
 					return
+				end
+
+				if OPTIONS.ExcludeModuleScripts and class == "ModuleScript" then
+					-- A module can contain models or other geometry. Keep its place in
+					-- the hierarchy without exporting executable ModuleScript content.
+					override = table.clone(override or {})
+					override.Properties = table.clone(override.Properties or {})
+					override.Properties.Name = name
+					override.__ClassName = "Folder"
+					InstancesOverrides[instance] = override
+					class, propClass = "Folder", "Instance"
+					HasAutoRemaps = true
+					ExportReport.moduleScriptContainers = (ExportReport.moduleScriptContainers or 0) + 1
 				end
 
 				local fix = NotCreatableFixes[class]
@@ -5721,6 +5739,7 @@ local function completeSavePlace(...)
 							ExportReport.propertyFailures[#ExportReport.propertyFailures + 1] = {
 								class = class, property = propName, instancesInColumn = #objs,
 								failedAt = failedAt, reason = failureReason, criticalGeometry = critical,
+								valueType = prop.ValueType, datatypeState = GHP[prop.ValueType],
 								example = pathOk and example or "unavailable",
 							}
 						end

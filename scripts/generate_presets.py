@@ -97,8 +97,8 @@ def render() -> dict[Path, str]:
                   "    true", "))()", "```", "", "Options:", "", "```lua", lua(preset["options"]), "```", ""]
     lines += [
         "## Export files", "",
-        "Each run creates `Game title - Preset/Game title - Preset.rbxl`, with `progress.json` and `report.json` in that folder.",
-        "Existing folders get numbered suffixes, such as ` (2)`, on both the folder and place file. Unicode titles are preserved; invalid path characters are replaced.",
+        "Each run creates `Game title - Preset/Game title.rbxl`, with `progress.json` and `report.json` in that folder.",
+        "Existing folders get numbered suffixes, such as ` (2)`, on the folder only. Unicode titles are preserved; invalid path characters are replaced.",
         "The runtime needs `makefolder` and `isfolder`. A temporary `write-test.tmp` probes writing and is removed when `delfile` is available.", "",
         "## Running a preset", "",
         "Use a versioned loader above, or copy the engine and preset into your runtime's file workspace:", "",

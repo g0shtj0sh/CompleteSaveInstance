@@ -17,7 +17,7 @@ local potassium = __POTASSIUM__
 local presetId = "__PRESET_ID__"
 local gameTitle = "(\u{5b66}\u{4e71}) Gakuran"
 local expectedCorePath = potassium and "CompleteSavePlace/Executors/Potassium/saveinstance.luau" or "CompleteSavePlace/saveinstance.luau"
-local expectedCoreUrl = potassium and "/v0.6.1/Executors/Potassium/saveinstance.luau" or "/v0.6.1/saveinstance.luau"
+local expectedCoreUrl = potassium and "/v0.6.2/Executors/Potassium/saveinstance.luau" or "/v0.6.2/saveinstance.luau"
 local function scenario(kind)
     local files, messages, folders = {}, {}, {}
     local title = gameTitle
@@ -99,12 +99,14 @@ local function scenario(kind)
                 assert(options.SafeMode == false and options.KillAllScripts == false)
                 assert(options.ShutdownWhenDone == false and options.BoostFPS == false)
                 if __NO_MODULES__ then
-                    assert(#options.IgnoreList == 1 and options.IgnoreList[1] == "ModuleScript", "Exclude ModuleScripts from collection")
+                    assert(#options.IgnoreList == 0 and options.ExcludeModuleScripts, "Exclude module code without dropping descendant models")
                     assert(options.Decompile and options.SaveBytecode, "Keep extraction enabled for other script classes")
                 end
                 if potassium then assert(options.IgnoreSpecialProperties == false, "Potassium must enable its native reader") end
                 local folder, filename=string.match(options.FilePath,"^(.*)/([^/]+)%.rbxl$")
-                assert(folder and folder==filename and folders[folder], "Folder and place file must share the same title")
+                assert(folder and folders[folder], "Place file belongs in the export folder")
+                local expectedTitle=string.gsub(folder," %- " .. presetId .. ".*$", "")
+                assert(filename==expectedTitle, "Place filename contains only the game title")
                 assert(utf8.len(folder), "Unicode truncation must retain valid UTF-8")
                 assert(not string.find(folder, '[<>:"/\\|?*%c]'), "Unsafe path characters must be replaced")
                 if kind=="folder-collision" or kind=="file-collision" then
@@ -125,8 +127,8 @@ local function scenario(kind)
                 if kind == "runtime-error" then error("serializer failed") end
                 if kind ~= "missing-output" then files[options.FilePath] = "mock output" end
                 if kind == "legacy-core" then return nil end
-                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.6.1"} end
-                return {ok=true, engineVersion="0.6.1", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
+                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.6.2"} end
+                return {ok=true, engineVersion="0.6.2", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
             end
         end
     end
@@ -157,7 +159,7 @@ local function scenario(kind)
     end
     if kind == "success" or kind == "remote-core" then
         assert(localReads == 0 and remoteReads == 1, "Default must not silently load a stale local core")
-        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.6.1/", 1, true))
+        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.6.2/", 1, true))
     elseif kind == "local-core" or kind == "local-core-missing" then
         assert(localReads == 1 and remoteReads == 0, "Local development must use only its explicit source")
     end
@@ -199,7 +201,7 @@ def main() -> None:
     args = parser.parse_args()
     catalog = json.loads((ROOT / "Script Presets/presets.json").read_text(encoding="utf-8"))
     options = {preset["id"]: preset["options"] for preset in catalog["presets"]}
-    expected = dict(options["UltraCompleteSavePlace"], IgnoreList=["ModuleScript"])
+    expected = dict(options["UltraCompleteSavePlace"], ExcludeModuleScripts=True)
     assert options["UltraNoModuleScripts"] == expected, "Only ModuleScript selection should differ from Ultra"
     files = sorted((ROOT / "Script Presets").glob("*.luau")) + sorted((ROOT / "Executors/Potassium/Script Presets").glob("*.luau"))
     if not files:

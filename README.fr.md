@@ -24,7 +24,7 @@ Le site public comprend maintenant la référence API, un index des options,
 la recherche et le guide des presets. **UltraCompleteSavePlace** est notre
 configuration expérimentale de travail pour la couverture maximale.
 
-Le preset [UltraNoModuleScripts](docs/PRESETS.md#ultranomodulescripts) conserve les réglages Ultra en excluant les ModuleScript et leurs descendants. Disponible en Universal et Potassium, avec un bouton de copie dans la documentation.
+Le preset [UltraNoModuleScripts](docs/PRESETS.md#ultranomodulescripts) conserve les réglages Ultra sans lire le code des ModuleScript. Leurs conteneurs deviennent des dossiers pour préserver les modèles enfants. Disponible en Universal et Potassium.
 
 ## Ce qui est présent
 
@@ -56,7 +56,7 @@ options de couverture étendue, avec des délais par tâche bornés, mais ses
 résultats dans Roblox et Studio restent à valider.
 
 Depuis la **0.6.1**, chaque export utilise un dossier **Nom du jeu - Preset**.
-Le fichier `.rbxl` porte le même nom ; les fichiers annexes sont `progress.json`
+Le fichier `.rbxl` porte uniquement le nom du jeu ; les fichiers annexes sont `progress.json`
 et `report.json`. Les noms japonais sont conservés. Si le dossier existe déjà,
 un suffixe `(2)`, `(3)`, etc. préserve les anciennes sauvegardes.
 

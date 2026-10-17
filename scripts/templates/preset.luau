@@ -75,7 +75,7 @@ for attempt = 1, 9999 do
 		if not created then fail("Could not create output folder: " .. tostring(createError)) end
 		local verified, folderExists = pcall(isfolder, candidate)
 		if not verified or folderExists ~= true then fail("Output folder was not created: " .. candidate) end
-		outputFolder, outputName = candidate, candidate
+		outputFolder, outputName = candidate, title
 		break
 	end
 end

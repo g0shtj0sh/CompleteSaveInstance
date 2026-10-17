@@ -6,7 +6,7 @@
 -- Relative to the runtime's file workspace, not the Git checkout on your PC.
 local CORE_PATH = "CompleteSavePlace/Executors/Potassium/saveinstance.luau"
 local USE_LOCAL_CORE = false -- opt in explicitly when developing a local engine
-local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.1/Executors/Potassium/saveinstance.luau"
+local CORE_URL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSavePlace/v0.6.2/Executors/Potassium/saveinstance.luau"
 local PRESET_ID = "UltraCompleteSavePlace"
 local options = {
 	mode = "full",
@@ -103,7 +103,7 @@ for attempt = 1, 9999 do
 		if not created then fail("Could not create output folder: " .. tostring(createError)) end
 		local verified, folderExists = pcall(isfolder, candidate)
 		if not verified or folderExists ~= true then fail("Output folder was not created: " .. candidate) end
-		outputFolder, outputName = candidate, candidate
+		outputFolder, outputName = candidate, title
 		break
 	end
 end
@@ -139,7 +139,7 @@ local function onProgress(progress)
 	latestProgress = progress
 	progress.preset = PRESET_ID
 	progress.profile = "Potassium"
-	progress.wrapperVersion = "0.6.1"
+	progress.wrapperVersion = "0.6.2"
 	progress.sourceOrigin = sourceOrigin
 	progress.validation = "unverified"
 	local wrote, writeError = pcall(function()
@@ -195,7 +195,7 @@ local report = type(exportReport) == "table" and exportReport or {
 	propertyAudit = "unavailable_from_this_core",
 }
 report.preset = PRESET_ID
-report.wrapperVersion = "0.6.1"
+report.wrapperVersion = "0.6.2"
 report.profile = "Potassium"
 report.sourceOrigin = sourceOrigin
 report.sourceBytes = sourceBytes
@@ -229,8 +229,8 @@ end
 if report.criticalGeometryOmissions and report.criticalGeometryOmissions > 0 then
 	warn(prefix .. tostring(report.criticalGeometryOmissions) .. " geometry/terrain property columns were omitted. See the report; missing road geometry is not repaired by a completed export.")
 end
-if report.engineVersion ~= "0.6.1" then
-	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.6.1. Check for an outdated local CORE_PATH.")
+if report.engineVersion ~= "0.6.2" then
+	warn(prefix .. "Selected core version: " .. tostring(report.engineVersion) .. "; expected 0.6.2. Check for an outdated local CORE_PATH.")
 end
 if not ok then
 	fail("Export failed. Check CORE_PATH and console details: " .. tostring(result))

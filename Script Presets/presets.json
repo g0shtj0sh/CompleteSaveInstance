@@ -111,7 +111,7 @@
     },
     {
       "id": "UltraNoModuleScripts",
-      "summary": "Ultra coverage excluding ModuleScript instances and their descendants; Script and LocalScript extraction stays enabled.",
+      "summary": "Ultra without ModuleScript code: keep module containers as Folders and preserve descendant models.",
       "status": "experimental-runtime-unverified",
       "options": {
         "mode": "full",
@@ -125,9 +125,7 @@
         "NilInstances": true,
         "IgnoreNotArchivable": true,
         "SaveNotCreatable": true,
-        "IgnoreList": [
-          "ModuleScript"
-        ],
+        "IgnoreList": [],
         "DecompileIgnore": [],
         "IgnoreSpecialProperties": false,
         "IgnoreDefaultPlayerScripts": false,
@@ -142,7 +140,8 @@
         "ShutdownWhenDone": false,
         "ShowStatus": true,
         "__DEBUG_MODE": true,
-        "WorkBudgetMs": 4
+        "WorkBudgetMs": 4,
+        "ExcludeModuleScripts": true
       }
     }
   ]

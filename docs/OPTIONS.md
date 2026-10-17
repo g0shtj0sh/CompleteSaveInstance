@@ -163,6 +163,12 @@ Type: `{Instance | Instance.ClassName | [Instance.ClassName] = {Instance.Name | 
 
 Structure mirrors **@DecompileIgnore**, except `false` means keep the instance but ignore its descendants. Supports both instance references and ClassName strings. Examples: `"CoreGui"` skips entirely; `CorePackages = false` keeps the instance but skips its descendants; `Players = {"SomePlayer"}` skips a specific named instance with specific ClassName.
 
+## ExcludeModuleScripts
+
+Type: `boolean`. Source default: `false`.
+
+Exports ModuleScript containers as Folders, preserving their names and descendants without reading their Source or bytecode. Explicit IgnoreList rules still take priority.
+
 ## ExtraInstances
 
 Type: `{Instance}`. Source default: `{}`.

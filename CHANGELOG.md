@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.2 — 2026-10-17
+
+- Kept the preset label in export folder names only; the `.rbxl` uses the game
+  title without a preset or repeated-export suffix.
+- Fixed UltraNoModuleScripts dropping models nested under ModuleScripts.
+  `ExcludeModuleScripts` replaces module containers with named Folders, keeping
+  descendants and parent references without reading module source or bytecode.
+- Added collection regression coverage, including the old subtree-loss behavior
+  as a negative control. Reports count converted containers and include property
+  datatypes and guard states when binary columns cannot be saved.
+
+This does not repair inaccessible union geometry. The inspected 0.5.1 export
+omitted `UnionOperation.SolidMeshHolder` with a failed `NetAssetRef` self-check;
+restoring those native values still requires a connected-client investigation.
+
 ## 0.6.1 — 2026-10-17
 
 - Grouped preset exports in a `Game title - Preset` folder, with a matching

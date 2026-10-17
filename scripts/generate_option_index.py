@@ -15,7 +15,7 @@ DATA = ROOT / "website/api-data.json"
 
 GROUPS = {
     "Output": "Binary CompressionMode CompressionLevel FilePath AvoidFileOverwrite Callback CopyToClipboard AlternativeWritefile SaveCacheInterval ReadMe",
-    "Selection": "mode Object IsModel ExtraInstances IgnoreList NilInstances IgnoreNotArchivable SaveNotCreatable",
+    "Selection": "mode Object IsModel ExtraInstances IgnoreList ExcludeModuleScripts NilInstances IgnoreNotArchivable SaveNotCreatable",
     "Scripts": "Decompile DecompileTimeout DecompileJobless scriptcache SaveBytecode BytecodeTimeout DecompileIgnore IgnoreDefaultPlayerScripts",
     "Properties": "IgnoreProperties IgnoreDefaultProperties IgnoreSpecialProperties IgnorePropertiesOfNotScriptsOnScriptsMode SharedBinaryStrings TreatUnionsAsParts",
     "Players": "IsolateStarterPlayer IsolatePlayers IsolateLocalPlayer IsolateLocalPlayerCharacter SavePlayerCharacters",
