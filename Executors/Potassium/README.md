@@ -7,11 +7,12 @@ or execute this versioned Ultra loader:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/Executors/Potassium/Script%20Presets/UltraCompleteSveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Executors/Potassium/Script%20Presets/UltraCompleteSveInstance.luau",
     true
 ))()
 ```
 
+- [UltraNoModuleScripts](Script%20Presets/UltraNoModuleScripts.luau): Ultra excluding ModuleScripts and their descendants.
 - [UltraCompleteSveInstance](Script%20Presets/UltraCompleteSveInstance.luau): experimental full coverage.
 - [DiagnosticSaveInstance](Script%20Presets/DiagnosticSaveInstance.luau): property/writer diagnosis without scripts or compression.
 - [MapSaveInstance](Script%20Presets/MapSaveInstance.luau): full-root scene export without script extraction.
@@ -36,7 +37,7 @@ native call. Source columns and chunks over 8 MiB are stored uncompressed,
 preserving their data at the cost of potentially larger files.
 
 No general-purpose globals are overwritten. Both stages download code pinned
-to v0.5.0; inherited helper dependencies remain unpinned. Local adapter
+to v0.5.1; inherited helper dependencies remain unpinned. Local adapter
 development also requires changing its core URL if the shared engine is local.
 Regenerate presets with `python scripts/generate_presets.py` at repository root.
 

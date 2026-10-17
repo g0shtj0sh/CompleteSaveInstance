@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import subprocess
 import tempfile
 from pathlib import Path
@@ -14,7 +15,7 @@ local presetSource = __PRESET_SOURCE__
 local successes = 0
 local potassium = __POTASSIUM__
 local expectedCorePath = potassium and "CompleteSaveInstance/Executors/Potassium/saveinstance.luau" or "CompleteSaveInstance/saveinstance.luau"
-local expectedCoreUrl = potassium and "/v0.5.0/Executors/Potassium/saveinstance.luau" or "/v0.5.0/saveinstance.luau"
+local expectedCoreUrl = potassium and "/v0.5.1/Executors/Potassium/saveinstance.luau" or "/v0.5.1/saveinstance.luau"
 local function scenario(kind)
     local files, messages = {}, {}
     local capturedReport
@@ -66,13 +67,17 @@ local function scenario(kind)
                 runtimeParameters.onProgress({phase="scripts",detail={operation="decompile",path="ReplicatedStorage.ExampleModule"}})
                 assert(options.SafeMode == false and options.KillAllScripts == false)
                 assert(options.ShutdownWhenDone == false and options.BoostFPS == false)
+                if __NO_MODULES__ then
+                    assert(#options.IgnoreList == 1 and options.IgnoreList[1] == "ModuleScript", "Exclude ModuleScripts from collection")
+                    assert(options.Decompile and options.SaveBytecode, "Keep extraction enabled for other script classes")
+                end
                 if potassium then assert(options.IgnoreSpecialProperties == false, "Potassium must enable its native reader") end
                 assert(string.find(options.FilePath, "_123_", 1, true))
                 if kind == "runtime-error" then error("serializer failed") end
                 if kind ~= "missing-output" then files[options.FilePath] = "mock output" end
                 if kind == "legacy-core" then return nil end
-                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.5.0"} end
-                return {ok=true, engineVersion="0.5.0", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
+                if kind == "engine-reported-error" then return {ok=false, error="internal engine failure", engineVersion="0.5.1"} end
+                return {ok=true, engineVersion="0.5.1", validation="unverified", criticalGeometryOmissions=kind=="geometry-omission" and 2 or 0}
             end
         end
     end
@@ -99,7 +104,7 @@ local function scenario(kind)
     end
     if kind == "success" or kind == "remote-core" then
         assert(localReads == 0 and remoteReads == 1, "Default must not silently load a stale local core")
-        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.5.0/", 1, true))
+        assert(capturedReport.sourceOrigin and string.find(capturedReport.sourceOrigin, "/v0.5.1/", 1, true))
     elseif kind == "local-core" or kind == "local-core-missing" then
         assert(localReads == 1 and remoteReads == 0, "Local development must use only its explicit source")
     end
@@ -138,6 +143,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--luau", default="luau", help="official Luau interpreter executable")
     args = parser.parse_args()
+    catalog = json.loads((ROOT / "Script Presets/presets.json").read_text(encoding="utf-8"))
+    options = {preset["id"]: preset["options"] for preset in catalog["presets"]}
+    expected = dict(options["UltraCompleteSveInstance"], IgnoreList=["ModuleScript"])
+    assert options["UltraNoModuleScripts"] == expected, "Only ModuleScript selection should differ from Ultra"
     files = sorted((ROOT / "Script Presets").glob("*.luau")) + sorted((ROOT / "Executors/Potassium/Script Presets").glob("*.luau"))
     if not files:
         raise SystemExit("No generated presets to test")
@@ -146,6 +155,7 @@ def main() -> None:
         if "]====]" in source:
             raise SystemExit("Preset contains a reserved test harness delimiter")
         harness = HARNESS.replace("__PRESET_SOURCE__", "[====[" + source + "]====]").replace("__POTASSIUM__", "true" if "Potassium" in path.parts else "false")
+        harness = harness.replace("__NO_MODULES__", "true" if path.stem == "UltraNoModuleScripts" else "false")
         with tempfile.TemporaryDirectory(prefix="csi-preset-tests-") as directory:
             script = Path(directory) / "preset-test.luau"
             script.write_text(harness, encoding="utf-8")

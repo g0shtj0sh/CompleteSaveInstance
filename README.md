@@ -25,6 +25,8 @@
 
 ---
 
+The [UltraNoModuleScripts preset](docs/PRESETS.md#ultranomodulescripts) keeps Ultra settings while excluding ModuleScripts and their descendants. Universal and Potassium copy launchers are available in the documentation.
+
 ## The project
 
 **CompleteSaveInstance** is a Luau toolkit for exporting accessible Roblox
@@ -73,7 +75,7 @@ LocalScript or Studio command-bar script.
 
 ```lua
 local source = game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/saveinstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/saveinstance.luau",
     true
 )
 local completeSaveInstance = assert(loadstring(source, "CompleteSaveInstance"))()

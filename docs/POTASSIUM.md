@@ -19,6 +19,14 @@ does not establish that all place content was captured.
 
 <PresetLauncher id="UltraCompleteSveInstance" initialProfile="Potassium" />
 
+## UltraNoModuleScripts
+
+Ultra with native binary-property reads and the append-based writer, excluding
+ModuleScripts and their descendants entirely. Script and LocalScript extraction
+stays enabled. Scripts requiring excluded modules may no longer work.
+
+<PresetLauncher id="UltraNoModuleScripts" initialProfile="Potassium" />
+
 ## DiagnosticSaveInstance
 
 An initial test without scripts or compression. This profile exercises
@@ -59,7 +67,7 @@ native property access, and the append-based writer.
 - **Script extraction:** since 0.4.2, the shared engine reads each script's
   bytecode once per export and passes cached bytes to Potassium's documented
   `decompile` overload. Both Ultra configurations benefit when run on Potassium.
-  ModuleScripts are not excluded as a class.
+  The standard Ultra includes ModuleScripts; UltraNoModuleScripts excludes them.
   Version 0.4.4 removes forced per-script frame waits and deferral of immediately
   completed jobs. Native API latency remains executor-dependent; the selection
   and timeout settings are unchanged.
@@ -69,8 +77,8 @@ native property access, and the append-based writer.
   the wrapper's `sourceOrigin` identifies the dedicated entry point.
 
 Both entry points use the same serializer. The Potassium entry point is under
-`Executors/Potassium/saveinstance.luau`; its four presets are under
-`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.5.0.
+`Executors/Potassium/saveinstance.luau`; its five presets are under
+`Executors/Potassium/Script Presets/`. Loaders pin both stages to v0.5.1.
 For local adapter development, edit its `CORE_URL` as well as the preset's
 `CORE_PATH`; opting into a local adapter alone still downloads its pinned core.
 

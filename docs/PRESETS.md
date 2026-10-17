@@ -55,19 +55,32 @@ termination, forced shutdown, and rendering changes stay disabled.
 
 <PresetLauncher id="UltraCompleteSveInstance" />
 
+## UltraNoModuleScripts
+
+The Ultra configuration **without ModuleScript instances**. It uses
+`IgnoreList = { "ModuleScript" }`: ModuleScripts and their descendants are
+excluded from the exported file, so their bytecode and source are not read.
+Script and LocalScript extraction stays enabled with the usual Ultra settings.
+Scripts that require an excluded module may no longer work in the export.
+
+Choose Universal or Potassium below and click **Copier le script**.
+
+<PresetLauncher id="UltraNoModuleScripts" />
+
 ## Versioned loaders
 
 Run a preset in a compatible environment with HTTP access and file APIs:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/Script%20Presets/UltraCompleteSveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Script%20Presets/UltraCompleteSveInstance.luau",
     true
 ))()
 ```
 
 Replace the final filename with `DiagnosticSaveInstance.luau`,
-`MapSaveInstance.luau`, or `ScriptsSaveInstance.luau` for a different goal.
+`MapSaveInstance.luau`, `ScriptsSaveInstance.luau`, or
+`UltraNoModuleScripts.luau` for a different goal.
 The [catalog on GitHub](https://github.com/g0shtj0sh/CompleteSaveInstance/blob/main/Script%20Presets/README.md)
 shows each loader and its exact option values.
 
@@ -84,6 +97,7 @@ CompleteSaveInstance/
     MapSaveInstance.luau
     ScriptsSaveInstance.luau
     UltraCompleteSveInstance.luau
+    UltraNoModuleScripts.luau
 ```
 
 Execute the chosen preset through the runtime's local script facility. If your

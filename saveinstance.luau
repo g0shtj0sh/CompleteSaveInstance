@@ -3806,7 +3806,7 @@ end
 	Report completion does not certify file validity or Studio compatibility. Example:
 	```lua
 	local Params = {
-		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/",
+		RepoURL = "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/",
 		SSI = "saveinstance",
 	}
 
@@ -3833,7 +3833,7 @@ local function completeSaveInstance(...)
 	GLOBAL_ENV.CSI = true
 	local ExportReport = {
 		schemaVersion = 1,
-		engineVersion = "0.5.0",
+		engineVersion = "0.5.1",
 		ok = false,
 		validation = "unverified",
 		propertyAudit = "binary_columns_only",

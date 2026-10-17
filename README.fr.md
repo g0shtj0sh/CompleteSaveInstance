@@ -7,7 +7,7 @@
 La [documentation des presets](https://g0shtj0sh.github.io/CompleteSaveInstance/docs/PRESETS/)
 propose un bouton **Copier le script** pour chaque configuration, avec le choix
 **Universal / Potassium**. Le [dossier Potassium](Executors/Potassium/README.md)
-contient une entrée adaptée et quatre presets : lectures binaires natives,
+contient une entrée adaptée et cinq presets : lectures binaires natives,
 compression LZ4 contrôlée et rapports détaillés. Les résultats réels restent à
 vérifier dans Studio.
 
@@ -23,6 +23,8 @@ et leur ouverture dans Studio restent à valider pour cette distribution.
 Le site public comprend maintenant la référence API, un index des options,
 la recherche et le guide des presets. **UltraCompleteSveInstance** est notre
 configuration expérimentale de travail pour la couverture maximale.
+
+Le preset [UltraNoModuleScripts](docs/PRESETS.md#ultranomodulescripts) conserve les réglages Ultra en excluant les ModuleScript et leurs descendants. Disponible en Universal et Potassium, avec un bouton de copie dans la documentation.
 
 ## Ce qui est présent
 

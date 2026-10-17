@@ -57,11 +57,14 @@ def main() -> int:
             errors.append(f"Runnable copy launcher missing for {preset['id']}")
         if preset["id"] + ".luau" not in presets_page:
             errors.append(f"Runnable URL missing for {preset['id']}")
-    if presets_page.count('class="csi-launch-copy"') != 4:
+    if presets_page.count('class="csi-launch-copy"') != len(catalog["presets"]):
         errors.append("Expected a direct copy button for each universal preset section")
     potassium = (BUILD / "docs/POTASSIUM/index.html").read_text(encoding="utf-8")
-    if potassium.count('data-profile="Potassium"') != 4 or potassium.count('class="csi-launch-copy"') != 4:
-        errors.append("Expected four Potassium preset copy launchers")
+    if potassium.count('data-profile="Potassium"') != len(catalog["presets"]) or potassium.count('class="csi-launch-copy"') != len(catalog["presets"]):
+        errors.append("Expected a Potassium copy launcher for each preset")
+    for preset in catalog["presets"]:
+        if f'data-preset="{preset["id"]}"' not in potassium:
+            errors.append(f"Potassium preset missing from website: {preset['id']}")
     if catalog["developmentTarget"] not in home:
         errors.append("Homepage does not identify the current development target")
     if not list(BUILD.glob("*search-doc*.json")) or not list(BUILD.glob("*lunr-index*.json")):

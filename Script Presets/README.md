@@ -18,7 +18,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/Script%20Presets/DiagnosticSaveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Script%20Presets/DiagnosticSaveInstance.luau",
     true
 ))()
 ```
@@ -56,7 +56,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/Script%20Presets/MapSaveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Script%20Presets/MapSaveInstance.luau",
     true
 ))()
 ```
@@ -95,7 +95,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/Script%20Presets/ScriptsSaveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Script%20Presets/ScriptsSaveInstance.luau",
     true
 ))()
 ```
@@ -136,7 +136,7 @@ Run this preset:
 
 ```lua
 loadstring(game:HttpGet(
-    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.0/Script%20Presets/UltraCompleteSveInstance.luau",
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Script%20Presets/UltraCompleteSveInstance.luau",
     true
 ))()
 ```
@@ -175,6 +175,55 @@ Options:
 }
 ```
 
+## [UltraNoModuleScripts](UltraNoModuleScripts.luau)
+
+Ultra coverage excluding ModuleScript instances and their descendants; Script and LocalScript extraction stays enabled.
+
+Status: `experimental-runtime-unverified`.
+
+Run this preset:
+
+```lua
+loadstring(game:HttpGet(
+    "https://raw.githubusercontent.com/g0shtj0sh/CompleteSaveInstance/v0.5.1/Script%20Presets/UltraNoModuleScripts.luau",
+    true
+))()
+```
+
+Options:
+
+```lua
+{
+	mode = "full",
+	Binary = true,
+	CompressionMode = "lz4",
+	Decompile = true,
+	DecompileTimeout = 10,
+	SaveBytecode = true,
+	BytecodeTimeout = 3,
+	scriptcache = true,
+	NilInstances = true,
+	IgnoreNotArchivable = true,
+	SaveNotCreatable = true,
+	IgnoreList = { "ModuleScript" },
+	DecompileIgnore = {},
+	IgnoreSpecialProperties = false,
+	IgnoreDefaultPlayerScripts = false,
+	SavePlayerCharacters = true,
+	IsolatePlayers = true,
+	IgnoreDefaultProperties = false,
+	ReadMe = true,
+	AlternativeWritefile = false,
+	SafeMode = false,
+	KillAllScripts = false,
+	BoostFPS = false,
+	ShutdownWhenDone = false,
+	ShowStatus = true,
+	__DEBUG_MODE = true,
+	WorkBudgetMs = 4,
+}
+```
+
 ## Running a preset
 
 Use a versioned loader above, or copy the engine and preset into your runtime's file workspace:
@@ -188,7 +237,7 @@ CompleteSaveInstance/
 
 Execute the chosen preset through the runtime's local script facility, or use the versioned loader above.
 
-The preset downloads the engine pinned to `v0.5.0` by default, avoiding stale local copies.
+The preset downloads the engine pinned to `v0.5.1` by default, avoiding stale local copies.
 For local development, explicitly set `USE_LOCAL_CORE = true` and adjust `CORE_PATH`.
 No GitHub token is required. The runtime still needs HTTP access and file APIs.
 

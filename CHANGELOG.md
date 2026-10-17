@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 — 2026-10-17
+
+- Added UltraNoModuleScripts in Universal and Potassium: the Ultra configuration
+  with ModuleScript instances and their descendants excluded from collection.
+  Script and LocalScript extraction settings remain unchanged.
+- Added copy launchers to both preset guides and the API configuration explorer.
+  Excluded modules can leave scripts that require them unable to run.
+
 ## 0.5.0 — 2026-10-17
 
 - Added a compact status panel with a progress bar below the current operation.
